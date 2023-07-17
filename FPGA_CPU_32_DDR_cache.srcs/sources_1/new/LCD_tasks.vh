@@ -1,7 +1,7 @@
 // SPI Write to LCD as command
 // On completion
 // Increment PC by 2
-// Increamaent r_SM
+// Increment r_SM
 task spi_dc_write_command_value;
    input [31:0] i_byte;
    begin
@@ -23,7 +23,7 @@ endtask
 // SPI Write to LCD as data
 // On completion
 // Increment PC by 2
-// Increamaent r_SM
+// Increment r_SM
 task spi_dc_write_data_value;
    input [31:0] i_byte;
    begin
@@ -45,7 +45,7 @@ endtask
 // SPI Write command to LCD as from lower byte of register
 // On completion
 // Increment PC
-// Increamaent r_SM
+// Increment r_SM
 
 task spi_dc_write_command_reg;
    reg [3:0] reg_1;
@@ -69,7 +69,7 @@ endtask
 // SPI Write data to LCD as from lower byte of register
 // On completion
 // Increment PC 1
-// Increamaent r_SM
+// Increment r_SM
 task spi_dc_data_command_reg;
    reg [3:0] reg_1;
    begin

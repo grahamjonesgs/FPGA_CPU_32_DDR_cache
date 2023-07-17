@@ -12,7 +12,7 @@
 //
 // Parameters:  SPI_MODE, can be 0, 1, 2, or 3.  See above.
 //              Can be configured in one of 4 modes:
-//              Mode | Clock Polarity (CPOL/CKP) | Clock Phase (CPHA)
+//              Mode | Clock Polarity (CPOL/CKP) | Clock Phase 
 //               0   |             0             |        0
 //               1   |             0             |        1
 //               2   |             1             |        0
@@ -27,9 +27,9 @@
 //              will be sent during a single CS-low pulse.
 //
 //              CS_INACTIVE_CLKS - Sets the amount of time in clock cycles to
-//              hold the state of Chip-Selct high (inactive) before next
+//              hold the state of Chip-Select high (inactive) before next
 //              command is allowed on the line.  Useful if chip requires some
-//              time when CS is high between trasnfers.
+//              time when CS is high between transfers.
 ///////////////////////////////////////////////////////////////////////////////
 `timescale 1ns / 1ps
 module SPI_Master_With_Single_CS #(

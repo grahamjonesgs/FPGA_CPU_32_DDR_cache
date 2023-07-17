@@ -52,7 +52,7 @@ module Seven_seg_LED_Display_Controller (
             o_Anode_Activate = 8'b11101111;
             r_LED_Bytes = i_displayed_number1[7:0];
          end
-         default:  // To dim the LED's to 75% igonre 25% duty cycle
+         default:  // To dim the LED's to 75% ignore 25% duty cycle
         begin
             o_Anode_Activate = 8'b11111111;
             r_LED_Bytes = 8'b0;

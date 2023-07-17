@@ -1,7 +1,7 @@
 /*// Set reg from memory location
 // On completion
-// Increament PC 3
-// Increament r_SM_msg
+// Increment PC 3
+// Increment r_SM_msg
 task t_set_reg_from_memory;
 input [31:0] i_location; // Not used here, but needed to show this is a two word opcode
     begin
@@ -20,8 +20,8 @@ endtask
 
 // Set mem location from register
 // On completion
-// Increament PC 3
-// Increament r_SM_msg
+// Increment PC 3
+// Increment r_SM_msg
 task t_set_memory_from_reg;
 input [31:0] i_location; // Not used here, but needed to show this is a two word opcode
     begin
@@ -52,8 +52,8 @@ endtask
 
 // Copy from second reg to first
 // On completion
-// Increament PC
-// Increament r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 task t_copy_regs;
    begin
       r_register[r_reg_1] <= r_register[r_reg_2];
@@ -64,8 +64,8 @@ endtask
 
 // Set reg with value
 // On completion
-// Increament PC 2
-// Increament r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 task t_set_reg;
    input [31:0] i_value;
    begin
@@ -77,8 +77,8 @@ endtask
 
 // Set reg with value
 // On completion
-// Increament PC
-// Increament r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 task t_set_reg_flags;
    begin
       r_register[r_reg_2] <= {r_zero_flag, r_equal_flag, r_carry_flag, r_overflow_flag, 28'b0};
@@ -87,12 +87,12 @@ task t_set_reg_flags;
    end
 endtask
 
-// Bitwise opperations
+// Bitwise operations
 
 // AND first reg with second, result in first
 // On completion
-// Increament PC
-// Increament r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 task t_and_regs;
    begin
       r_register[r_reg_1] <= r_register[r_reg_1] & r_register[r_reg_2];
@@ -103,8 +103,8 @@ endtask
 
 // OR first reg with second, result in first
 // On completion
-// Increament PC
-// Increament r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 task t_or_regs;
    begin
       r_register[r_reg_1] <= r_register[r_reg_1] | r_register[r_reg_2];
@@ -115,8 +115,8 @@ endtask
 
 // XOR first reg with second, result in first
 // On completion
-// Increament PC
-// Increament r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 task t_xor_regs;
    begin
       r_register[r_reg_1] <= r_register[r_reg_1] ^ r_register[r_reg_2];
@@ -127,8 +127,8 @@ endtask
 
 // AND first reg with value, result in first
 // On completion
-// Increament PC by 2
-// Increament r_SM_msg
+// Increment PC by 2
+// Increment r_SM_msg
 task t_and_reg_value;
    input [31:0] i_value;
    begin
@@ -140,8 +140,8 @@ endtask
 
 // OR first reg with value, result in first
 // On completion
-// Increament PC by 2
-// Increament r_SM_msg
+// Increment PC by 2
+// Increment r_SM_msg
 task t_or_reg_value;
    input [31:0] i_value;
    begin
@@ -153,8 +153,8 @@ endtask
 
 // XOR first reg with value, result in first
 // On completion
-// Increament PC by 2
-// Increament r_SM_msg
+// Increment PC by 2
+// Increment r_SM_msg
 task t_xor_reg_value;
    input [31:0] i_value;
    begin
@@ -164,12 +164,12 @@ task t_xor_reg_value;
    end
 endtask
 
-// Arimetic operations
+// Arithmetic operations
 
 // Inc reg by value
 // On completion
-// Increament PC 2
-// Increament r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 // Update zero, carry
 task t_add_value;
    input [31:0] i_value;
@@ -187,8 +187,8 @@ endtask
 
 // Dec reg by value
 // On completion
-// Increament PC 2
-// Increament r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 task t_minus_value;
    input [31:0] i_value;
    reg [31:0] hold;
@@ -204,8 +204,8 @@ endtask
 
 // Dec reg
 // On completion
-// Increament PC
-// Increament r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 task t_dec_reg;
    reg [31:0] hold;
    begin
@@ -220,7 +220,7 @@ endtask
 
 // Inc reg
 // On completion
-// Increament PC
+// Increment PC
 // Increment r_SM_msg
 task t_inc_reg;
    reg [31:0] hold;
@@ -331,7 +331,7 @@ task t_left_shift_a_reg;
    end
 endtask
 
-// Right shift arithmeticalreg
+// Right shift arithmetical reg
 // On completion
 // Increment PC 1
 // Increment r_SM_msg

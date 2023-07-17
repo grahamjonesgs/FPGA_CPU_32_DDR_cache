@@ -1,7 +1,7 @@
-// Set 7 Seg 1 LED vaue
+// Set 7 Seg 1 LED value
 // On completion
-// Increament PC 2
-// Increamaent r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 task t_7_seg1_value;
    input [31:0] i_byte;
    begin
@@ -15,8 +15,8 @@ endtask
 
 // Set 7 Seg 2 LED  lower 16 bits
 // On completion
-// Increament PC 2
-// Increamaent r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 task t_7_seg2_value;
    input [31:0] i_byte;
    begin
@@ -30,8 +30,8 @@ endtask
 
 // Set 7 Seg 1 reg lower 16 bits
 // On completion
-// Increament PC
-// Increamaent r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 
 task t_7_seg1_reg;
    begin
@@ -52,8 +52,8 @@ endtask
 
 // Set 7 Seg 2 reg
 // On completion
-// Increament PC
-// Increamaent r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 
 task t_7_seg2_reg;
    begin
@@ -74,8 +74,8 @@ endtask
 
 // Set 7 Seg all reg
 // On completion
-// Increament PC
-// Increamaent r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 task t_7_seg_reg;
    begin
       r_seven_seg_value1 <= {
@@ -103,10 +103,10 @@ task t_7_seg_reg;
    end
 endtask
 
-// Blank 7 Seg LED vaue
+// Blank 7 Seg LED value
 // On completion
-// Increament PC
-// Increamaent r_SM_msg
+// Increment PC
+// Increment r_SM_msg
 
 task t_7_seg_blank;
    begin

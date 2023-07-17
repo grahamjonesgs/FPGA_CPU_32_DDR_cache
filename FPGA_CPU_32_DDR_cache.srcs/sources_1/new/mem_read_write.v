@@ -57,7 +57,7 @@ module mem_read_write (
    reg  [  9:0] por_counter = 32;
    wire         resetn = (por_counter == 0);
    // Power-on-reset generator circuit.
-   // Asserts resetn for 1023 cycles, then deasserts
+   // Asserts resetn for 1023 cycles, then de-asserts
    // `resetn` is Active low reset
 
    // regs to talk to DDR
@@ -87,7 +87,6 @@ module mem_read_write (
 
    reg [9:0] state = WAIT;
 
-   // o_ddr_mem_adrr is 26:0 so 27 bits. Lowest 3 are zero, new 5 will be index so 20 for tag, plus valid is 20
    reg [24-$clog2(CACHE_SIZE):0] cache_val_addr[CACHE_SIZE-1:0];
    // Cache data
    (* ram_style = "block" *)
@@ -103,7 +102,7 @@ module mem_read_write (
    wire [23-$clog2(CACHE_SIZE):0] w_cache_tag;  // is 18 for 5 bit index (cache size 32) // 18:0
 
    // Memory model based on the 16 bit data address of the DDR, thus the <<1 to make it 32 bit. Then remove 
-   // the two lowest bits as we will aloways grap the 4*32 bits 
+   // the two lowest bits as we will always grab the 4*32 bits 
    assign o_temp_ddr_mem_addr = {3'b0, i_mem_addr[23:0]};
    assign o_temp_ddr_mem_addr2 = o_temp_ddr_mem_addr << 1;
    assign o_ddr_mem_addr = {o_temp_ddr_mem_addr2[26:3], 3'b0};
@@ -115,7 +114,7 @@ module mem_read_write (
    assign w_cache_index = o_ddr_mem_addr[$clog2(CACHE_SIZE)+2:3];  // 7:3 - 5 bit index
    assign w_cache_tag = o_ddr_mem_addr[26:3+$clog2(CACHE_SIZE)];  // 26:8 - 19 bit tag 
 
-   // compring 18:0 to 18:0.....
+   // comprising 18:0 to 18:0.....
    assign w_cache_hit = cache_val_addr[w_cache_index][23-$clog2(
        CACHE_SIZE
    ):0] == w_cache_tag && cache_val_addr[w_cache_index][24-$clog2(

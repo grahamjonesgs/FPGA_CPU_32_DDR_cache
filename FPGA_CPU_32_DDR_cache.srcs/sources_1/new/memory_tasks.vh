@@ -1,7 +1,7 @@
 // Set mem location given in value to contents of register
 // On completion
-// Increament PC 2
-// Increament r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 task t_set_mem_from_value_reg;
    input [31:0] i_location;
    begin
@@ -18,14 +18,14 @@ task t_set_mem_from_value_reg;
             r_PC <= r_PC + 2;
             r_mem_write_DV <= 1'b0;
          end  // if ready asserted, else will loop until ready
-      end  // if sebsequent loop
+      end  // if subsequent loop
    end
 endtask
 
 // Set mem location given in register to contents of register (first in order is value, second is location)
 // On completion
-// Increament PC 1
-// Increament r_SM_msg
+// Increment PC 1
+// Increment r_SM_msg
 task t_set_mem_from_reg_reg;
    begin
       if (r_extra_clock == 0) begin
@@ -41,14 +41,14 @@ task t_set_mem_from_reg_reg;
             r_PC <= r_PC + 1;
             r_mem_write_DV <= 1'b0;
          end  // if ready asserted, else will loop until ready
-      end  // if sebsequent loop
+      end  // if subsequent loop
    end
 endtask
 
 // Set contents of register to location given in value
 // On completion
-// Increament PC 2
-// Increament r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 task t_set_reg_from_mem_value;
    input [31:0] i_location;
    begin
@@ -67,14 +67,14 @@ task t_set_reg_from_mem_value;
                r_PC <= r_PC + 2;
             end
          end  // if ready asserted, else will loop until ready
-      end  // if sebsequent loop
+      end  // if subsequent loop
    end
 endtask
 
 // Set contents of register to location given in register (first in order is reg to be set, second is location)
 // On completion
-// Increament PC 1
-// Increament r_SM_msg
+// Increment PC 1
+// Increment r_SM_msg
 task t_set_reg_from_mem_reg;
    begin
       if (r_extra_clock == 0) begin
@@ -92,6 +92,6 @@ task t_set_reg_from_mem_reg;
                r_PC <= r_PC + 1;
             end
          end  // if ready asserted, else will loop until ready
-      end  // if sebsequent loop
+      end  // if subsequent loop
    end
 endtask

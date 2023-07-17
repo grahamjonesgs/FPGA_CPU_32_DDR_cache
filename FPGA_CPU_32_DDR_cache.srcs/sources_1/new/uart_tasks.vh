@@ -1,7 +1,7 @@
 // Send debug message
 // On completion
 // Increment PC 1
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 
 task t_debug_message;
     begin
@@ -30,7 +30,7 @@ task t_debug_message;
 endtask  // Send test message
 // On completion
 // Increment PC 1
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 
 task t_test_message;
     begin
@@ -44,8 +44,8 @@ endtask
 
 // Print to serial values from register location
 // On completion
-// Increament PC 1
-// Increament r_SM_msg
+// Increment PC 1
+// Increment r_SM_msg
 task t_tx_char_from_reg_value;
     begin
         if (r_extra_clock == 0) begin
@@ -69,14 +69,14 @@ task t_tx_char_from_reg_value;
                 r_mem_read_DV <= 1'b0;
                 r_PC <= r_PC + 1;
             end  // if ready asserted, else will loop until ready
-        end  // if sebsequent loop
+        end  // if subsequent loop
     end
 endtask
 
 // Print to serial value from memory at register location
 // On completion
-// Increament PC 1
-// Increament r_SM_msg
+// Increment PC 1
+// Increment r_SM_msg
 task t_tx_value_of_mem_at_reg;
     begin
         if (r_extra_clock == 0) begin
@@ -107,14 +107,14 @@ task t_tx_value_of_mem_at_reg;
                 r_mem_read_DV <= 1'b0;
                 r_PC <= r_PC + 1;
             end  // if ready asserted, else will loop until ready
-        end  // if sebsequent loop
+        end  // if subsequent loop
     end
 endtask
 
 // Print to serial character from memory location
 // On completion
-// Increament PC 2
-// Increament r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 task t_tx_value_of_mem;
     input [31:0] i_location;
     begin
@@ -146,14 +146,14 @@ task t_tx_value_of_mem;
                 r_mem_read_DV <= 1'b0;
                 r_PC <= r_PC + 2;
             end  // if ready asserted, else will loop until ready
-        end  // if sebsequent loop
+        end  // if subsequent loop
     end
 endtask
 
 // Print to serial character from memory location
 // On completion
-// Increament PC 2
-// Increament r_SM_msg
+// Increment PC 2
+// Increment r_SM_msg
 task t_tx_string_at_mem;
     input [31:0] i_location;
     begin
@@ -181,14 +181,14 @@ task t_tx_string_at_mem;
                 r_mem_read_DV <= 1'b0;
                 r_PC <= r_PC + 2;
             end  // if ready asserted, else will loop until ready
-        end  // if sebsequent loop
+        end  // if subsequent loop
     end
 endtask
 
 // Print to serial character from memory location given by register
 // On completion
-// Increament PC 1
-// Increament r_SM_msg
+// Increment PC 1
+// Increment r_SM_msg
 task t_tx_string_at_reg;
     begin
         if (r_extra_clock == 0) begin
@@ -215,7 +215,7 @@ task t_tx_string_at_reg;
                 r_mem_read_DV <= 1'b0;
                 r_PC <= r_PC + 1;
             end  // if ready asserted, else will loop until ready
-        end  // if sebsequent loop
+        end  // if subsequent loop
     end
 endtask
 
@@ -223,7 +223,7 @@ endtask
 // Send message newline
 // On completion
 // Increment PC 1
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 task t_tx_newline;
     begin
         if (!w_sending_msg) begin
@@ -240,7 +240,7 @@ endtask
 // Send message of reg contents
 // On completion
 // Increment PC 1
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 task t_tx_reg;
     begin
         if (!w_sending_msg) begin
@@ -330,7 +330,7 @@ task t_tx_message;
                 r_msg[111:104] <= 8'h0D;
                 r_msg_length <= 14;
             end
-            3: // Segmentatiion error. Attempt to execute data.
+            3: // Segmentation error. Attempt to execute data.
             begin
                 r_msg[7:0] <= 8'h54;
                 r_msg[15:8] <= 8'h65;

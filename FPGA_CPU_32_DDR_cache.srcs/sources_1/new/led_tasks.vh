@@ -1,7 +1,7 @@
 // Set LED signal status
 // On completion
 // Increment PC 2
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 
 task t_led_value;
    input [31:0] i_state;
@@ -15,7 +15,7 @@ endtask
 // Set LED signal status from register
 // On completion
 // Increment PC 1
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 task t_led_reg;
    reg [3:0] reg_1;
    begin
@@ -29,7 +29,7 @@ endtask
 // Set LED RGB1 signal status
 // On completion
 // Increment PC 2
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 task t_led_rgb1_value;
    input [31:0] i_state;
    begin
@@ -42,7 +42,7 @@ endtask
 // Set LED RGB1 signal status from register
 // On completion
 // Increment PC 1
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 task t_led_rgb1_reg;
    reg [3:0] reg_1;
    begin
@@ -56,7 +56,7 @@ endtask
 // Set LED RGB2 signal status
 // On completion
 // Increment PC 2
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 task t_led_rgb2_value;
    input [31:0] i_state;
    begin
@@ -69,7 +69,7 @@ endtask
 // Set LED RGB2 signal status from register
 // On completion
 // Increment PC 1
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 task t_led_rgb2_reg;
    reg [3:0] reg_1;
    begin
@@ -83,7 +83,7 @@ endtask
 // Put switch status into register
 // On completion
 // Increment PC 1
-// Increamaent r_SM_msg
+// Increment r_SM_msg
 task t_get_switch_reg;
    reg [3:0] reg_1;
    begin

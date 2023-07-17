@@ -3,7 +3,7 @@ module rams_sp_nc (
 
     input i_clk,
 
-    // Progam load and data update
+    // Program load and data update
     input [31:0] i_write_addr,
     input [15:0] i_write_value,
     input        i_write_en,

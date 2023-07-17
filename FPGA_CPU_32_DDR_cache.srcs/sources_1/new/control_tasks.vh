@@ -52,7 +52,7 @@ task t_ret;
    end
 endtask
 
-// Do nothng
+// Do nothing
 // On completion
 // Increment PC
 // Increment r_SM
@@ -84,15 +84,15 @@ task t_reset;
    end  // Case FFFF
 endtask
 
-// Set interupt from regs first is interupt in lowest byte, then address of handlers
+// Set interrupt from regs first is interrupt in lowest byte, then address of handlers
 // On completion
 // Increment PC
 // Increment r_SM
-task t_set_interupt_regs;
-   reg [1:0] r_interupt_number;
+task t_set_interrupt_regs;
+   reg [1:0] r_interrupt_number;
    begin
-      r_interupt_number = r_register[r_reg_1][1:0];
-      r_interupt_table[r_interupt_number] <= r_register[r_reg_2][23:0];
+      r_interrupt_number = r_register[r_reg_1][1:0];
+      r_interrupt_table[r_interrupt_number] <= r_register[r_reg_2][23:0];
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
    end

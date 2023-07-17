@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2023.1 (lin64) Build 3865809 Sun May  7 15:04:56 MDT 2023
-| Date         : Wed Jul  5 21:43:25 2023
+| Date         : Mon Jul 17 22:16:17 2023
 | Host         : archlinux running 64-bit unknown
 | Command      : report_timing_summary -max_paths 10 -report_unconstrained -file FPGA_CPU_32_bits_cache_timing_summary_routed.rpt -pb FPGA_CPU_32_bits_cache_timing_summary_routed.pb -rpx FPGA_CPU_32_bits_cache_timing_summary_routed.rpx -warn_on_violation
 | Design       : FPGA_CPU_32_bits_cache
@@ -1047,11 +1047,11 @@ Slack (MET) :             0.418ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
     SLICE_X29Y54         FDRE (Prop_fdre_C_Q)         0.456     5.701 r  r_reg_2_reg[1]/Q
                          net (fo=157, routed)         1.153     6.854    mem_read_write/r_msg_reg[0]_0[1]
-    SLICE_X30Y54         LUT6 (Prop_lut6_I2_O)        0.124     6.978 r  mem_read_write/r_interupt_table[0][0]_i_3/O
-                         net (fo=1, routed)           0.812     7.790    mem_read_write/r_interupt_table[0][0]_i_3_n_0
-    SLICE_X30Y58         LUT6 (Prop_lut6_I0_O)        0.124     7.914 f  mem_read_write/r_interupt_table[0][0]_i_2/O
+    SLICE_X30Y54         LUT6 (Prop_lut6_I2_O)        0.124     6.978 r  mem_read_write/r_interrupt_table[0][0]_i_3/O
+                         net (fo=1, routed)           0.812     7.790    mem_read_write/r_interrupt_table[0][0]_i_3_n_0
+    SLICE_X30Y58         LUT6 (Prop_lut6_I0_O)        0.124     7.914 f  mem_read_write/r_interrupt_table[0][0]_i_2/O
                          net (fo=23, routed)          0.725     8.639    mem_read_write/r_reg_2_reg[2]_0
-    SLICE_X30Y58         LUT1 (Prop_lut1_I0_O)        0.152     8.791 r  mem_read_write/r_interupt_table[0][0]_i_1/O
+    SLICE_X30Y58         LUT1 (Prop_lut1_I0_O)        0.152     8.791 r  mem_read_write/r_interrupt_table[0][0]_i_1/O
                          net (fo=3, routed)           0.643     9.435    mem_read_write/r_reg_2_reg[2]_2
     SLICE_X31Y61         CARRY4 (Prop_carry4_CYINIT_CO[3])
                                                       0.804    10.239 r  mem_read_write/r_register_reg[15][4]_i_15/CO[3]
@@ -1203,7 +1203,7 @@ Slack (MET) :             0.090ns  (arrival time - required time)
                          slack                                  0.090    
 
 Slack (MET) :             0.119ns  (arrival time - required time)
-  Source:                 r_interupt_table_reg[0][9]/C
+  Source:                 r_interrupt_table_reg[0][9]/C
                             (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
   Destination:            r_PC_reg[9]/D
                             (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
@@ -1227,9 +1227,9 @@ Slack (MET) :             0.119ns  (arrival time - required time)
                          net (fo=1, routed)           0.644     0.894    i_Clk_IBUF
     BUFGCTRL_X0Y16       BUFG (Prop_bufg_I_O)         0.026     0.920 r  i_Clk_IBUF_BUFG_inst/O
                          net (fo=2539, routed)        0.564     1.483    i_Clk_IBUF_BUFG
-    SLICE_X53Y53         FDRE                                         r  r_interupt_table_reg[0][9]/C
+    SLICE_X53Y53         FDRE                                         r  r_interrupt_table_reg[0][9]/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X53Y53         FDRE (Prop_fdre_C_Q)         0.141     1.624 r  r_interupt_table_reg[0][9]/Q
+    SLICE_X53Y53         FDRE (Prop_fdre_C_Q)         0.141     1.624 r  r_interrupt_table_reg[0][9]/Q
                          net (fo=2, routed)           0.392     2.016    main_stack/r_PC_reg[9]
     SLICE_X58Y49         LUT6 (Prop_lut6_I5_O)        0.045     2.061 r  main_stack/r_PC[9]_i_1/O
                          net (fo=1, routed)           0.000     2.061    main_stack_n_62
@@ -1505,7 +1505,7 @@ Slack (MET) :             0.126ns  (arrival time - required time)
                          slack                                  0.126    
 
 Slack (MET) :             0.131ns  (arrival time - required time)
-  Source:                 r_interupt_table_reg[0][4]/C
+  Source:                 r_interrupt_table_reg[0][4]/C
                             (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
   Destination:            r_PC_reg[4]/D
                             (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
@@ -1529,9 +1529,9 @@ Slack (MET) :             0.131ns  (arrival time - required time)
                          net (fo=1, routed)           0.644     0.894    i_Clk_IBUF
     BUFGCTRL_X0Y16       BUFG (Prop_bufg_I_O)         0.026     0.920 r  i_Clk_IBUF_BUFG_inst/O
                          net (fo=2539, routed)        0.565     1.484    i_Clk_IBUF_BUFG
-    SLICE_X53Y51         FDRE                                         r  r_interupt_table_reg[0][4]/C
+    SLICE_X53Y51         FDRE                                         r  r_interrupt_table_reg[0][4]/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X53Y51         FDRE (Prop_fdre_C_Q)         0.141     1.625 r  r_interupt_table_reg[0][4]/Q
+    SLICE_X53Y51         FDRE (Prop_fdre_C_Q)         0.141     1.625 r  r_interrupt_table_reg[0][4]/Q
                          net (fo=2, routed)           0.372     1.998    main_stack/r_PC_reg[4]
     SLICE_X53Y49         LUT6 (Prop_lut6_I5_O)        0.045     2.043 r  main_stack/r_PC[4]_i_1/O
                          net (fo=1, routed)           0.000     2.043    main_stack_n_67
@@ -1556,7 +1556,7 @@ Slack (MET) :             0.131ns  (arrival time - required time)
                          slack                                  0.131    
 
 Slack (MET) :             0.141ns  (arrival time - required time)
-  Source:                 r_interupt_table_reg[0][14]/C
+  Source:                 r_interrupt_table_reg[0][14]/C
                             (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
   Destination:            r_PC_reg[14]/D
                             (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
@@ -1580,9 +1580,9 @@ Slack (MET) :             0.141ns  (arrival time - required time)
                          net (fo=1, routed)           0.644     0.894    i_Clk_IBUF
     BUFGCTRL_X0Y16       BUFG (Prop_bufg_I_O)         0.026     0.920 r  i_Clk_IBUF_BUFG_inst/O
                          net (fo=2539, routed)        0.566     1.485    i_Clk_IBUF_BUFG
-    SLICE_X48Y53         FDRE                                         r  r_interupt_table_reg[0][14]/C
+    SLICE_X48Y53         FDRE                                         r  r_interrupt_table_reg[0][14]/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X48Y53         FDRE (Prop_fdre_C_Q)         0.141     1.626 r  r_interupt_table_reg[0][14]/Q
+    SLICE_X48Y53         FDRE (Prop_fdre_C_Q)         0.141     1.626 r  r_interrupt_table_reg[0][14]/Q
                          net (fo=2, routed)           0.383     2.009    main_stack/r_PC_reg[14]
     SLICE_X47Y49         LUT6 (Prop_lut6_I5_O)        0.045     2.054 r  main_stack/r_PC[14]_i_1/O
                          net (fo=1, routed)           0.000     2.054    main_stack_n_57
@@ -35554,8 +35554,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.196    10.087    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X26Y44         LUT6 (Prop_lut6_I0_O)        0.124    10.211 r  uart_rx1/r_register[11][31]_i_2/O
@@ -35600,8 +35600,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.196    10.087    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X26Y44         LUT6 (Prop_lut6_I0_O)        0.124    10.211 r  uart_rx1/r_register[11][31]_i_2/O
@@ -35646,8 +35646,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.196    10.087    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X26Y44         LUT6 (Prop_lut6_I0_O)        0.124    10.211 r  uart_rx1/r_register[11][31]_i_2/O
@@ -35692,8 +35692,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.023     9.915    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X29Y46         LUT5 (Prop_lut5_I0_O)        0.150    10.065 r  uart_rx1/r_register[7][31]_i_2/O
@@ -35738,8 +35738,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.023     9.915    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X29Y46         LUT5 (Prop_lut5_I0_O)        0.150    10.065 r  uart_rx1/r_register[7][31]_i_2/O
@@ -35784,8 +35784,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.023     9.915    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X29Y46         LUT5 (Prop_lut5_I0_O)        0.150    10.065 r  uart_rx1/r_register[7][31]_i_2/O
@@ -35830,8 +35830,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.196    10.087    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X26Y44         LUT6 (Prop_lut6_I0_O)        0.124    10.211 r  uart_rx1/r_register[11][31]_i_2/O
@@ -35876,8 +35876,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          0.949     9.841    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X35Y45         LUT5 (Prop_lut5_I0_O)        0.118     9.959 r  uart_rx1/r_register[3][31]_i_2/O
@@ -35922,8 +35922,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.196    10.087    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X26Y44         LUT6 (Prop_lut6_I0_O)        0.124    10.211 r  uart_rx1/r_register[11][31]_i_2/O
@@ -35968,8 +35968,8 @@ Slack:                    inf
                          net (fo=0)                   0.000     0.000    CPU_RESETN
     C12                  IBUF (Prop_ibuf_I_O)         1.507     1.507 r  CPU_RESETN_IBUF_inst/O
                          net (fo=40, routed)          6.160     7.667    uart_rx1/CPU_RESETN_IBUF
-    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interupt_counter[20]_i_2/O
-                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interupt_counter
+    SLICE_X44Y67         LUT6 (Prop_lut6_I2_O)        0.124     7.791 r  uart_rx1/r_timer_interrupt_counter[20]_i_2/O
+                         net (fo=105, routed)         0.977     8.768    uart_rx1/r_timer_interrupt_counter
     SLICE_X39Y52         LUT6 (Prop_lut6_I0_O)        0.124     8.892 r  uart_rx1/r_register[15][31]_i_13/O
                          net (fo=16, routed)          1.196    10.087    uart_rx1/r_register[15][31]_i_13_n_0
     SLICE_X26Y44         LUT6 (Prop_lut6_I0_O)        0.124    10.211 r  uart_rx1/r_register[11][31]_i_2/O

@@ -70,7 +70,6 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
-set_param chipscope.maxJobs 1
 set_msg_config  -string {{HW Target shutdown}}  -suppress 
 set_msg_config  -id {Synth 8-689}  -string {{WARNING: [Synth 8-689] width (12) of port connection 'pi_dqs_found_lanes' does not match port width (4) of module 'mig_7series_v4_2_ddr_mc_phy' [/home/graham/Documents/src/FPGA_CPU_32_DDR/FPGA_CPU_32_DDR.gen/sources_1/ip/mig_7series_0_1/mig_7series_0/user_design/rtl/phy/mig_7series_v4_2_ddr_mc_phy_wrapper.v:1671]}}  -suppress 
 set_msg_config  -id {Synth 8-5974}  -string {{WARNING: [Synth 8-5974] attribute "use_dsp48" has been deprecated, please use "use_dsp" instead}}  -suppress 

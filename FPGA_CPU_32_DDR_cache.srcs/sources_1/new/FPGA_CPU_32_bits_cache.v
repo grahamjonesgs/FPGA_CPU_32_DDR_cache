@@ -92,7 +92,7 @@ module FPGA_CPU_32_bits_cache (
    wire i_RX_LCD_DV;  // Data Valid pulse (1 clock cycle)
    wire [7:0] i_RX_LCD_Byte;  // Byte received on MISO
 
-   reg [44:0] r_timeout_counter;  // Roomfor 32 bits plus the 13 left shift in the timing task
+   reg [44:0] r_timeout_counter;  // Room for 32 bits plus the 13 left shift in the timing task
    reg [44:0] r_timeout_max;
 
    // Machine control
@@ -158,11 +158,11 @@ module FPGA_CPU_32_bits_cache (
    // temp vars for timing
    reg r_timing_start;
 
-   // Interupt handler
-   reg [23:0] r_interupt_table[3:0];
-   reg r_timer_interupt;
-   reg [31:0] r_timer_interupt_counter;
-   reg [63:0] r_timer_interupt_counter_sec;
+   // Interrupt handler
+   reg [23:0] r_interrupt_table[3:0];
+   reg r_timer_interrupt;
+   reg [31:0] r_timer_interrupt_counter;
+   reg [63:0] r_timer_interrupt_counter_sec;
 
    // Memory
    reg r_mem_write_DV;
@@ -358,8 +358,8 @@ rams_sp_nc rams_sp_nc1 (
       r_RGB_LED_1 = 12'h000;
       r_RGB_LED_2 = 12'h000;
       r_timing_start <= 0;
-      r_timer_interupt_counter <= 0;
-      r_timer_interupt_counter_sec <= 0;
+      r_timer_interrupt_counter <= 0;
+      r_timer_interrupt_counter_sec <= 0;
       r_mem_write_DV <= 0;
       r_mem_read_DV <= 0;
       r_msg = 2048'b0;
@@ -374,28 +374,7 @@ rams_sp_nc rams_sp_nc1 (
       if (w_reset_H) begin
 
          r_SM <= NO_PROGRAM;
-         /*    o_TX_LCD_Count <= 4'd1;
-      o_TX_LCD_Byte <= 8'b0;
-      r_timeout_counter <= 0;
-      o_LCD_reset_n <= 1'b0;
-      r_PC <= 24'h0;
-      r_zero_flag <= 0;
-      r_equal_flag <= 0;
-      r_carry_flag <= 0;
-      r_overflow_flag <= 0;
-      r_error_code <= 8'h0;
-      o_ram_write_addr <= 24'h0;
-      r_ram_next_write_addr <= 24'h0;
-      r_seven_seg_value1 = 32'h22222222;
-      r_seven_seg_value2 = 32'h22222222;
-      r_RGB_LED_1 = 12'h000;
-      r_RGB_LED_2 = 12'h000;
-      o_led <= 16'h0;
-      r_stack_reset = 1'b0;
-      r_msg_send_DV <= 1'b0;
-      r_hcf_message_sent <= 1'b0;
-      r_timing_start <= 0;
-      r_timer_interupt_counter <= 0; */
+        
       end // if (w_reset_H)
     // else if(w_uart_rx_DV&w_uart_rx_value==8'h53&i_load_H) // Load start flag received and down button pressed
       else if(w_uart_rx_DV&w_uart_rx_value==8'h53) // Load start flag received ignore if button pressed
@@ -436,17 +415,17 @@ rams_sp_nc rams_sp_nc1 (
       end else begin
          r_msg_send_DV <= 1'b0;
 
-         if (r_timer_interupt_counter > 32'hFFFFF) begin
-            r_timer_interupt_counter <= 0;
-            r_timer_interupt <= 1;
+         if (r_timer_interrupt_counter > 32'hFFFFF) begin
+            r_timer_interrupt_counter <= 0;
+            r_timer_interrupt <= 1;
          end else begin
-            r_timer_interupt_counter <= r_timer_interupt_counter + 1;
+            r_timer_interrupt_counter <= r_timer_interrupt_counter + 1;
          end
 
-         if (r_timer_interupt_counter_sec > 100_000_000) begin
-            r_timer_interupt_counter_sec <= 0;
+         if (r_timer_interrupt_counter_sec > 100_000_000) begin
+            r_timer_interrupt_counter_sec <= 0;
          end else begin
-            r_timer_interupt_counter_sec <= r_timer_interupt_counter_sec + 1;
+            r_timer_interrupt_counter_sec <= r_timer_interrupt_counter_sec + 1;
          end
 
 
@@ -455,7 +434,7 @@ rams_sp_nc rams_sp_nc1 (
                r_seven_seg_value1 <= 32'h22222222;
                r_seven_seg_value2 <= 32'h22222222;
 
-               if (r_timer_interupt_counter_sec == 0) begin
+               if (r_timer_interrupt_counter_sec == 0) begin
                   case (r_boot_flash)
                      0: begin
                         r_RGB_LED_1  <= 12'h010;
@@ -472,7 +451,6 @@ rams_sp_nc rams_sp_nc1 (
                   endcase
                end
             end
-
 
             LOADING_BYTE: begin
 
@@ -546,7 +524,7 @@ rams_sp_nc rams_sp_nc1 (
                            endcase
                            o_ram_write_addr <= r_ram_next_write_addr;
                            r_ram_next_write_addr <= r_ram_next_write_addr + 1;
-                           if (r_ram_next_write_addr>24'h10_000) // Nexys has 128 MiB ram, but is adesses in 128 bit chunks and on 32 bits are used
+                           if (r_ram_next_write_addr>24'h10_000) // Nexys has 128 MiB ram, but is addresses in 128 bit chunks and on 32 bits are used
                                 begin
                               r_SM <= HCF_1;  // Halt and catch fire error
                               r_error_code <= ERR_OVERFLOW;
@@ -583,7 +561,7 @@ rams_sp_nc rams_sp_nc1 (
                   r_equal_flag <= 1'b0;
                   r_error_code <= 8'h0;
                   r_hcf_message_sent <= 1'b0;
-                  r_interupt_table[0] <= 0;  // blank timer interupt
+                  r_interrupt_table[0] <= 0;  // blank timer interrupt
                   r_msg_send_DV <= 1'b0;
                   r_overflow_flag <= 1'b0;
                   r_PC <= r_PC_requested;
@@ -595,8 +573,8 @@ rams_sp_nc rams_sp_nc1 (
                   r_SM <= START_WAIT;
                   r_stack_reset <= 1'b0;
                   r_timeout_counter <= 0;
-                  r_timer_interupt <= 0;
-                  r_timer_interupt_counter <= 0;
+                  r_timer_interrupt <= 0;
+                  r_timer_interrupt_counter <= 0;
                   r_timing_start <= 0;
                   r_zero_flag <= 0;
                   t_tx_message(8'd1);  // Load OK message
@@ -647,11 +625,11 @@ rams_sp_nc rams_sp_nc1 (
                   r_SM <= HCF_1;  // Halt and catch fire error 1
                   r_error_code <= ERR_STACK;
                end else begin
-                  if (r_timer_interupt && r_interupt_table[0] != 24'h0) begin
+                  if (r_timer_interrupt && r_interrupt_table[0] != 24'h0) begin
                      r_stack_write_value = {8'b0, r_PC};  // push PC on stack
                      r_stack_write_flag <= 1'b1;  // to move stack pointer
-                     r_timer_interupt <= 0;
-                     r_PC <= r_interupt_table[0];
+                     r_timer_interrupt <= 0;
+                     r_PC <= r_interrupt_table[0];
                   end
 
                   r_mem_addr <= r_PC;
@@ -672,10 +650,8 @@ rams_sp_nc rams_sp_nc1 (
                r_reg_2 = w_opcode[3:0];
                r_reg_1 = w_opcode[7:4];
                r_SM <= VAR1_FETCH;
-
                r_mem_addr <= (r_PC + 1);
                r_mem_read_DV = 1'b1;
-
             end
 
 
@@ -724,8 +700,6 @@ rams_sp_nc rams_sp_nc1 (
             OPCODE_EXECUTE: begin
                t_opcode_select;
             end  // case OPCODE_EXECUTE
-
-
 
             HCF_1: begin
                if (!r_hcf_message_sent) begin
@@ -795,7 +769,7 @@ rams_sp_nc rams_sp_nc1 (
                         };
                      end
                      default: // Also for opcode 1
-                            // Blank then Progam counter
+                            // Blank then Program counter
                      begin
                         r_seven_seg_value1 <= {8'h22, 8'h22, 4'h0, r_PC[23:20], 4'h0, r_PC[19:16]};
                         r_seven_seg_value2 <= {
@@ -811,7 +785,7 @@ rams_sp_nc rams_sp_nc1 (
 
                   case (r_error_code)
                      ERR_CHECKSUM_LOAD:
-                     // Calculated checksim
+                     // Calculated checksum
                      r_seven_seg_value1 <= {
                         4'h0,
                         r_calc_checksum[15:12],

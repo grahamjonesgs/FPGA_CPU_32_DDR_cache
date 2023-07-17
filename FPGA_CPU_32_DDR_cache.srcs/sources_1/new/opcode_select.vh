@@ -25,12 +25,12 @@ task t_opcode_select;
          //  16'h06??: t_add_regs;                               // ADDRR Compare registers
          16'h07??: t_minus_regs;  // MINUSRR Minus registers, result in first register
          16'h080?: t_set_reg(w_var1);  // SETR Set register to a value
-         16'h081?: t_add_value(w_var1);  // ADDV Increament register by a value
-         16'h082?: t_minus_value(w_var1);  // MINUSV Decreament register by a value
+         16'h081?: t_add_value(w_var1);  // ADDV Increment register by a value
+         16'h082?: t_minus_value(w_var1);  // MINUSV Decrement register by a value
          16'h083?:
          t_compare_reg_value(w_var1);  // CMPRV Compare register to value, result in equal flag
-         16'h084?: t_inc_reg;  // INCR Increament register
-         16'h085?: t_dec_reg;  // DECR Decreament register
+         16'h084?: t_inc_reg;  // INCR Increment register
+         16'h085?: t_dec_reg;  // DECR Decrement register
          16'h086?: t_and_reg_value(w_var1);  // ANDV AND register with value, result in register
          16'h087?: t_or_reg_value(w_var1);  // ORV OR register with value, result in register
          16'h088?: t_xor_reg_value(w_var1);  // XORV XOR register with value,result in register
@@ -93,10 +93,10 @@ task t_opcode_select;
          16'h401?: t_stack_pop_reg;  // POP Pop stack into register
          16'h4020: t_stack_push_value(w_var1);  // PUSHV Push value onto stack
 
-         /// Coms 5xxxx
+         /// Communication 5xxxx
          16'h5000: t_test_message;  // TESTMSG send test UART message
          16'h5001: t_tx_newline;  // NEWLINE send UART newline
-         16'h5002: t_tx_value_of_mem(w_var1);  // TXMEM send 8 bytes value of memory locaiton
+         16'h5002: t_tx_value_of_mem(w_var1);  // TXMEM send 8 bytes value of memory location
          16'h5003: t_tx_string_at_mem(w_var1);  // TXSTRMEM send string at memory
          16'h501?: t_tx_reg;  // TXR send 8 bytes reg value in message
          16'h502?:
@@ -107,7 +107,7 @@ task t_opcode_select;
 
 
          /// CPU Setting 6xxxx
-         16'h60??: t_set_interupt_regs;  // INTSETRR Set interupt from registers
+         16'h60??: t_set_interrupt_regs;  // INTSETRR Set interrupt from registers
 
          /// Memory actions 7xxx
          16'h70??:
@@ -124,7 +124,7 @@ task t_opcode_select;
 
          /// Other Fxxx
          16'hF00?: t_delay_reg;  // DELAYR Delay by register
-         16'hF010: t_nop;  // NOP No opperation
+         16'hF010: t_nop;  // NOP No operation
          16'hF011: t_halt;  // HALT Freeze and hang
          16'hF012: t_reset;  // RESET Reset
          16'hF013: t_delay(w_var1);  // DELAYV Set by value
