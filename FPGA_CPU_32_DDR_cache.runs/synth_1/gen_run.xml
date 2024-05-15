@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1689761066" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp">
+<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1715775731" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp">
   <File Type="VDS-TIMINGSUMMARY" Name="FPGA_CPU_32_bits_cache_timing_summary_synth.rpt"/>
   <File Type="RDS-DCP" Name="FPGA_CPU_32_bits_cache.dcp"/>
   <File Type="RDS-UTIL-PB" Name="FPGA_CPU_32_bits_cache_utilization_synth.pb"/>
@@ -226,6 +226,6 @@
     <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
     <Step Id="synth_design"/>
   </Strategy>
-  <BlockFileSet Type="BlockSrcs" Name="mig_7series_0"/>
   <BlockFileSet Type="BlockSrcs" Name="clk_wiz_0"/>
+  <BlockFileSet Type="BlockSrcs" Name="mig_7series_0"/>
 </GenRun>

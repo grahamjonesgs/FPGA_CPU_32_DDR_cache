@@ -1,11 +1,11 @@
 // Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 // Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2023.1 (lin64) Build 3865809 Sun May  7 15:04:56 MDT 2023
-// Date        : Wed Jul  5 20:46:07 2023
-// Host        : archlinux running 64-bit unknown
-// Command     : write_verilog -force -mode funcsim -rename_top decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix -prefix
-//               decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix_ clk_wiz_0_sim_netlist.v
+// Tool Version: Vivado v.2023.2 (lin64) Build 4029153 Fri Oct 13 20:13:54 MDT 2023
+// Date        : Wed May 15 14:23:10 2024
+// Host        : kubuntu running 64-bit Ubuntu 24.04 LTS
+// Command     : write_verilog -force -mode funcsim
+//               /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/clk_wiz_0_synth_1/clk_wiz_0_sim_netlist.v
 // Design      : clk_wiz_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -14,7 +14,7 @@
 `timescale 1 ps / 1 ps
 
 (* NotValidForBitStream *)
-module decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix
+module clk_wiz_0
    (clk_200,
     resetn,
     i_Clk);
@@ -26,13 +26,13 @@ module decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix
   wire i_Clk;
   wire resetn;
 
-  decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix_clk_wiz_0_clk_wiz inst
+  clk_wiz_0_clk_wiz inst
        (.clk_200(clk_200),
         .i_Clk(i_Clk),
         .resetn(resetn));
 endmodule
 
-module decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix_clk_wiz_0_clk_wiz
+module clk_wiz_0_clk_wiz
    (clk_200,
     resetn,
     i_Clk);
