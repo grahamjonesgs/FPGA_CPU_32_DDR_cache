@@ -1,8 +1,8 @@
-Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
-| Tool Version : Vivado v.2023.2 (lin64) Build 4029153 Fri Oct 13 20:13:54 MDT 2023
-| Date         : Wed May 15 14:34:08 2024
-| Host         : kubuntu running 64-bit Ubuntu 24.04 LTS
+| Tool Version : Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
+| Date         : Mon Mar  3 15:47:39 2025
+| Host         : Garuda running 64-bit Garuda Linux Broadwing
 | Command      : report_drc -file FPGA_CPU_32_bits_cache_drc_routed.rpt -pb FPGA_CPU_32_bits_cache_drc_routed.pb -rpx FPGA_CPU_32_bits_cache_drc_routed.rpx
 | Design       : FPGA_CPU_32_bits_cache
 | Device       : xc7a100tcsg324-1
@@ -23,16 +23,71 @@ Table of Contents
           Floorplan: design_1
       Design limits: <entire design considered>
            Ruledeck: default
-             Max violations: <unlimited>
-             Violations found: 1
-+-----------+----------+------------------------+------------+
-| Rule      | Severity | Description            | Violations |
-+-----------+----------+------------------------+------------+
-| REQP-1709 | Warning  | Clock output buffering | 1          |
-+-----------+----------+------------------------+------------+
+             Max checks: <unlimited>
+             Checks found: 11
++-----------+----------+----------------------------+--------+
+| Rule      | Severity | Description                | Checks |
++-----------+----------+----------------------------+--------+
+| PDRC-132  | Warning  | SLICE_PairEqSame_A6A5_WARN | 2      |
+| PDRC-134  | Warning  | SLICE_PairEqSame_B6B5_WARN | 2      |
+| PDRC-136  | Warning  | SLICE_PairEqSame_C6C5_WARN | 2      |
+| PDRC-138  | Warning  | SLICE_PairEqSame_D6D5_WARN | 3      |
+| PDRC-140  | Warning  | SLICE_PairEqSame_A6A5_WARN | 1      |
+| REQP-1709 | Warning  | Clock output buffering     | 1      |
++-----------+----------+----------------------------+--------+
 
 2. REPORT DETAILS
 -----------------
+PDRC-132#1 Warning
+SLICE_PairEqSame_A6A5_WARN  
+Luts A6LUT and A5LUT in use in site SLICE_X28Y69 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-132#2 Warning
+SLICE_PairEqSame_A6A5_WARN  
+Luts A6LUT and A5LUT in use in site SLICE_X79Y90 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-134#1 Warning
+SLICE_PairEqSame_B6B5_WARN  
+Luts B6LUT and B5LUT in use in site SLICE_X43Y49 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-134#2 Warning
+SLICE_PairEqSame_B6B5_WARN  
+Luts B6LUT and B5LUT in use in site SLICE_X79Y90 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-136#1 Warning
+SLICE_PairEqSame_C6C5_WARN  
+Luts C6LUT and C5LUT in use in site SLICE_X43Y49 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-136#2 Warning
+SLICE_PairEqSame_C6C5_WARN  
+Luts C6LUT and C5LUT in use in site SLICE_X53Y66 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-138#1 Warning
+SLICE_PairEqSame_D6D5_WARN  
+Luts D6LUT and D5LUT in use in site SLICE_X41Y62 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-138#2 Warning
+SLICE_PairEqSame_D6D5_WARN  
+Luts D6LUT and D5LUT in use in site SLICE_X43Y49 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-138#3 Warning
+SLICE_PairEqSame_D6D5_WARN  
+Luts D6LUT and D5LUT in use in site SLICE_X53Y66 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
+PDRC-140#1 Warning
+SLICE_PairEqSame_A6A5_WARN  
+Luts A6LUT and A5LUT in use in site SLICE_X80Y90 with different equations without A6 pin connected to Global Logic High.
+Related violations: <none>
+
 REQP-1709#1 Warning
 Clock output buffering  
 PLLE2_ADV connectivity violation. The signal mem_read_write/ddr2_control/mig_7series_0/u_mig_7series_0_mig/u_ddr2_infrastructure/pll_clk3_out on the mem_read_write/ddr2_control/mig_7series_0/u_mig_7series_0_mig/u_ddr2_infrastructure/plle2_i/CLKOUT3 pin of mem_read_write/ddr2_control/mig_7series_0/u_mig_7series_0_mig/u_ddr2_infrastructure/plle2_i does not drive the same kind of BUFFER load as the other CLKOUT pins. Routing from the different buffer types will not be phase aligned.

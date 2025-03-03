@@ -4,7 +4,7 @@
 
 set TIME_start [clock seconds] 
 namespace eval ::optrace {
-  variable script "/home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/FPGA_CPU_32_bits_cache.tcl"
+  variable script "/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/FPGA_CPU_32_bits_cache.tcl"
   variable category "vivado_synth"
 }
 
@@ -55,20 +55,6 @@ if {$::dispatch::connected} {
   }
 }
 
-proc create_report { reportName command } {
-  set status "."
-  append status $reportName ".fail"
-  if { [file exists $status] } {
-    eval file delete [glob $status]
-  }
-  send_msg_id runtcl-4 info "Executing : $command"
-  set retval [eval catch { $command } msg]
-  if { $retval != 0 } {
-    set fp [open $status w]
-    close $fp
-    send_msg_id runtcl-5 warning "$msg"
-  }
-}
 OPTRACE "synth_1" START { ROLLUP_AUTO }
 set_msg_config  -string {{HW Target shutdown}}  -suppress 
 set_msg_config  -id {Synth 8-7023}  -string {{WARNING: [Synth 8-7023] instance 'bank_mach0' of module 'mig_7series_v4_2_bank_mach' has 74 connections declared, but only 73 given [/home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/user_design/rtl/controller/mig_7series_v4_2_mc.v:670]}}  -suppress 
@@ -137,51 +123,50 @@ set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
 set_param synth.vivado.isSynthRun true
 set_msg_config -source 4 -id {IP_Flow 19-2162} -severity warning -new_severity info
-set_property webtalk.parent_dir /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.cache/wt [current_project]
-set_property parent.project_path /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.xpr [current_project]
+set_property webtalk.parent_dir /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.cache/wt [current_project]
+set_property parent.project_path /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.xpr [current_project]
 set_property XPM_LIBRARIES XPM_CDC [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
-set_property board_part digilentinc.com:nexys-a7-100t:part0:1.3 [current_project]
-set_property ip_output_repo /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.cache/ip [current_project]
+set_property ip_output_repo /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
 read_verilog {
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/memory_tasks.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_tasks.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/register_tasks.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/LCD_tasks.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/led_tasks.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/functions.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/control_tasks.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/stack_tasks.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/seven_seg.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/timing_tasks.vh
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/opcode_select.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/LCD_tasks.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/functions.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/led_tasks.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/timing_tasks.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/control_tasks.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/stack_tasks.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/memory_tasks.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/register_tasks.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/seven_seg.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/opcode_select.vh
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_tasks.vh
 }
 read_verilog -library xil_defaultlib {
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/RGB_LED.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/SPI_Master.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/SPI_Master_With_Single_CS.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/Seven_seg_LED_Display_Controller.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/ddr2_control.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/stack.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_rx.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_send_msg.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_tx.v
-  /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/FPGA_CPU_32_bits_cache.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/RGB_LED.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/SPI_Master.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/SPI_Master_With_Single_CS.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/Seven_seg_LED_Display_Controller.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/ddr2_control.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/stack.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_rx.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_send_msg.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_tx.v
+  /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/FPGA_CPU_32_bits_cache.v
 }
-read_ip -quiet /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0.xci
-set_property used_in_implementation false [get_files -all /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/user_design/constraints/mig_7series_0_ooc.xdc]
-set_property used_in_implementation false [get_files -all /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/user_design/constraints/mig_7series_0.xdc]
+read_ip -quiet /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0.xci
+set_property used_in_implementation false [get_files -all /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/user_design/constraints/mig_7series_0.xdc]
+set_property used_in_implementation false [get_files -all /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/user_design/constraints/mig_7series_0_ooc.xdc]
 
-read_ip -quiet /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci
-set_property used_in_implementation false [get_files -all /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0_board.xdc]
-set_property used_in_implementation false [get_files -all /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xdc]
-set_property used_in_implementation false [get_files -all /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0_late.xdc]
-set_property used_in_implementation false [get_files -all /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0_ooc.xdc]
+read_ip -quiet /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci
+set_property used_in_implementation false [get_files -all /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0_board.xdc]
+set_property used_in_implementation false [get_files -all /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xdc]
+set_property used_in_implementation false [get_files -all /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0_late.xdc]
+set_property used_in_implementation false [get_files -all /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0_ooc.xdc]
 
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
@@ -192,12 +177,12 @@ OPTRACE "Adding files" END { }
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
-read_xdc /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc
-set_property used_in_implementation false [get_files /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc]
+read_xdc /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc
+set_property used_in_implementation false [get_files /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc]
 
 set_param ips.enableIPCacheLiteLoad 1
 
-read_checkpoint -auto_incremental -incremental /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp
+read_checkpoint -auto_incremental -incremental /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }
@@ -214,7 +199,7 @@ set_param constraints.enableBinaryConstraints false
 write_checkpoint -force -noxdef FPGA_CPU_32_bits_cache.dcp
 OPTRACE "write_checkpoint" END { }
 OPTRACE "synth reports" START { REPORT }
-create_report "synth_1_synth_report_utilization_0" "report_utilization -file FPGA_CPU_32_bits_cache_utilization_synth.rpt -pb FPGA_CPU_32_bits_cache_utilization_synth.pb"
+generate_parallel_reports -reports { "report_utilization -file FPGA_CPU_32_bits_cache_utilization_synth.rpt -pb FPGA_CPU_32_bits_cache_utilization_synth.pb"  } 
 OPTRACE "synth reports" END { }
 file delete __synthesis_is_running__
 close [open __synthesis_is_complete__ w]

@@ -1,11 +1,11 @@
 -- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
--- Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+-- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2023.2 (lin64) Build 4029153 Fri Oct 13 20:13:54 MDT 2023
--- Date        : Wed May 15 14:25:03 2024
--- Host        : kubuntu running 64-bit Ubuntu 24.04 LTS
+-- Tool Version: Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
+-- Date        : Mon Mar  3 15:33:18 2025
+-- Host        : Garuda running 64-bit Garuda Linux Broadwing
 -- Command     : write_vhdl -force -mode synth_stub
---               /home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0_stub.vhdl
+--               /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0_stub.vhdl
 -- Design      : mig_7series_0
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a100tcsg324-1
@@ -57,9 +57,9 @@ entity mig_7series_0 is
 end mig_7series_0;
 
 architecture stub of mig_7series_0 is
-attribute syn_black_box : boolean;
-attribute black_box_pad_pin : string;
-attribute syn_black_box of stub : architecture is true;
-attribute black_box_pad_pin of stub : architecture is "ddr2_dq[15:0],ddr2_dqs_n[1:0],ddr2_dqs_p[1:0],ddr2_addr[12:0],ddr2_ba[2:0],ddr2_ras_n,ddr2_cas_n,ddr2_we_n,ddr2_ck_p[0:0],ddr2_ck_n[0:0],ddr2_cke[0:0],ddr2_cs_n[0:0],ddr2_dm[1:0],ddr2_odt[0:0],sys_clk_i,app_addr[26:0],app_cmd[2:0],app_en,app_wdf_data[127:0],app_wdf_end,app_wdf_mask[15:0],app_wdf_wren,app_rd_data[127:0],app_rd_data_end,app_rd_data_valid,app_rdy,app_wdf_rdy,app_sr_req,app_ref_req,app_zq_req,app_sr_active,app_ref_ack,app_zq_ack,ui_clk,ui_clk_sync_rst,init_calib_complete,sys_rst";
+  attribute syn_black_box : boolean;
+  attribute black_box_pad_pin : string;
+  attribute syn_black_box of stub : architecture is true;
+  attribute black_box_pad_pin of stub : architecture is "ddr2_dq[15:0],ddr2_dqs_n[1:0],ddr2_dqs_p[1:0],ddr2_addr[12:0],ddr2_ba[2:0],ddr2_ras_n,ddr2_cas_n,ddr2_we_n,ddr2_ck_p[0:0],ddr2_ck_n[0:0],ddr2_cke[0:0],ddr2_cs_n[0:0],ddr2_dm[1:0],ddr2_odt[0:0],sys_clk_i,app_addr[26:0],app_cmd[2:0],app_en,app_wdf_data[127:0],app_wdf_end,app_wdf_mask[15:0],app_wdf_wren,app_rd_data[127:0],app_rd_data_end,app_rd_data_valid,app_rdy,app_wdf_rdy,app_sr_req,app_ref_req,app_zq_req,app_sr_active,app_ref_ack,app_zq_ack,ui_clk,ui_clk_sync_rst,init_calib_complete,sys_rst";
 begin
 end;

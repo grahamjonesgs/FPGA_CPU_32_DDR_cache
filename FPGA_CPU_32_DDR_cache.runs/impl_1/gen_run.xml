@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="impl_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1715775731">
+<GenRun Id="impl_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1741008539">
   <File Type="ROUTE-RQS-RPT" Name="route_report_qor_suggestions_0.rpt"/>
   <File Type="POSTROUTE-PHYSOPT-RQS" Name="FPGA_CPU_32_bits_cache_postroute_physopted.rqs"/>
   <File Type="ROUTE-RQS" Name="FPGA_CPU_32_bits_cache_routed.rqs"/>
@@ -156,28 +156,14 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
-    <File Path="$PSRCDIR/sources_1/new/memory_tasks.vh">
-      <FileInfo>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-        <Attr Name="IsVisible" Val="1"/>
-      </FileInfo>
-    </File>
-    <File Path="$PSRCDIR/sources_1/new/uart_tasks.vh">
-      <FileInfo>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-        <Attr Name="IsVisible" Val="1"/>
-      </FileInfo>
-    </File>
-    <File Path="$PSRCDIR/sources_1/new/register_tasks.vh">
-      <FileInfo>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-        <Attr Name="IsVisible" Val="1"/>
-      </FileInfo>
-    </File>
     <File Path="$PSRCDIR/sources_1/new/LCD_tasks.vh">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+        <Attr Name="IsVisible" Val="1"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/functions.vh">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -191,7 +177,7 @@
         <Attr Name="IsVisible" Val="1"/>
       </FileInfo>
     </File>
-    <File Path="$PSRCDIR/sources_1/new/functions.vh">
+    <File Path="$PSRCDIR/sources_1/new/timing_tasks.vh">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -212,6 +198,20 @@
         <Attr Name="IsVisible" Val="1"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/new/memory_tasks.vh">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+        <Attr Name="IsVisible" Val="1"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/register_tasks.vh">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+        <Attr Name="IsVisible" Val="1"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/new/seven_seg.vh">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
@@ -219,14 +219,14 @@
         <Attr Name="IsVisible" Val="1"/>
       </FileInfo>
     </File>
-    <File Path="$PSRCDIR/sources_1/new/timing_tasks.vh">
+    <File Path="$PSRCDIR/sources_1/new/opcode_select.vh">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="simulation"/>
         <Attr Name="IsVisible" Val="1"/>
       </FileInfo>
     </File>
-    <File Path="$PSRCDIR/sources_1/new/opcode_select.vh">
+    <File Path="$PSRCDIR/sources_1/new/uart_tasks.vh">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="simulation"/>

@@ -1,8 +1,8 @@
-Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
-| Tool Version : Vivado v.2023.2 (lin64) Build 4029153 Fri Oct 13 20:13:54 MDT 2023
-| Date         : Wed May 15 14:25:03 2024
-| Host         : kubuntu running 64-bit Ubuntu 24.04 LTS
+| Tool Version : Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
+| Date         : Mon Mar  3 15:33:18 2025
+| Host         : Garuda running 64-bit Garuda Linux Broadwing
 | Command      : report_utilization -file mig_7series_0_utilization_synth.rpt -pb mig_7series_0_utilization_synth.pb
 | Design       : mig_7series_0
 | Device       : xc7a100tcsg324-1
@@ -31,19 +31,20 @@ Table of Contents
 +----------------------------+------+-------+------------+-----------+-------+
 |          Site Type         | Used | Fixed | Prohibited | Available | Util% |
 +----------------------------+------+-------+------------+-----------+-------+
-| Slice LUTs*                | 3750 |     0 |          0 |     63400 |  5.91 |
-|   LUT as Logic             | 3378 |     0 |          0 |     63400 |  5.33 |
+| Slice LUTs*                | 3709 |     0 |          0 |     63400 |  5.85 |
+|   LUT as Logic             | 3337 |     0 |          0 |     63400 |  5.26 |
 |   LUT as Memory            |  372 |     0 |          0 |     19000 |  1.96 |
 |     LUT as Distributed RAM |  356 |     0 |            |           |       |
 |     LUT as Shift Register  |   16 |     0 |            |           |       |
-| Slice Registers            | 3280 |     0 |          0 |    126800 |  2.59 |
-|   Register as Flip Flop    | 3280 |     0 |          0 |    126800 |  2.59 |
+| Slice Registers            | 3259 |     0 |          0 |    126800 |  2.57 |
+|   Register as Flip Flop    | 3259 |     0 |          0 |    126800 |  2.57 |
 |   Register as Latch        |    0 |     0 |          0 |    126800 |  0.00 |
-| F7 Muxes                   |    4 |     0 |          0 |     31700 |  0.01 |
+| F7 Muxes                   |    2 |     0 |          0 |     31700 | <0.01 |
 | F8 Muxes                   |    0 |     0 |          0 |     15850 |  0.00 |
 +----------------------------+------+-------+------------+-----------+-------+
 * Warning! The Final LUT count, after physical optimizations and full implementation, is typically lower. Run opt_design after synthesis, if not already completed, for a more realistic count.
 Warning! LUT value is adjusted to account for LUT combining.
+Warning! For any ECO changes, please run place_design if there are unplaced instances
 
 
 1.1 Summary of Registers by Type
@@ -60,8 +61,8 @@ Warning! LUT value is adjusted to account for LUT combining.
 | 0     |          Yes |           - |            - |
 | 70    |          Yes |           - |          Set |
 | 1     |          Yes |           - |        Reset |
-| 75    |          Yes |         Set |            - |
-| 3134  |          Yes |       Reset |            - |
+| 80    |          Yes |         Set |            - |
+| 3108  |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
 
 
@@ -156,17 +157,17 @@ Warning! LUT value is adjusted to account for LUT combining.
 +--------------------------+------+---------------------+
 |         Ref Name         | Used | Functional Category |
 +--------------------------+------+---------------------+
-| FDRE                     | 3134 |        Flop & Latch |
-| LUT6                     |  963 |                 LUT |
-| LUT4                     |  829 |                 LUT |
-| LUT5                     |  793 |                 LUT |
-| LUT3                     |  735 |                 LUT |
+| FDRE                     | 3108 |        Flop & Latch |
+| LUT6                     |  937 |                 LUT |
+| LUT4                     |  809 |                 LUT |
+| LUT5                     |  806 |                 LUT |
+| LUT3                     |  732 |                 LUT |
 | RAMD32                   |  532 |  Distributed Memory |
-| LUT2                     |  386 |                 LUT |
-| LUT1                     |  334 |                 LUT |
+| LUT2                     |  372 |                 LUT |
+| LUT1                     |  333 |                 LUT |
 | RAMS32                   |  176 |  Distributed Memory |
 | CARRY4                   |  101 |          CarryLogic |
-| FDSE                     |   75 |        Flop & Latch |
+| FDSE                     |   80 |        Flop & Latch |
 | FDPE                     |   70 |        Flop & Latch |
 | OSERDESE2                |   42 |                  IO |
 | OBUF                     |   22 |                  IO |
@@ -179,12 +180,12 @@ Warning! LUT value is adjusted to account for LUT combining.
 | PHASER_OUT_PHY           |    4 |                  IO |
 | OUT_FIFO                 |    4 |                  IO |
 | OBUFTDS                  |    4 |                  IO |
-| MUXF7                    |    4 |               MuxFx |
 | IBUFDS_INTERMDISABLE_INT |    4 |                  IO |
 | INV                      |    3 |                 LUT |
 | BUFG                     |    3 |               Clock |
 | PHASER_IN_PHY            |    2 |                  IO |
 | OBUFDS                   |    2 |                  IO |
+| MUXF7                    |    2 |               MuxFx |
 | IN_FIFO                  |    2 |                  IO |
 | XADC                     |    1 |              Others |
 | SRLC32E                  |    1 |  Distributed Memory |

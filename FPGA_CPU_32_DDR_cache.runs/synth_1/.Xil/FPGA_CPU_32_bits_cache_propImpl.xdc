@@ -1,4 +1,4 @@
-set_property SRC_FILE_INFO {cfile:/home/graham/Documents/src/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc rfile:../../../FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc id:1} [current_design]
+set_property SRC_FILE_INFO {cfile:/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc rfile:../../../FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc id:1} [current_design]
 set_property src_info {type:XDC file:1 line:7 export:INPUT save:INPUT read:READ} [current_design]
 set_property -dict {PACKAGE_PIN E3 IOSTANDARD LVCMOS33} [get_ports i_Clk]
 set_property src_info {type:XDC file:1 line:13 export:INPUT save:INPUT read:READ} [current_design]
