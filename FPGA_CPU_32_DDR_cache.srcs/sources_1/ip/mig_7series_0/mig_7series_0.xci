@@ -3,7 +3,7 @@
   "ip_inst": {
     "xci_name": "mig_7series_0",
     "component_reference": "xilinx.com:ip:mig_7series:4.2",
-    "ip_revision": "1",
+    "ip_revision": "2",
     "gen_directory": ".",
     "parameters": {
       "component_parameters": {
@@ -1177,12 +1177,12 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Flow" } ],
-        "IPREVISION": [ { "value": "1" } ],
+        "IPREVISION": [ { "value": "2" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "." } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "." } ],
-        "SWVERSION": [ { "value": "2024.2" } ],
+        "SWVERSION": [ { "value": "2025.1" } ],
         "SYNTHESISFLOW": [ { "value": "OUT_OF_CONTEXT" } ]
       }
     },
