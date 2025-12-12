@@ -247,25 +247,6 @@ task t_compare_reg_value;
    end
 endtask
 
-// Add second reg to first, result in first
-// On completion
-// Increment PC
-// Increment r_SM_msg
-task t_add_regs;
-   reg [31:0] hold;
-   begin
-
-      {r_carry_flag, hold} = {1'b0, r_register[r_reg_1]} + {1'b0, r_register[r_reg_2]};
-      r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
-      r_overflow_flag = (r_register[r_reg_1][31]&&r_register[r_reg_2][31]&&!hold[31])||(!r_register[r_reg_1][31]&&!r_register[r_reg_2][31]&&hold[31]) ? 1'b1 : 1'b0;
-      r_register[r_reg_1] <= hold;
-
-      r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 1;
-
-   end
-endtask
-
 // Minus second reg from first, result in first
 // On completion
 // Increment PC
@@ -351,6 +332,51 @@ endtask
 task t_compare_regs;
    begin
       r_equal_flag <= r_register[r_reg_1] == r_register[r_reg_2] ? 1'b1 : 1'b0;
+      r_SM <= OPCODE_REQUEST;
+      r_PC <= r_PC + 1;
+   end
+endtask
+
+//=============================================================================
+// ADDRR - Add registers
+// Add second reg to first, result in first
+// On completion: Increment PC, update flags
+//=============================================================================
+task t_add_regs;
+   reg [32:0] hold;
+   begin
+      hold = {1'b0, r_register[r_reg_1]} + {1'b0, r_register[r_reg_2]};
+      r_carry_flag <= hold[32];
+      r_zero_flag <= (hold[31:0] == 0) ? 1'b1 : 1'b0;
+      r_overflow_flag <= (r_register[r_reg_1][31] == r_register[r_reg_2][31]) && 
+                         (hold[31] != r_register[r_reg_1][31]) ? 1'b1 : 1'b0;
+      r_register[r_reg_1] <= hold[31:0];
+      r_SM <= OPCODE_REQUEST;
+      r_PC <= r_PC + 1;
+   end
+endtask
+
+//=============================================================================
+// CMPLTRR - Compare less-than registers
+// Sets equal_flag if reg1 < reg2 (signed comparison)
+// Sets carry_flag for unsigned comparison result
+//=============================================================================
+task t_compare_less_than_regs;
+   reg signed [31:0] signed_reg1;
+   reg signed [31:0] signed_reg2;
+   begin
+      signed_reg1 = r_register[r_reg_1];
+      signed_reg2 = r_register[r_reg_2];
+      
+      // Signed less-than in equal_flag (reusing for "condition true")
+      r_equal_flag <= (signed_reg1 < signed_reg2) ? 1'b1 : 1'b0;
+      
+      // Unsigned less-than in carry_flag
+      r_carry_flag <= (r_register[r_reg_1] < r_register[r_reg_2]) ? 1'b1 : 1'b0;
+      
+      // Zero flag if equal
+      r_zero_flag <= (r_register[r_reg_1] == r_register[r_reg_2]) ? 1'b1 : 1'b0;
+      
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
    end

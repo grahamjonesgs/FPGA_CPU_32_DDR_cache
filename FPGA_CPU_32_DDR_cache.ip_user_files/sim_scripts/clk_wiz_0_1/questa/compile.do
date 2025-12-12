@@ -7,13 +7,13 @@ vlib questa_lib/msim/xil_defaultlib
 vmap xpm questa_lib/msim/xpm
 vmap xil_defaultlib questa_lib/msim/xil_defaultlib
 
-vlog -work xpm -64 -incr -mfcu  -sv "+incdir+../../../ipstatic" \
-"/opt/Xilinx/Vivado/2023.1/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv" \
+vlog -work xpm -64 -incr -mfcu  -sv "+incdir+../../../ipstatic" "+incdir+../../../../../../../../../../opt/Xilinx/2025.1/data/rsb/busdef" \
+"/opt/Xilinx/2025.1/Vivado/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv" \
 
 vcom -work xpm -64 -93  \
-"/opt/Xilinx/Vivado/2023.1/data/ip/xpm/xpm_VCOMP.vhd" \
+"/opt/Xilinx/2025.1/data/ip/xpm/xpm_VCOMP.vhd" \
 
-vlog -work xil_defaultlib -64 -incr -mfcu  "+incdir+../../../ipstatic" \
+vlog -work xil_defaultlib -64 -incr -mfcu  "+incdir+../../../ipstatic" "+incdir+../../../../../../../../../../opt/Xilinx/2025.1/data/rsb/busdef" \
 "../../../ip/clk_wiz_0_1/clk_wiz_0_clk_wiz.v" \
 "../../../ip/clk_wiz_0_1/clk_wiz_0.v" \
 

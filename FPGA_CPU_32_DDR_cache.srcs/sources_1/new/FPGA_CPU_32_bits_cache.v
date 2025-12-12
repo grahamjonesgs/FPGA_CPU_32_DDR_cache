@@ -71,6 +71,8 @@ module FPGA_CPU_32_bits_cache (
    localparam LOAD_COMPLETE = 32'h10_000, LOAD_WAIT = 32'h20_000;
    localparam DEBUG_DATA = 32'h40_000, DEBUG_DATA2 = 32'h80_000, DEBUG_DATA3 = 32'h100_000;
    localparam DEBUG_WAIT = 32'h200_000;
+localparam MULTIPLY_CALC      = 32'h0040_0000;  // DSP computing
+localparam MULTIPLY_WRITEBACK = 32'h0080_0000;  // Write result
 
    // Error Codes
    localparam ERR_INV_OPCODE = 8'h1, ERR_INV_FSM_STATE = 8'h2, ERR_STACK = 8'h3;
@@ -183,10 +185,59 @@ module FPGA_CPU_32_bits_cache (
 
    wire w_reset_H;
    reg r_boot_flash;
+   
+   //=========================================================================
+   // Additional flags for expanded comparisons
+   //=========================================================================
+   reg r_sign_flag;      // Sign of last result (bit 31)
+   reg r_less_flag;      // Result of signed less-than comparison
 
+   reg r_mul_is_immediate;  // If true, increment PC by 2 instead of 1
+   
+   //=============================================================================
+  // PIPELINED MULTIPLY REGISTERS
+  //=============================================================================
+
+  // Pipeline stage registers (active during s_multiply state)
+  reg [31:0] r_mul_result_lo;
+  reg [31:0] r_mul_result_hi;
+  reg        r_mul_is_high;      // Are we capturing high word?
+  reg        r_mul_is_unsigned;  // Unsigned operation?
+  reg [3:0]  r_mul_dest_reg;     // Destination register
+  // Dedicated multiply operand capture (breaks path from register file)
+  reg [31:0] r_mul_operand_a;
+  reg [31:0] r_mul_operand_b;
+
+
+   //=========================================================================
+   // Hardware divide using iterative but optimized state machine
+   // For true single-cycle, you'd need a pipelined divider IP
+   //=========================================================================
+   reg [31:0] r_div_dividend;
+   reg [31:0] r_div_divisor;
+   reg [31:0] r_div_quotient;
+   reg [31:0] r_div_remainder;
+   reg [5:0]  r_div_counter;
+   reg        r_div_busy;
+   reg        r_div_sign_q;      // Sign of quotient
+   reg        r_div_sign_r;      // Sign of remainder
+   reg        r_div_is_signed;
+   reg [1:0]  r_div_op;          // 0=none, 1=div, 2=mod
+   
+   localparam DIV_OP_NONE = 2'd0;
+   localparam DIV_OP_DIV  = 2'd1;
+   localparam DIV_OP_MOD  = 2'd2;
+   
+   // Dedicated read ports - registered every cycle
+   reg [31:0] r_reg_port_a;
+   reg [31:0] r_reg_port_b;
+
+    always @(posedge i_Clk) begin
+       r_reg_port_a <= r_register[r_reg_1];
+       r_reg_port_b <= r_register[r_reg_2];
+   end
 
    assign w_reset_H = !CPU_RESETN;
-
 
    mem_read_write mem_read_write (
        .i_Clk(i_Clk),
@@ -277,9 +328,22 @@ rams_sp_nc rams_sp_nc1 (
                .i_write_en(o_ram_write_DV)
                 );
  */
+   integer i;
+   initial begin
+      r_sign_flag <= 0;
+      r_less_flag <= 0;
+      r_div_busy <= 0;
+      r_div_op <= DIV_OP_NONE;
+      r_div_counter <= 0;
+       for (i = 0; i < 16; i = i + 1)
+       r_register[i] = 32'b0;
+      r_mul_is_immediate = 0;
+   end
+   
    assign w_opcode = r_opcode_mem;
    assign w_var1   = r_var1_mem;
    assign w_var2   = r_var2_mem;
+   
 
    stack main_stack (
        .clk(i_Clk),
@@ -332,6 +396,7 @@ rams_sp_nc rams_sp_nc1 (
    `include "opcode_select.vh"
    `include "uart_tasks.vh"
    `include "memory_tasks.vh"
+   `include "alu_extended_tasks.vh"    
 
    initial begin
       o_TX_LCD_Count = 4'd1;
@@ -619,7 +684,7 @@ rams_sp_nc rams_sp_nc1 (
                r_extra_clock <= 1'b0;
                if (r_stack_write_flag) begin
                   r_stack_write_flag <= 0;
-                  r_SP = r_SP + 2;
+                  r_SP <= r_SP + 1;
                end
                if (i_stack_error) begin
                   r_SM <= HCF_1;  // Halt and catch fire error 1
@@ -833,10 +898,169 @@ rams_sp_nc rams_sp_nc1 (
                end  // else if(r_timeout_counter>=DELAY_TIME)
 
             end
+            
+             MULTIPLY_CALC: begin
+    // Multiply is computed AND registered in this state
+    // No intermediate wires - DSP48 will be fully pipelined
+    if (r_mul_is_unsigned) begin
+        {r_mul_result_hi, r_mul_result_lo} <= r_mul_operand_a * r_mul_operand_b;
+    end else begin
+        {r_mul_result_hi, r_mul_result_lo} <= $signed(r_mul_operand_a) * $signed(r_mul_operand_b);
+    end
+    r_SM <= MULTIPLY_WRITEBACK;
+end
+
+MULTIPLY_WRITEBACK: begin
+    // Write ONLY from pipeline registers
+    if (r_mul_is_high)
+        r_register[r_mul_dest_reg] <= r_mul_result_hi;
+    else
+        r_register[r_mul_dest_reg] <= r_mul_result_lo;
+    
+    // Flags from registered values
+    if (r_mul_is_high) begin
+        r_zero_flag     <= (r_mul_result_hi == 32'b0);
+        r_sign_flag     <= r_mul_result_hi[31];
+        r_overflow_flag <= 1'b0;
+    end else begin
+        r_zero_flag     <= (r_mul_result_lo == 32'b0);
+        r_sign_flag     <= r_mul_result_lo[31];
+        if (r_mul_is_unsigned)
+            r_overflow_flag <= (r_mul_result_hi != 32'b0);
+        else
+            r_overflow_flag <= (r_mul_result_hi != {32{r_mul_result_lo[31]}});
+    end
+    
+    // PC increment depends on instruction type
+    if (r_mul_is_immediate)
+        r_PC <= r_PC + 2;  // Immediate instructions use 2 words
+    else
+        r_PC <= r_PC + 1;  // Register-only instructions use 1 word
+    
+    r_SM <= OPCODE_REQUEST;
+end
 
             default: r_SM <= HCF_1;  // loop in error
          endcase  // case(r_SM)
       end  // else if (w_reset_H)
    end  // always @(posedge i_Clk)
+   
+   //=========================================================================
+   // Bit manipulation helper functions (active during single cycles)
+   //=========================================================================
+   // Population count - count number of 1 bits
+   function [5:0] popcount;
+      input [31:0] val;
+      integer i;
+      begin
+         popcount = 0;
+         for (i = 0; i < 32; i = i + 1) begin
+            popcount = popcount + val[i];
+         end
+      end
+   endfunction
+   
+   // Count leading zeros
+   function [5:0] count_leading_zeros;
+      input [31:0] val;
+      integer i;
+      begin
+         count_leading_zeros = 32;
+         for (i = 31; i >= 0; i = i - 1) begin
+            if (val[i] && count_leading_zeros == 32 - i - 1 + 32) begin
+               // This is tricky in a function; use casez instead
+            end
+         end
+         // Simpler implementation:
+         casez (val)
+            32'b1???????????????????????????????: count_leading_zeros = 0;
+            32'b01??????????????????????????????: count_leading_zeros = 1;
+            32'b001?????????????????????????????: count_leading_zeros = 2;
+            32'b0001????????????????????????????: count_leading_zeros = 3;
+            32'b00001???????????????????????????: count_leading_zeros = 4;
+            32'b000001??????????????????????????: count_leading_zeros = 5;
+            32'b0000001?????????????????????????: count_leading_zeros = 6;
+            32'b00000001????????????????????????: count_leading_zeros = 7;
+            32'b000000001???????????????????????: count_leading_zeros = 8;
+            32'b0000000001??????????????????????: count_leading_zeros = 9;
+            32'b00000000001?????????????????????: count_leading_zeros = 10;
+            32'b000000000001????????????????????: count_leading_zeros = 11;
+            32'b0000000000001???????????????????: count_leading_zeros = 12;
+            32'b00000000000001??????????????????: count_leading_zeros = 13;
+            32'b000000000000001?????????????????: count_leading_zeros = 14;
+            32'b0000000000000001????????????????: count_leading_zeros = 15;
+            32'b00000000000000001???????????????: count_leading_zeros = 16;
+            32'b000000000000000001??????????????: count_leading_zeros = 17;
+            32'b0000000000000000001?????????????: count_leading_zeros = 18;
+            32'b00000000000000000001????????????: count_leading_zeros = 19;
+            32'b000000000000000000001???????????: count_leading_zeros = 20;
+            32'b0000000000000000000001??????????: count_leading_zeros = 21;
+            32'b00000000000000000000001?????????: count_leading_zeros = 22;
+            32'b000000000000000000000001????????: count_leading_zeros = 23;
+            32'b0000000000000000000000001???????: count_leading_zeros = 24;
+            32'b00000000000000000000000001??????: count_leading_zeros = 25;
+            32'b000000000000000000000000001?????: count_leading_zeros = 26;
+            32'b0000000000000000000000000001????: count_leading_zeros = 27;
+            32'b00000000000000000000000000001???: count_leading_zeros = 28;
+            32'b000000000000000000000000000001??: count_leading_zeros = 29;
+            32'b0000000000000000000000000000001?: count_leading_zeros = 30;
+            32'b00000000000000000000000000000001: count_leading_zeros = 31;
+            32'b00000000000000000000000000000000: count_leading_zeros = 32;
+         endcase
+      end
+   endfunction
+   
+   // Count trailing zeros
+   function [5:0] count_trailing_zeros;
+      input [31:0] val;
+      begin
+         casez (val)
+            32'b???????????????????????????????1: count_trailing_zeros = 0;
+            32'b??????????????????????????????10: count_trailing_zeros = 1;
+            32'b?????????????????????????????100: count_trailing_zeros = 2;
+            32'b????????????????????????????1000: count_trailing_zeros = 3;
+            32'b???????????????????????????10000: count_trailing_zeros = 4;
+            32'b??????????????????????????100000: count_trailing_zeros = 5;
+            32'b?????????????????????????1000000: count_trailing_zeros = 6;
+            32'b????????????????????????10000000: count_trailing_zeros = 7;
+            32'b???????????????????????100000000: count_trailing_zeros = 8;
+            32'b??????????????????????1000000000: count_trailing_zeros = 9;
+            32'b?????????????????????10000000000: count_trailing_zeros = 10;
+            32'b????????????????????100000000000: count_trailing_zeros = 11;
+            32'b???????????????????1000000000000: count_trailing_zeros = 12;
+            32'b??????????????????10000000000000: count_trailing_zeros = 13;
+            32'b?????????????????100000000000000: count_trailing_zeros = 14;
+            32'b????????????????1000000000000000: count_trailing_zeros = 15;
+            32'b???????????????10000000000000000: count_trailing_zeros = 16;
+            32'b??????????????100000000000000000: count_trailing_zeros = 17;
+            32'b?????????????1000000000000000000: count_trailing_zeros = 18;
+            32'b????????????10000000000000000000: count_trailing_zeros = 19;
+            32'b???????????100000000000000000000: count_trailing_zeros = 20;
+            32'b??????????1000000000000000000000: count_trailing_zeros = 21;
+            32'b?????????10000000000000000000000: count_trailing_zeros = 22;
+            32'b????????100000000000000000000000: count_trailing_zeros = 23;
+            32'b???????1000000000000000000000000: count_trailing_zeros = 24;
+            32'b??????10000000000000000000000000: count_trailing_zeros = 25;
+            32'b?????100000000000000000000000000: count_trailing_zeros = 26;
+            32'b????1000000000000000000000000000: count_trailing_zeros = 27;
+            32'b???10000000000000000000000000000: count_trailing_zeros = 28;
+            32'b??100000000000000000000000000000: count_trailing_zeros = 29;
+            32'b?1000000000000000000000000000000: count_trailing_zeros = 30;
+            32'b10000000000000000000000000000000: count_trailing_zeros = 31;
+            32'b00000000000000000000000000000000: count_trailing_zeros = 32;
+         endcase
+      end
+   endfunction
+   
+   // Bit reverse
+   function [31:0] bit_reverse;
+      input [31:0] val;
+      integer i;
+      begin
+         for (i = 0; i < 32; i = i + 1) begin
+            bit_reverse[31-i] = val[i];
+         end
+      end
+   endfunction
 
 endmodule

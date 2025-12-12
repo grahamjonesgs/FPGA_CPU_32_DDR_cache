@@ -3,8 +3,8 @@
 # SW Build 6140274 on Wed May 21 22:58:25 MDT 2025
 # IP Build 6138677 on Thu May 22 03:10:11 MDT 2025
 # SharedData Build 6139179 on Tue May 20 17:58:58 MDT 2025
-# Start of session at: Mon Jul 28 11:45:12 2025
-# Process ID         : 9284
+# Start of session at: Thu Dec 11 16:25:31 2025
+# Process ID         : 25925
 # Current directory  : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1
 # Command line       : vivado -log FPGA_CPU_32_bits_cache.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source FPGA_CPU_32_bits_cache.tcl
 # Log file           : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/FPGA_CPU_32_bits_cache.vds
@@ -16,9 +16,9 @@
 # CPU Frequency      : 2304.000 MHz
 # CPU Physical cores : 4
 # CPU Logical cores  : 4
-# Host memory        : 8310 MB
-# Swap memory        : 8309 MB
-# Total Virtual      : 16620 MB
-# Available Virtual  : 4083 MB
+# Host memory        : 16753 MB
+# Swap memory        : 16753 MB
+# Total Virtual      : 33506 MB
+# Available Virtual  : 30254 MB
 #-----------------------------------------------------------
 source FPGA_CPU_32_bits_cache.tcl -notrace

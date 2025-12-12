@@ -330,7 +330,7 @@ task t_tx_message;
                 r_msg[111:104] <= 8'h0D;
                 r_msg_length <= 14;
             end
-            3: // Segmentation error. Attempt to execute data.
+            4: // Segmentation error. Attempt to execute data.
             begin
                 r_msg[7:0] <= 8'h54;
                 r_msg[15:8] <= 8'h65;

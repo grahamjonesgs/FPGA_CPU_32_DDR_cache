@@ -1,0 +1,24 @@
+#-----------------------------------------------------------
+# Vivado v2025.1 (64-bit)
+# SW Build 6140274 on Wed May 21 22:58:25 MDT 2025
+# IP Build 6138677 on Thu May 22 03:10:11 MDT 2025
+# SharedData Build 6139179 on Tue May 20 17:58:58 MDT 2025
+# Start of session at: Thu Dec 11 16:35:01 2025
+# Process ID         : 27486
+# Current directory  : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/impl_1
+# Command line       : vivado -log FPGA_CPU_32_bits_cache.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source FPGA_CPU_32_bits_cache.tcl -notrace
+# Log file           : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/impl_1/FPGA_CPU_32_bits_cache.vdi
+# Journal file       : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/impl_1/vivado.jou
+# Running On         : Garuda
+# Platform           : Garuda
+# Operating System   : Garuda Linux Broadwing
+# Processor Detail   : Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz
+# CPU Frequency      : 2304.000 MHz
+# CPU Physical cores : 4
+# CPU Logical cores  : 4
+# Host memory        : 16753 MB
+# Swap memory        : 16753 MB
+# Total Virtual      : 33506 MB
+# Available Virtual  : 30230 MB
+#-----------------------------------------------------------
+source FPGA_CPU_32_bits_cache.tcl -notrace

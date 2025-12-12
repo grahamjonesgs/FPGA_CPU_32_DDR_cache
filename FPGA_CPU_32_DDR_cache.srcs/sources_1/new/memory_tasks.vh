@@ -63,9 +63,7 @@ task t_set_reg_from_mem_value;
             r_register[r_reg_2]<=w_mem_read_data; // the memory location, allows read of code as well as data
             r_SM <= OPCODE_REQUEST;
             r_mem_read_DV <= 1'b0;
-            if (r_mem_read_DV) begin
-               r_PC <= r_PC + 2;
-            end
+            r_PC <= r_PC + 2;
          end  // if ready asserted, else will loop until ready
       end  // if subsequent loop
    end
@@ -95,3 +93,4 @@ task t_set_reg_from_mem_reg;
       end  // if subsequent loop
    end
 endtask
+
