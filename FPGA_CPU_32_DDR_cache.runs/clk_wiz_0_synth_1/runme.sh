@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # 
 # Vivado(TM)
@@ -8,9 +8,9 @@
 # 
 
 if [ -z "$PATH" ]; then
-  PATH=/opt/Xilinx/2025.1/Vitis/bin:/opt/Xilinx/2025.1/Vivado/ids_lite/ISE/bin/lin64:/opt/Xilinx/2025.1/Vivado/bin
+  PATH=/opt/Xilinx/2025.2/Vitis/bin:/opt/Xilinx/2025.2/Vivado/ids_lite/ISE/bin/lin64:/opt/Xilinx/2025.2/Vivado/bin
 else
-  PATH=/opt/Xilinx/2025.1/Vitis/bin:/opt/Xilinx/2025.1/Vivado/ids_lite/ISE/bin/lin64:/opt/Xilinx/2025.1/Vivado/bin:$PATH
+  PATH=/opt/Xilinx/2025.2/Vitis/bin:/opt/Xilinx/2025.2/Vivado/ids_lite/ISE/bin/lin64:/opt/Xilinx/2025.2/Vivado/bin:$PATH
 fi
 export PATH
 

@@ -1,10 +1,10 @@
 #-----------------------------------------------------------
-# Vivado v2025.1 (64-bit)
-# SW Build 6140274 on Wed May 21 22:58:25 MDT 2025
-# IP Build 6138677 on Thu May 22 03:10:11 MDT 2025
-# SharedData Build 6139179 on Tue May 20 17:58:58 MDT 2025
-# Start of session at: Thu Dec 11 16:25:31 2025
-# Process ID         : 25925
+# Vivado v2025.2 (64-bit)
+# SW Build 6299465 on Fri Nov 14 12:34:56 MST 2025
+# IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+# SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+# Start of session at: Fri Dec 12 21:00:31 2025
+# Process ID         : 7831
 # Current directory  : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1
 # Command line       : vivado -log FPGA_CPU_32_bits_cache.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source FPGA_CPU_32_bits_cache.tcl
 # Log file           : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/FPGA_CPU_32_bits_cache.vds
@@ -19,10 +19,9 @@
 # Host memory        : 16753 MB
 # Swap memory        : 16753 MB
 # Total Virtual      : 33506 MB
-# Available Virtual  : 30254 MB
+# Available Virtual  : 28028 MB
 #-----------------------------------------------------------
 source FPGA_CPU_32_bits_cache.tcl -notrace
-create_project: Time (s): cpu = 00:00:34 ; elapsed = 00:00:12 . Memory (MB): peak = 1506.406 ; gain = 84.055 ; free physical = 8951 ; free virtual = 28467
 Command: read_checkpoint -auto_incremental -incremental /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp
 INFO: [Vivado 12-5825] Read reference checkpoint from /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp for incremental synthesis
 INFO: [Vivado 12-7989] Please ensure there are no constraint changes
@@ -30,23 +29,24 @@ Command: synth_design -top FPGA_CPU_32_bits_cache -part xc7a100tcsg324-1 -global
 Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+WARNING: [Vivado_Tcl 4-1809] The reference checkpoint is from an old version of Vivado; A full resynthesis flow will be run
 INFO: [Device 21-403] Loading part xc7a100tcsg324-1
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 7 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 26021
+INFO: [Synth 8-7075] Helper process launched with PID 7888
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 2123.930 ; gain = 440.625 ; free physical = 8096 ; free virtual = 27612
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2221.145 ; gain = 482.188 ; free physical = 3820 ; free virtual = 25412
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'FPGA_CPU_32_bits_cache' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/FPGA_CPU_32_bits_cache.v:24]
 INFO: [Synth 8-6157] synthesizing module 'mem_read_write' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:23]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-25925-Garuda/realtime/clk_wiz_0_stub.v:6]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-25925-Garuda/realtime/clk_wiz_0_stub.v:6]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-7831-Garuda/realtime/clk_wiz_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-7831-Garuda/realtime/clk_wiz_0_stub.v:6]
 WARNING: [Synth 8-7071] port 'clk_80' of module 'clk_wiz_0' is unconnected for instance 'clk_wiz_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:260]
 WARNING: [Synth 8-7071] port 'locked' of module 'clk_wiz_0' is unconnected for instance 'clk_wiz_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:260]
 WARNING: [Synth 8-7023] instance 'clk_wiz_0' of module 'clk_wiz_0' has 5 connections declared, but only 3 given [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:260]
 INFO: [Synth 8-6157] synthesizing module 'ddr2_control' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/ddr2_control.v:23]
-INFO: [Synth 8-6157] synthesizing module 'mig_7series_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-25925-Garuda/realtime/mig_7series_0_stub.v:6]
-INFO: [Synth 8-6155] done synthesizing module 'mig_7series_0' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-25925-Garuda/realtime/mig_7series_0_stub.v:6]
+INFO: [Synth 8-6157] synthesizing module 'mig_7series_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-7831-Garuda/realtime/mig_7series_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'mig_7series_0' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-7831-Garuda/realtime/mig_7series_0_stub.v:6]
 INFO: [Synth 8-6155] done synthesizing module 'ddr2_control' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/ddr2_control.v:23]
 INFO: [Synth 8-6155] done synthesizing module 'mem_read_write' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:23]
 INFO: [Synth 8-6157] synthesizing module 'uart_send_msg' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_send_msg.v:2]
@@ -72,62 +72,52 @@ INFO: [Synth 8-226] default block is never used [/home/graham/Documents/src/fpga
 INFO: [Synth 8-226] default block is never used [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/functions.vh:29]
 INFO: [Synth 8-6155] done synthesizing module 'FPGA_CPU_32_bits_cache' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/FPGA_CPU_32_bits_cache.v:24]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:40 ; elapsed = 00:00:47 . Memory (MB): peak = 2437.906 ; gain = 754.602 ; free physical = 7771 ; free virtual = 27291
+Finished RTL Elaboration : Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 2546.090 ; gain = 807.133 ; free physical = 3457 ; free virtual = 25052
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:40 ; elapsed = 00:00:48 . Memory (MB): peak = 2437.906 ; gain = 754.602 ; free physical = 7771 ; free virtual = 27290
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 2546.090 ; gain = 807.133 ; free physical = 3457 ; free virtual = 25052
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:40 ; elapsed = 00:00:48 . Memory (MB): peak = 2437.906 ; gain = 754.602 ; free physical = 7771 ; free virtual = 27290
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 2546.090 ; gain = 807.133 ; free physical = 3457 ; free virtual = 25052
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 2437.906 ; gain = 0.000 ; free physical = 7789 ; free virtual = 27308
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 2546.090 ; gain = 0.000 ; free physical = 3478 ; free virtual = 25073
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
 Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/mig_7series_0_in_context.xdc] for cell 'mem_read_write/ddr2_control/mig_7series_0'
 Finished Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/mig_7series_0_in_context.xdc] for cell 'mem_read_write/ddr2_control/mig_7series_0'
-Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-25925-Garuda/clk_wiz_0_1/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'mem_read_write/clk_wiz_0'
-Finished Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-25925-Garuda/clk_wiz_0_1/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'mem_read_write/clk_wiz_0'
+Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-7831-Garuda/clk_wiz_0_1/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'mem_read_write/clk_wiz_0'
+Finished Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-7831-Garuda/clk_wiz_0_1/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'mem_read_write/clk_wiz_0'
 Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc]
 Finished Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc]
 INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/FPGA_CPU_32_bits_cache_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/FPGA_CPU_32_bits_cache_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2850.629 ; gain = 0.000 ; free physical = 7471 ; free virtual = 26990
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2995.883 ; gain = 0.000 ; free physical = 3141 ; free virtual = 24740
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.14 . Memory (MB): peak = 2850.664 ; gain = 0.000 ; free physical = 7471 ; free virtual = 26990
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 2995.918 ; gain = 0.000 ; free physical = 3141 ; free virtual = 24740
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:01:29 ; elapsed = 00:01:37 . Memory (MB): peak = 2850.664 ; gain = 1167.359 ; free physical = 7423 ; free virtual = 26943
+Finished Constraint Validation : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 2995.918 ; gain = 1256.961 ; free physical = 3102 ; free virtual = 24701
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a100tcsg324-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:01:29 ; elapsed = 00:01:37 . Memory (MB): peak = 2858.633 ; gain = 1175.328 ; free physical = 7423 ; free virtual = 26943
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 3003.887 ; gain = 1264.930 ; free physical = 3102 ; free virtual = 24701
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:01:29 ; elapsed = 00:01:37 . Memory (MB): peak = 2858.633 ; gain = 1175.328 ; free physical = 7423 ; free virtual = 26943
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Start Preparing Guide Design
----------------------------------------------------------------------------------
-CRITICAL WARNING: [Synth 8-6895] The reference checkpoint /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp is not suitable for use with incremental synthesis for this design. Please regenerate the checkpoint for this design with -incremental_synth switch in the same Vivado session that synth_design has been run. Synthesis will continue with the default flow
----------------------------------------------------------------------------------
-Finished Doing Graph Differ : Time (s): cpu = 00:01:31 ; elapsed = 00:01:39 . Memory (MB): peak = 2858.633 ; gain = 1175.328 ; free physical = 7431 ; free virtual = 26955
----------------------------------------------------------------------------------
----------------------------------------------------------------------------------
-Finished Preparing Guide Design : Time (s): cpu = 00:01:31 ; elapsed = 00:01:39 . Memory (MB): peak = 2858.633 ; gain = 1175.328 ; free physical = 7431 ; free virtual = 26955
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 3003.887 ; gain = 1264.930 ; free physical = 3102 ; free virtual = 24701
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'ddr2_control'
 INFO: [Synth 8-802] inferred FSM for state register 'r_SM_Main_reg' in module 'uart_tx'
@@ -147,6 +137,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
                    State |                     New Encoding |                Previous Encoding 
 ---------------------------------------------------------------------------------------------------
+*
                   s_IDLE |                              000 |                              000
           s_TX_START_BIT |                              001 |                              001
           s_TX_DATA_BITS |                              010 |                              010
@@ -157,12 +148,12 @@ INFO: [Synth 8-3354] encoded FSM with state register 'r_SM_Main_reg' using encod
 ---------------------------------------------------------------------------------------------------
                    State |                     New Encoding |                Previous Encoding 
 ---------------------------------------------------------------------------------------------------
+*
                   s_IDLE |                              001 |                              000
                 s_TX_MSG |                              010 |                              001
                s_CLEANUP |                              100 |                              100
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'r_SM_Main_reg' using encoding 'one-hot' in module 'uart_send_msg'
-WARNING: [Synth 8-12595] Onehot encoded FSM with state register 'r_SM_Main_reg' is not having reset. This may cause incorrect behavior. User should consider using FSM_SAFE_STATE attribute on the register
 ---------------------------------------------------------------------------------------------------
                    State |                     New Encoding |                Previous Encoding 
 ---------------------------------------------------------------------------------------------------
@@ -172,18 +163,8 @@ WARNING: [Synth 8-12595] Onehot encoded FSM with state register 'r_SM_Main_reg' 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'r_SM_CS_reg' using encoding 'one-hot' in module 'SPI_Master_With_Single_CS'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:02:18 ; elapsed = 00:02:31 . Memory (MB): peak = 2858.633 ; gain = 1175.328 ; free physical = 7446 ; free virtual = 26971
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:46 ; elapsed = 00:00:48 . Memory (MB): peak = 3003.887 ; gain = 1264.930 ; free physical = 3154 ; free virtual = 24757
 ---------------------------------------------------------------------------------
-
-
-Incremental Synthesis Report Summary:
-
-1. Incremental synthesis run: no
-
-   Reason for not running incremental synthesis : 
-
-
-INFO: [Synth 8-7130] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
 ---------------------------------------------------------------------------------
@@ -191,8 +172,8 @@ Detailed RTL Component Info :
 +---Adders : 
 	   2 Input   64 Bit       Adders := 2     
 	   2 Input   45 Bit       Adders := 1     
-	   3 Input   33 Bit       Adders := 2     
 	   2 Input   33 Bit       Adders := 4     
+	   3 Input   33 Bit       Adders := 2     
 	   2 Input   32 Bit       Adders := 8     
 	   3 Input   32 Bit       Adders := 1     
 	   2 Input   24 Bit       Adders := 5     
@@ -257,20 +238,20 @@ Detailed RTL Component Info :
 	   2 Input   19 Bit        Muxes := 1     
 	   2 Input   17 Bit        Muxes := 1     
 	   2 Input   16 Bit        Muxes := 21    
-	 146 Input   16 Bit        Muxes := 1     
-	  21 Input   16 Bit        Muxes := 1     
 	   4 Input   16 Bit        Muxes := 1     
+	  21 Input   16 Bit        Muxes := 1     
+	 146 Input   16 Bit        Muxes := 1     
 	   6 Input   16 Bit        Muxes := 1     
 	   2 Input   14 Bit        Muxes := 1     
 	   2 Input   13 Bit        Muxes := 1     
 	   7 Input   13 Bit        Muxes := 1     
 	 146 Input   12 Bit        Muxes := 1     
 	   2 Input   10 Bit        Muxes := 2     
-	   2 Input    9 Bit        Muxes := 4     
 	   3 Input    9 Bit        Muxes := 1     
+	   2 Input    9 Bit        Muxes := 4     
 	   2 Input    8 Bit        Muxes := 6     
+	   4 Input    8 Bit        Muxes := 2     
 	   8 Input    8 Bit        Muxes := 1     
-	   3 Input    8 Bit        Muxes := 2     
 	   6 Input    8 Bit        Muxes := 1     
 	   2 Input    7 Bit        Muxes := 2     
 	   2 Input    6 Bit        Muxes := 1     
@@ -278,15 +259,15 @@ Detailed RTL Component Info :
 	   2 Input    4 Bit        Muxes := 1     
 	   3 Input    4 Bit        Muxes := 1     
 	   2 Input    3 Bit        Muxes := 14    
-	   5 Input    3 Bit        Muxes := 1     
-	   6 Input    3 Bit        Muxes := 2     
+	   6 Input    3 Bit        Muxes := 3     
 	  16 Input    2 Bit        Muxes := 1     
 	   2 Input    2 Bit        Muxes := 2     
 	   3 Input    2 Bit        Muxes := 3     
+	   6 Input    1 Bit        Muxes := 18    
+	   5 Input    1 Bit        Muxes := 3     
 	   2 Input    1 Bit        Muxes := 255   
-	   5 Input    1 Bit        Muxes := 10    
-	   3 Input    1 Bit        Muxes := 14    
-	   6 Input    1 Bit        Muxes := 12    
+	   4 Input    1 Bit        Muxes := 8     
+	   3 Input    1 Bit        Muxes := 6     
 ---------------------------------------------------------------------------------
 Finished RTL Component Statistics 
 ---------------------------------------------------------------------------------
@@ -302,109 +283,6 @@ Finished Part Resource Summary
 ---------------------------------------------------------------------------------
 Start Cross Boundary and Area Optimization
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[0]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[1]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[2]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[3]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[4]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[5]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[6]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[7]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[9]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[10]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3886] merging instance 'r_timeout_max_reg[11]' (FDE) to 'r_timeout_max_reg[12]'
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_timeout_max_reg[12] )
-INFO: [Synth 8-5544] ROM "o_Anode_Activate" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "p_0_out" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: A2*B2.
-DSP Report: register r_mul_operand_a_reg is absorbed into DSP r_mul_result_lo0.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: (PCIN>>17)+A2*B2.
-DSP Report: register r_mul_operand_a_reg is absorbed into DSP r_mul_result_lo0.
-DSP Report: register r_mul_operand_b_reg is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: A2*B2.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: C+A2*B2.
-DSP Report: register r_mul_operand_b_reg is absorbed into DSP r_mul_result_lo0.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: A2*B2.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: (PCIN>>17)+A2*B2.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: C+A2*B2.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_0_255_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_256_511_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_512_767_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_768_1023_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1024_1279_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1280_1535_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1536_1791_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1792_2047_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2048_2303_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2304_2559_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2560_2815_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2816_3071_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3072_3327_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3328_3583_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3584_3839_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3840_4095_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_0_255_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_256_511_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_512_767_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_768_1023_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1024_1279_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1280_1535_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1536_1791_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1792_2047_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2048_2303_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2304_2559_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2560_2815_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2816_3071_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3072_3327_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3328_3583_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3584_3839_10_10 from module extram__3 due to constant propagation
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3840_4095_10_10 from module extram__3 due to constant propagation
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[167]' (FDE) to 'r_msg_reg[159]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[159]' (FDE) to 'r_msg_reg[151]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[151]' (FDE) to 'r_msg_reg[166]'
@@ -425,8 +303,8 @@ INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_msg_re
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[166]' (FDE) to 'r_msg_reg[158]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[158]' (FDE) to 'r_msg_reg[165]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[150]' (FDE) to 'r_msg_reg[163]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[142]' (FDE) to 'r_msg_reg[134]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[134]' (FDE) to 'r_msg_reg[125]'
+INFO: [Synth 8-3886] merging instance 'r_msg_reg[142]' (FDE) to 'r_msg_reg[140]'
+INFO: [Synth 8-3886] merging instance 'r_msg_reg[134]' (FDE) to 'r_msg_reg[140]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[126]' (FDE) to 'r_msg_reg[139]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[118]' (FDE) to 'r_msg_reg[114]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[102]' (FDE) to 'r_msg_reg[101]'
@@ -435,7 +313,7 @@ INFO: [Synth 8-3886] merging instance 'r_msg_reg[157]' (FDE) to 'r_msg_reg[149]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[149]' (FDE) to 'r_msg_reg[164]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[141]' (FDE) to 'r_msg_reg[133]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[133]' (FDE) to 'r_msg_reg[132]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[125]' (FDE) to 'r_msg_reg[117]'
+INFO: [Synth 8-3886] merging instance 'r_msg_reg[125]' (FDE) to 'r_msg_reg[140]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[117]' (FDE) to 'r_msg_reg[140]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[164]' (FDE) to 'r_msg_reg[156]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[156]' (FDE) to 'r_msg_reg[148]'
@@ -449,24 +327,23 @@ INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_msg_re
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[163]' (FDE) to 'r_msg_reg[155]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[155]' (FDE) to 'r_msg_reg[162]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[147]' (FDE) to 'r_msg_reg[154]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[139]' (FDE) to 'r_msg_reg[131]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[131]' (FDE) to 'r_msg_reg[123]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[123]' (FDE) to 'r_msg_reg[115]'
+INFO: [Synth 8-3886] merging instance 'r_msg_reg[139]' (FDE) to 'r_msg_reg[138]'
+INFO: [Synth 8-3886] merging instance 'r_msg_reg[131]' (FDE) to 'r_msg_reg[138]'
+INFO: [Synth 8-3886] merging instance 'r_msg_reg[123]' (FDE) to 'r_msg_reg[138]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[115]' (FDE) to 'r_msg_reg[138]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[107]' (FDE) to 'r_msg_reg[106]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[162]' (FDE) to 'r_msg_reg[153]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[154]' (FDE) to 'r_msg_reg[146]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[146]' (FDE) to 'r_msg_reg[161]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[138]' (FDE) to 'r_msg_reg[121]'
+INFO: [Synth 8-3886] merging instance 'r_msg_reg[138]' (FDE) to 'r_msg_reg[136]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[130]' (FDE) to 'r_msg_reg[122]'
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_msg_reg[122] )
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[114]' (FDE) to 'r_msg_reg[129]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[98]' (FDE) to 'r_msg_reg[96]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[161]' (FDE) to 'r_msg_reg[152]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[153]' (FDE) to 'r_msg_reg[145]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[145]' (FDE) to 'r_msg_reg[160]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[137]' (FDE) to 'r_msg_reg[128]'
-INFO: [Synth 8-3886] merging instance 'r_msg_reg[121]' (FDE) to 'r_msg_reg[113]'
+INFO: [Synth 8-3886] merging instance 'r_msg_reg[121]' (FDE) to 'r_msg_reg[136]'
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[113]' (FDE) to 'r_msg_reg[136]'
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_msg_reg[105] )
 INFO: [Synth 8-3886] merging instance 'r_msg_reg[160]' (FDE) to 'r_msg_reg[144]'
@@ -502,34 +379,137 @@ INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[230][7]' (FDE) t
 INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[229][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
 INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[228][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
 INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[227][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[226][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[225][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[224][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[223][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[222][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[221][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[220][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[219][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[218][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[217][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[216][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
+INFO: [Synth 8-3886] merging instance 'uart_send_msg1/r_msg_reg[215][7]' (FDE) to 'uart_send_msg1/r_msg_reg[21][0]'
 INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart_send_msg1/\r_msg_reg[21][0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart_send_msg1/\r_msg_reg[19][0] )
+INFO: [Synth 8-5544] ROM "p_0_out" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "o_Anode_Activate" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "return_ascii_from_hex" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_0_255_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_256_511_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_512_767_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_768_1023_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1024_1279_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1280_1535_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1536_1791_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1792_2047_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2048_2303_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2304_2559_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2560_2815_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2816_3071_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3072_3327_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3328_3583_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3584_3839_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3840_4095_11_11 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_0_255_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_256_511_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_512_767_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_768_1023_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1024_1279_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1280_1535_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1536_1791_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_1792_2047_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2048_2303_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2304_2559_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2560_2815_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_2816_3071_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3072_3327_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3328_3583_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3584_3839_10_10 from module extram__4 due to constant propagation
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_3840_4095_10_10 from module extram__4 due to constant propagation
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_seven_seg_value1_reg[31] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_seven_seg_value2_reg[31] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (mem_read_write/\ddr2_control/app_addr_reg[26] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (mem_read_write/\state_reg[4] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_error_code_reg[3] )
-INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_0_255_11_11 from module extram__3 due to constant propagation
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart_send_msg1/\r_msg_reg[19][0] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_seven_seg_value1_reg[7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_SM_reg[31] )
+INFO: [Synth 8-7067] Removed DRAM instance mem_read_write/i_1/i_0/cache_val_addr_reg_0_255_11_11 from module extram__4 due to constant propagation
+DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: A2*B2.
+DSP Report: register r_mul_operand_a_reg is absorbed into DSP r_mul_result_lo0.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: (PCIN>>17)+A2*B2.
+DSP Report: register r_mul_operand_a_reg is absorbed into DSP r_mul_result_lo0.
+DSP Report: register r_mul_operand_b_reg is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: A2*B2.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: C+A2*B2.
+DSP Report: register r_mul_operand_b_reg is absorbed into DSP r_mul_result_lo0.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: A2*B2.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: (PCIN>>17)+A2*B2.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: Generating DSP r_mul_result_lo0, operation Mode is: C+A2*B2.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: register r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+DSP Report: operator r_mul_result_lo0 is absorbed into DSP r_mul_result_lo0.
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_timeout_max_reg[12] )
 INFO: [Synth 8-5546] ROM "r_mul_result_lo" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "r_reg_2" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "r_cache_reset" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5587] ROM size for "return_hex_from_ascii" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "r_cache_reset" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "r_error_display_type" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "o_led" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "r_mul_result_lo" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "r_reg_2" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "r_cache_reset" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5587] ROM size for "return_hex_from_ascii" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "r_cache_reset" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "r_error_display_type" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "o_led" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (\o_TX_LCD_Count_reg[3] )
 INFO: [Synth 8-3333] propagating constant 1 across sequential element (\o_TX_LCD_Count_reg[0] )
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_SM_reg[31] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\r_error_code_reg[7] )
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:03:21 ; elapsed = 00:05:19 . Memory (MB): peak = 2886.566 ; gain = 1203.262 ; free physical = 1122 ; free virtual = 20728
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:01:26 ; elapsed = 00:02:43 . Memory (MB): peak = 3031.820 ; gain = 1292.863 ; free physical = 189 ; free virtual = 17691
 ---------------------------------------------------------------------------------
  Sort Area is FPGA_CPU_32_bits_cache__GB6 r_mul_result_lo0_4 : 0 0 : 2373 4431 : Used 1 time 0
  Sort Area is FPGA_CPU_32_bits_cache__GB6 r_mul_result_lo0_4 : 0 1 : 2058 4431 : Used 1 time 0
@@ -546,8 +526,8 @@ Block RAM: Preliminary Mapping Report (see note below)
 +---------------+--------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
 |Module Name    | RTL Object         | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
 +---------------+--------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
-|main_stack     | RAM_reg            | 8 K x 32(READ_FIRST)   | W |   | 8 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 0      | 16     | 
 |mem_read_write | cache_val_data_reg | 4 K x 128(READ_FIRST)  | W |   | 4 K x 128(WRITE_FIRST) |   | R | Port A and B     | 1      | 14     | 
+|main_stack     | RAM_reg            | 8 K x 32(READ_FIRST)   | W |   | 8 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 0      | 16     | 
 +---------------+--------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
 
 Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
@@ -582,13 +562,13 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:06:24 ; elapsed = 00:06:03 . Memory (MB): peak = 2886.566 ; gain = 1203.262 ; free physical = 2578 ; free virtual = 22208
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:03:56 ; elapsed = 00:03:16 . Memory (MB): peak = 3031.820 ; gain = 1292.863 ; free physical = 1541 ; free virtual = 19118
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:07:29 ; elapsed = 00:07:11 . Memory (MB): peak = 2886.566 ; gain = 1203.262 ; free physical = 2516 ; free virtual = 22186
+Finished Timing Optimization : Time (s): cpu = 00:04:47 ; elapsed = 00:04:09 . Memory (MB): peak = 3031.820 ; gain = 1292.863 ; free physical = 1532 ; free virtual = 19117
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -598,8 +578,8 @@ Block RAM: Final Mapping Report
 +---------------+--------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
 |Module Name    | RTL Object         | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
 +---------------+--------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
-|main_stack     | RAM_reg            | 8 K x 32(READ_FIRST)   | W |   | 8 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 0      | 16     | 
 |mem_read_write | cache_val_data_reg | 4 K x 128(READ_FIRST)  | W |   | 4 K x 128(WRITE_FIRST) |   | R | Port A and B     | 1      | 14     | 
+|main_stack     | RAM_reg            | 8 K x 32(READ_FIRST)   | W |   | 8 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 0      | 16     | 
 +---------------+--------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
 
 
@@ -630,25 +610,11 @@ INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB1`
 INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB1' done
 
 
-INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB3`
+INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB6`
 	Numbers of forward move = 0, and backward move = 0
 
 
-INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB3' done
-
-
-INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB4`
-	Numbers of forward move = 0, and backward move = 0
-
-
-INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB4' done
-
-
-INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB5`
-	Numbers of forward move = 0, and backward move = 0
-
-
-INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB5' done
+INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache__GB6' done
 
 
 INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache`
@@ -659,341 +625,8 @@ INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache' done
 
 
 INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache_GT0_tempName`
-	Numbers of forward move = 0, and backward move = 22
+	Numbers of forward move = 0, and backward move = 0
 
-	Retimed registers names:
-		i_2/r_mul_result_hi_reg[10]_bret__0
-		i_2/r_mul_result_hi_reg[11]_bret__0
-		i_2/r_mul_result_hi_reg[16]_bret__0
-		i_2/r_mul_result_hi_reg[17]_bret__0
-		i_2/r_mul_result_hi_reg[18]_bret__0
-		i_2/r_mul_result_hi_reg[19]_bret__0
-		i_2/r_mul_result_hi_reg[20]_bret__0
-		i_2/r_mul_result_hi_reg[21]_bret__0
-		i_2/r_mul_result_hi_reg[22]_bret__0
-		i_2/r_mul_result_hi_reg[23]_bret__0
-		i_2/r_mul_result_hi_reg[23]_bret_bret
-		i_2/r_mul_result_hi_reg[23]_bret_bret__0
-		i_2/r_mul_result_hi_reg[23]_bret_bret__1
-		i_2/r_mul_result_hi_reg[23]_bret_bret__100
-		i_2/r_mul_result_hi_reg[23]_bret_bret__101
-		i_2/r_mul_result_hi_reg[23]_bret_bret__102
-		i_2/r_mul_result_hi_reg[23]_bret_bret__103
-		i_2/r_mul_result_hi_reg[23]_bret_bret__104
-		i_2/r_mul_result_hi_reg[23]_bret_bret__105
-		i_2/r_mul_result_hi_reg[23]_bret_bret__106
-		i_2/r_mul_result_hi_reg[23]_bret_bret__107
-		i_2/r_mul_result_hi_reg[23]_bret_bret__108
-		i_2/r_mul_result_hi_reg[23]_bret_bret__109
-		i_2/r_mul_result_hi_reg[23]_bret_bret__11
-		i_2/r_mul_result_hi_reg[23]_bret_bret__110
-		i_2/r_mul_result_hi_reg[23]_bret_bret__111
-		i_2/r_mul_result_hi_reg[23]_bret_bret__112
-		i_2/r_mul_result_hi_reg[23]_bret_bret__113
-		i_2/r_mul_result_hi_reg[23]_bret_bret__114
-		i_2/r_mul_result_hi_reg[23]_bret_bret__115
-		i_2/r_mul_result_hi_reg[23]_bret_bret__116
-		i_2/r_mul_result_hi_reg[23]_bret_bret__117
-		i_2/r_mul_result_hi_reg[23]_bret_bret__118
-		i_2/r_mul_result_hi_reg[23]_bret_bret__119
-		i_2/r_mul_result_hi_reg[23]_bret_bret__120
-		i_2/r_mul_result_hi_reg[23]_bret_bret__121
-		i_2/r_mul_result_hi_reg[23]_bret_bret__122
-		i_2/r_mul_result_hi_reg[23]_bret_bret__123
-		i_2/r_mul_result_hi_reg[23]_bret_bret__124
-		i_2/r_mul_result_hi_reg[23]_bret_bret__125
-		i_2/r_mul_result_hi_reg[23]_bret_bret__126
-		i_2/r_mul_result_hi_reg[23]_bret_bret__127
-		i_2/r_mul_result_hi_reg[23]_bret_bret__128
-		i_2/r_mul_result_hi_reg[23]_bret_bret__129
-		i_2/r_mul_result_hi_reg[23]_bret_bret__13
-		i_2/r_mul_result_hi_reg[23]_bret_bret__130
-		i_2/r_mul_result_hi_reg[23]_bret_bret__131
-		i_2/r_mul_result_hi_reg[23]_bret_bret__132
-		i_2/r_mul_result_hi_reg[23]_bret_bret__133
-		i_2/r_mul_result_hi_reg[23]_bret_bret__134
-		i_2/r_mul_result_hi_reg[23]_bret_bret__135
-		i_2/r_mul_result_hi_reg[23]_bret_bret__136
-		i_2/r_mul_result_hi_reg[23]_bret_bret__137
-		i_2/r_mul_result_hi_reg[23]_bret_bret__138
-		i_2/r_mul_result_hi_reg[23]_bret_bret__139
-		i_2/r_mul_result_hi_reg[23]_bret_bret__140
-		i_2/r_mul_result_hi_reg[23]_bret_bret__141
-		i_2/r_mul_result_hi_reg[23]_bret_bret__142
-		i_2/r_mul_result_hi_reg[23]_bret_bret__143
-		i_2/r_mul_result_hi_reg[23]_bret_bret__144
-		i_2/r_mul_result_hi_reg[23]_bret_bret__145
-		i_2/r_mul_result_hi_reg[23]_bret_bret__146
-		i_2/r_mul_result_hi_reg[23]_bret_bret__147
-		i_2/r_mul_result_hi_reg[23]_bret_bret__148
-		i_2/r_mul_result_hi_reg[23]_bret_bret__149
-		i_2/r_mul_result_hi_reg[23]_bret_bret__15
-		i_2/r_mul_result_hi_reg[23]_bret_bret__150
-		i_2/r_mul_result_hi_reg[23]_bret_bret__151
-		i_2/r_mul_result_hi_reg[23]_bret_bret__152
-		i_2/r_mul_result_hi_reg[23]_bret_bret__153
-		i_2/r_mul_result_hi_reg[23]_bret_bret__154
-		i_2/r_mul_result_hi_reg[23]_bret_bret__155
-		i_2/r_mul_result_hi_reg[23]_bret_bret__156
-		i_2/r_mul_result_hi_reg[23]_bret_bret__157
-		i_2/r_mul_result_hi_reg[23]_bret_bret__158
-		i_2/r_mul_result_hi_reg[23]_bret_bret__159
-		i_2/r_mul_result_hi_reg[23]_bret_bret__160
-		i_2/r_mul_result_hi_reg[23]_bret_bret__161
-		i_2/r_mul_result_hi_reg[23]_bret_bret__162
-		i_2/r_mul_result_hi_reg[23]_bret_bret__163
-		i_2/r_mul_result_hi_reg[23]_bret_bret__164
-		i_2/r_mul_result_hi_reg[23]_bret_bret__165
-		i_2/r_mul_result_hi_reg[23]_bret_bret__166
-		i_2/r_mul_result_hi_reg[23]_bret_bret__167
-		i_2/r_mul_result_hi_reg[23]_bret_bret__168
-		i_2/r_mul_result_hi_reg[23]_bret_bret__169
-		i_2/r_mul_result_hi_reg[23]_bret_bret__17
-		i_2/r_mul_result_hi_reg[23]_bret_bret__170
-		i_2/r_mul_result_hi_reg[23]_bret_bret__171
-		i_2/r_mul_result_hi_reg[23]_bret_bret__172
-		i_2/r_mul_result_hi_reg[23]_bret_bret__173
-		i_2/r_mul_result_hi_reg[23]_bret_bret__174
-		i_2/r_mul_result_hi_reg[23]_bret_bret__175
-		i_2/r_mul_result_hi_reg[23]_bret_bret__176
-		i_2/r_mul_result_hi_reg[23]_bret_bret__177
-		i_2/r_mul_result_hi_reg[23]_bret_bret__178
-		i_2/r_mul_result_hi_reg[23]_bret_bret__179
-		i_2/r_mul_result_hi_reg[23]_bret_bret__180
-		i_2/r_mul_result_hi_reg[23]_bret_bret__181
-		i_2/r_mul_result_hi_reg[23]_bret_bret__182
-		i_2/r_mul_result_hi_reg[23]_bret_bret__183
-		i_2/r_mul_result_hi_reg[23]_bret_bret__184
-		i_2/r_mul_result_hi_reg[23]_bret_bret__185
-		i_2/r_mul_result_hi_reg[23]_bret_bret__186
-		i_2/r_mul_result_hi_reg[23]_bret_bret__187
-		i_2/r_mul_result_hi_reg[23]_bret_bret__188
-		i_2/r_mul_result_hi_reg[23]_bret_bret__189
-		i_2/r_mul_result_hi_reg[23]_bret_bret__19
-		i_2/r_mul_result_hi_reg[23]_bret_bret__190
-		i_2/r_mul_result_hi_reg[23]_bret_bret__191
-		i_2/r_mul_result_hi_reg[23]_bret_bret__192
-		i_2/r_mul_result_hi_reg[23]_bret_bret__193
-		i_2/r_mul_result_hi_reg[23]_bret_bret__194
-		i_2/r_mul_result_hi_reg[23]_bret_bret__195
-		i_2/r_mul_result_hi_reg[23]_bret_bret__196
-		i_2/r_mul_result_hi_reg[23]_bret_bret__197
-		i_2/r_mul_result_hi_reg[23]_bret_bret__198
-		i_2/r_mul_result_hi_reg[23]_bret_bret__199
-		i_2/r_mul_result_hi_reg[23]_bret_bret__200
-		i_2/r_mul_result_hi_reg[23]_bret_bret__201
-		i_2/r_mul_result_hi_reg[23]_bret_bret__202
-		i_2/r_mul_result_hi_reg[23]_bret_bret__203
-		i_2/r_mul_result_hi_reg[23]_bret_bret__204
-		i_2/r_mul_result_hi_reg[23]_bret_bret__205
-		i_2/r_mul_result_hi_reg[23]_bret_bret__206
-		i_2/r_mul_result_hi_reg[23]_bret_bret__207
-		i_2/r_mul_result_hi_reg[23]_bret_bret__208
-		i_2/r_mul_result_hi_reg[23]_bret_bret__209
-		i_2/r_mul_result_hi_reg[23]_bret_bret__21
-		i_2/r_mul_result_hi_reg[23]_bret_bret__210
-		i_2/r_mul_result_hi_reg[23]_bret_bret__211
-		i_2/r_mul_result_hi_reg[23]_bret_bret__212
-		i_2/r_mul_result_hi_reg[23]_bret_bret__213
-		i_2/r_mul_result_hi_reg[23]_bret_bret__214
-		i_2/r_mul_result_hi_reg[23]_bret_bret__215
-		i_2/r_mul_result_hi_reg[23]_bret_bret__216
-		i_2/r_mul_result_hi_reg[23]_bret_bret__217
-		i_2/r_mul_result_hi_reg[23]_bret_bret__218
-		i_2/r_mul_result_hi_reg[23]_bret_bret__219
-		i_2/r_mul_result_hi_reg[23]_bret_bret__220
-		i_2/r_mul_result_hi_reg[23]_bret_bret__221
-		i_2/r_mul_result_hi_reg[23]_bret_bret__222
-		i_2/r_mul_result_hi_reg[23]_bret_bret__223
-		i_2/r_mul_result_hi_reg[23]_bret_bret__224
-		i_2/r_mul_result_hi_reg[23]_bret_bret__225
-		i_2/r_mul_result_hi_reg[23]_bret_bret__226
-		i_2/r_mul_result_hi_reg[23]_bret_bret__227
-		i_2/r_mul_result_hi_reg[23]_bret_bret__228
-		i_2/r_mul_result_hi_reg[23]_bret_bret__229
-		i_2/r_mul_result_hi_reg[23]_bret_bret__23
-		i_2/r_mul_result_hi_reg[23]_bret_bret__230
-		i_2/r_mul_result_hi_reg[23]_bret_bret__231
-		i_2/r_mul_result_hi_reg[23]_bret_bret__232
-		i_2/r_mul_result_hi_reg[23]_bret_bret__233
-		i_2/r_mul_result_hi_reg[23]_bret_bret__234
-		i_2/r_mul_result_hi_reg[23]_bret_bret__235
-		i_2/r_mul_result_hi_reg[23]_bret_bret__236
-		i_2/r_mul_result_hi_reg[23]_bret_bret__237
-		i_2/r_mul_result_hi_reg[23]_bret_bret__238
-		i_2/r_mul_result_hi_reg[23]_bret_bret__239
-		i_2/r_mul_result_hi_reg[23]_bret_bret__240
-		i_2/r_mul_result_hi_reg[23]_bret_bret__241
-		i_2/r_mul_result_hi_reg[23]_bret_bret__242
-		i_2/r_mul_result_hi_reg[23]_bret_bret__243
-		i_2/r_mul_result_hi_reg[23]_bret_bret__244
-		i_2/r_mul_result_hi_reg[23]_bret_bret__245
-		i_2/r_mul_result_hi_reg[23]_bret_bret__246
-		i_2/r_mul_result_hi_reg[23]_bret_bret__247
-		i_2/r_mul_result_hi_reg[23]_bret_bret__248
-		i_2/r_mul_result_hi_reg[23]_bret_bret__249
-		i_2/r_mul_result_hi_reg[23]_bret_bret__25
-		i_2/r_mul_result_hi_reg[23]_bret_bret__250
-		i_2/r_mul_result_hi_reg[23]_bret_bret__251
-		i_2/r_mul_result_hi_reg[23]_bret_bret__252
-		i_2/r_mul_result_hi_reg[23]_bret_bret__253
-		i_2/r_mul_result_hi_reg[23]_bret_bret__254
-		i_2/r_mul_result_hi_reg[23]_bret_bret__255
-		i_2/r_mul_result_hi_reg[23]_bret_bret__256
-		i_2/r_mul_result_hi_reg[23]_bret_bret__257
-		i_2/r_mul_result_hi_reg[23]_bret_bret__258
-		i_2/r_mul_result_hi_reg[23]_bret_bret__259
-		i_2/r_mul_result_hi_reg[23]_bret_bret__260
-		i_2/r_mul_result_hi_reg[23]_bret_bret__261
-		i_2/r_mul_result_hi_reg[23]_bret_bret__262
-		i_2/r_mul_result_hi_reg[23]_bret_bret__263
-		i_2/r_mul_result_hi_reg[23]_bret_bret__264
-		i_2/r_mul_result_hi_reg[23]_bret_bret__265
-		i_2/r_mul_result_hi_reg[23]_bret_bret__266
-		i_2/r_mul_result_hi_reg[23]_bret_bret__267
-		i_2/r_mul_result_hi_reg[23]_bret_bret__268
-		i_2/r_mul_result_hi_reg[23]_bret_bret__269
-		i_2/r_mul_result_hi_reg[23]_bret_bret__27
-		i_2/r_mul_result_hi_reg[23]_bret_bret__270
-		i_2/r_mul_result_hi_reg[23]_bret_bret__271
-		i_2/r_mul_result_hi_reg[23]_bret_bret__272
-		i_2/r_mul_result_hi_reg[23]_bret_bret__273
-		i_2/r_mul_result_hi_reg[23]_bret_bret__274
-		i_2/r_mul_result_hi_reg[23]_bret_bret__275
-		i_2/r_mul_result_hi_reg[23]_bret_bret__276
-		i_2/r_mul_result_hi_reg[23]_bret_bret__277
-		i_2/r_mul_result_hi_reg[23]_bret_bret__278
-		i_2/r_mul_result_hi_reg[23]_bret_bret__279
-		i_2/r_mul_result_hi_reg[23]_bret_bret__280
-		i_2/r_mul_result_hi_reg[23]_bret_bret__281
-		i_2/r_mul_result_hi_reg[23]_bret_bret__282
-		i_2/r_mul_result_hi_reg[23]_bret_bret__283
-		i_2/r_mul_result_hi_reg[23]_bret_bret__284
-		i_2/r_mul_result_hi_reg[23]_bret_bret__285
-		i_2/r_mul_result_hi_reg[23]_bret_bret__286
-		i_2/r_mul_result_hi_reg[23]_bret_bret__287
-		i_2/r_mul_result_hi_reg[23]_bret_bret__288
-		i_2/r_mul_result_hi_reg[23]_bret_bret__289
-		i_2/r_mul_result_hi_reg[23]_bret_bret__29
-		i_2/r_mul_result_hi_reg[23]_bret_bret__290
-		i_2/r_mul_result_hi_reg[23]_bret_bret__291
-		i_2/r_mul_result_hi_reg[23]_bret_bret__292
-		i_2/r_mul_result_hi_reg[23]_bret_bret__293
-		i_2/r_mul_result_hi_reg[23]_bret_bret__294
-		i_2/r_mul_result_hi_reg[23]_bret_bret__295
-		i_2/r_mul_result_hi_reg[23]_bret_bret__296
-		i_2/r_mul_result_hi_reg[23]_bret_bret__297
-		i_2/r_mul_result_hi_reg[23]_bret_bret__298
-		i_2/r_mul_result_hi_reg[23]_bret_bret__299
-		i_2/r_mul_result_hi_reg[23]_bret_bret__3
-		i_2/r_mul_result_hi_reg[23]_bret_bret__300
-		i_2/r_mul_result_hi_reg[23]_bret_bret__301
-		i_2/r_mul_result_hi_reg[23]_bret_bret__302
-		i_2/r_mul_result_hi_reg[23]_bret_bret__303
-		i_2/r_mul_result_hi_reg[23]_bret_bret__304
-		i_2/r_mul_result_hi_reg[23]_bret_bret__305
-		i_2/r_mul_result_hi_reg[23]_bret_bret__306
-		i_2/r_mul_result_hi_reg[23]_bret_bret__307
-		i_2/r_mul_result_hi_reg[23]_bret_bret__308
-		i_2/r_mul_result_hi_reg[23]_bret_bret__309
-		i_2/r_mul_result_hi_reg[23]_bret_bret__31
-		i_2/r_mul_result_hi_reg[23]_bret_bret__310
-		i_2/r_mul_result_hi_reg[23]_bret_bret__311
-		i_2/r_mul_result_hi_reg[23]_bret_bret__312
-		i_2/r_mul_result_hi_reg[23]_bret_bret__313
-		i_2/r_mul_result_hi_reg[23]_bret_bret__314
-		i_2/r_mul_result_hi_reg[23]_bret_bret__315
-		i_2/r_mul_result_hi_reg[23]_bret_bret__316
-		i_2/r_mul_result_hi_reg[23]_bret_bret__317
-		i_2/r_mul_result_hi_reg[23]_bret_bret__318
-		i_2/r_mul_result_hi_reg[23]_bret_bret__319
-		i_2/r_mul_result_hi_reg[23]_bret_bret__320
-		i_2/r_mul_result_hi_reg[23]_bret_bret__321
-		i_2/r_mul_result_hi_reg[23]_bret_bret__322
-		i_2/r_mul_result_hi_reg[23]_bret_bret__323
-		i_2/r_mul_result_hi_reg[23]_bret_bret__324
-		i_2/r_mul_result_hi_reg[23]_bret_bret__325
-		i_2/r_mul_result_hi_reg[23]_bret_bret__326
-		i_2/r_mul_result_hi_reg[23]_bret_bret__327
-		i_2/r_mul_result_hi_reg[23]_bret_bret__328
-		i_2/r_mul_result_hi_reg[23]_bret_bret__329
-		i_2/r_mul_result_hi_reg[23]_bret_bret__33
-		i_2/r_mul_result_hi_reg[23]_bret_bret__330
-		i_2/r_mul_result_hi_reg[23]_bret_bret__331
-		i_2/r_mul_result_hi_reg[23]_bret_bret__332
-		i_2/r_mul_result_hi_reg[23]_bret_bret__333
-		i_2/r_mul_result_hi_reg[23]_bret_bret__334
-		i_2/r_mul_result_hi_reg[23]_bret_bret__335
-		i_2/r_mul_result_hi_reg[23]_bret_bret__336
-		i_2/r_mul_result_hi_reg[23]_bret_bret__35
-		i_2/r_mul_result_hi_reg[23]_bret_bret__37
-		i_2/r_mul_result_hi_reg[23]_bret_bret__39
-		i_2/r_mul_result_hi_reg[23]_bret_bret__41
-		i_2/r_mul_result_hi_reg[23]_bret_bret__43
-		i_2/r_mul_result_hi_reg[23]_bret_bret__45
-		i_2/r_mul_result_hi_reg[23]_bret_bret__47
-		i_2/r_mul_result_hi_reg[23]_bret_bret__49
-		i_2/r_mul_result_hi_reg[23]_bret_bret__5
-		i_2/r_mul_result_hi_reg[23]_bret_bret__51
-		i_2/r_mul_result_hi_reg[23]_bret_bret__53
-		i_2/r_mul_result_hi_reg[23]_bret_bret__55
-		i_2/r_mul_result_hi_reg[23]_bret_bret__56
-		i_2/r_mul_result_hi_reg[23]_bret_bret__57
-		i_2/r_mul_result_hi_reg[23]_bret_bret__58
-		i_2/r_mul_result_hi_reg[23]_bret_bret__59
-		i_2/r_mul_result_hi_reg[23]_bret_bret__60
-		i_2/r_mul_result_hi_reg[23]_bret_bret__61
-		i_2/r_mul_result_hi_reg[23]_bret_bret__62
-		i_2/r_mul_result_hi_reg[23]_bret_bret__63
-		i_2/r_mul_result_hi_reg[23]_bret_bret__64
-		i_2/r_mul_result_hi_reg[23]_bret_bret__65
-		i_2/r_mul_result_hi_reg[23]_bret_bret__66
-		i_2/r_mul_result_hi_reg[23]_bret_bret__67
-		i_2/r_mul_result_hi_reg[23]_bret_bret__68
-		i_2/r_mul_result_hi_reg[23]_bret_bret__69
-		i_2/r_mul_result_hi_reg[23]_bret_bret__7
-		i_2/r_mul_result_hi_reg[23]_bret_bret__70
-		i_2/r_mul_result_hi_reg[23]_bret_bret__71
-		i_2/r_mul_result_hi_reg[23]_bret_bret__72
-		i_2/r_mul_result_hi_reg[23]_bret_bret__73
-		i_2/r_mul_result_hi_reg[23]_bret_bret__74
-		i_2/r_mul_result_hi_reg[23]_bret_bret__75
-		i_2/r_mul_result_hi_reg[23]_bret_bret__76
-		i_2/r_mul_result_hi_reg[23]_bret_bret__77
-		i_2/r_mul_result_hi_reg[23]_bret_bret__78
-		i_2/r_mul_result_hi_reg[23]_bret_bret__79
-		i_2/r_mul_result_hi_reg[23]_bret_bret__80
-		i_2/r_mul_result_hi_reg[23]_bret_bret__81
-		i_2/r_mul_result_hi_reg[23]_bret_bret__82
-		i_2/r_mul_result_hi_reg[23]_bret_bret__83
-		i_2/r_mul_result_hi_reg[23]_bret_bret__84
-		i_2/r_mul_result_hi_reg[23]_bret_bret__85
-		i_2/r_mul_result_hi_reg[23]_bret_bret__86
-		i_2/r_mul_result_hi_reg[23]_bret_bret__87
-		i_2/r_mul_result_hi_reg[23]_bret_bret__88
-		i_2/r_mul_result_hi_reg[23]_bret_bret__89
-		i_2/r_mul_result_hi_reg[23]_bret_bret__9
-		i_2/r_mul_result_hi_reg[23]_bret_bret__90
-		i_2/r_mul_result_hi_reg[23]_bret_bret__91
-		i_2/r_mul_result_hi_reg[23]_bret_bret__92
-		i_2/r_mul_result_hi_reg[23]_bret_bret__93
-		i_2/r_mul_result_hi_reg[23]_bret_bret__94
-		i_2/r_mul_result_hi_reg[23]_bret_bret__95
-		i_2/r_mul_result_hi_reg[23]_bret_bret__96
-		i_2/r_mul_result_hi_reg[23]_bret_bret__97
-		i_2/r_mul_result_hi_reg[23]_bret_bret__98
-		i_2/r_mul_result_hi_reg[23]_bret_bret__99
-		i_2/r_mul_result_hi_reg[24]_bret__0
-		i_2/r_mul_result_hi_reg[25]_bret__0
-		i_2/r_mul_result_hi_reg[26]_bret__0
-		i_2/r_mul_result_hi_reg[27]_bret__0
-		i_2/r_mul_result_hi_reg[28]_bret__0
-		i_2/r_mul_result_hi_reg[29]_bret__0
-		i_2/r_mul_result_hi_reg[30]_bret__0
-		i_2/r_mul_result_hi_reg[31]_bret__0
-		i_2/r_mul_result_hi_reg[8]_bret__0
-		i_2/r_mul_result_hi_reg[9]_bret__0
- 
 
 INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache_GT0_tempName' done
 
@@ -1005,7 +638,21 @@ INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache`
 INFO: [Synth 8-5816] Retiming module `FPGA_CPU_32_bits_cache' done
 
 
-INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_8 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_9 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_10 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_11 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_12 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance i_2/main_stack/RAM_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance i_2/main_stack/RAM_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance i_2/main_stack/RAM_reg_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
@@ -1022,23 +669,8 @@ INFO: [Synth 8-7052] The timing for the instance i_2/main_stack/RAM_reg_12 (impl
 INFO: [Synth 8-7052] The timing for the instance i_2/main_stack/RAM_reg_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance i_2/main_stack/RAM_reg_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance i_2/main_stack/RAM_reg_15 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_8 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_9 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_10 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_11 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_12 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance i_2/mem_read_write/cache_val_data_reg_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:07:39 ; elapsed = 00:07:58 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 2027 ; free virtual = 21708
+Finished Technology Mapping : Time (s): cpu = 00:04:50 ; elapsed = 00:04:25 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 1153 ; free virtual = 18739
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -1052,6 +684,21 @@ Finished Flattening Before IO Insertion
 ---------------------------------------------------------------------------------
 Start Final Netlist Cleanup
 ---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_8 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_9 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_10 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_11 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_12 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_stack/RAM_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_stack/RAM_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_stack/RAM_reg_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
@@ -1068,71 +715,45 @@ INFO: [Synth 8-7052] The timing for the instance main_stack/RAM_reg_12 (implemen
 INFO: [Synth 8-7052] The timing for the instance main_stack/RAM_reg_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_stack/RAM_reg_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_stack/RAM_reg_15 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_8 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_9 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_10 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_11 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_12 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:07:49 ; elapsed = 00:08:08 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 1980 ; free virtual = 21710
+Finished IO Insertion : Time (s): cpu = 00:04:57 ; elapsed = 00:04:33 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 1132 ; free virtual = 18734
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:07:49 ; elapsed = 00:08:08 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 1980 ; free virtual = 21710
+Finished Renaming Generated Instances : Time (s): cpu = 00:04:57 ; elapsed = 00:04:33 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 1132 ; free virtual = 18734
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:07:51 ; elapsed = 00:08:10 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 1980 ; free virtual = 21710
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:04:59 ; elapsed = 00:04:34 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 1131 ; free virtual = 18733
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:07:51 ; elapsed = 00:08:10 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 1980 ; free virtual = 21710
+Finished Renaming Generated Ports : Time (s): cpu = 00:04:59 ; elapsed = 00:04:34 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 1131 ; free virtual = 18733
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:07:52 ; elapsed = 00:08:11 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 1980 ; free virtual = 21710
+Finished Handling Custom Attributes : Time (s): cpu = 00:05:00 ; elapsed = 00:04:35 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 1131 ; free virtual = 18734
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:07:52 ; elapsed = 00:08:11 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 1980 ; free virtual = 21710
+Finished Renaming Generated Nets : Time (s): cpu = 00:05:00 ; elapsed = 00:04:35 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 1131 ; free virtual = 18734
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
-
-Retiming Report:
-+--------------------+-----+
-|Retiming summary:   |     | 
-+--------------------+-----+
-|Forward Retiming    | 0   | 
-|Backward Retiming   | 22  | 
-|New registers added | 331 | 
-|Registers deleted   | 48  | 
-+--------------------+-----+
-
 ---------------------------------------------------------------------------------
 Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
@@ -1141,17 +762,17 @@ Start Writing Synthesis Report
 ---------------------------------------------------------------------------------
 
 DSP Final Report (the ' indicates corresponding REG is set)
-+----------------------------+-------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
-|Module Name                 | DSP Mapping       | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
-+----------------------------+-------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
-|FPGA_CPU_32_bits_cache      | A'*B'             | 17     | 18     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
-|FPGA_CPU_32_bits_cache      | (PCIN>>17+A'*B')' | 30     | 18     | -      | -      | 30     | 1    | 1    | -    | -    | -     | 0    | 1    | 
-|FPGA_CPU_32_bits_cache__GB6 | A'*B'             | 17     | 17     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
-|FPGA_CPU_32_bits_cache      | (C+A'*B')'        | 17     | 18     | 48     | -      | 47     | 1    | 1    | 0    | -    | -     | 0    | 1    | 
-|FPGA_CPU_32_bits_cache__GB6 | A'*B'             | 17     | 15     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
-|FPGA_CPU_32_bits_cache__GB6 | (PCIN>>17+A'*B')' | 15     | 15     | -      | -      | 30     | 1    | 1    | -    | -    | -     | 0    | 1    | 
-|FPGA_CPU_32_bits_cache__GB6 | (C+A'*B')'        | 17     | 15     | 48     | -      | 47     | 1    | 1    | 0    | -    | -     | 0    | 1    | 
-+----------------------------+-------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
++----------------------------+----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name                 | DSP Mapping    | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++----------------------------+----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|FPGA_CPU_32_bits_cache      | A'*B'          | 17     | 18     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|FPGA_CPU_32_bits_cache      | PCIN>>17+A'*B' | 30     | 18     | -      | -      | 30     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|FPGA_CPU_32_bits_cache__GB6 | (A*B)'         | 17     | 17     | -      | -      | 48     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|FPGA_CPU_32_bits_cache      | C+(A*B)'       | 17     | 18     | 48     | -      | 47     | 0    | 0    | 0    | -    | -     | 1    | 0    | 
+|FPGA_CPU_32_bits_cache__GB6 | A'*B'          | 17     | 15     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|FPGA_CPU_32_bits_cache__GB6 | PCIN>>17+A'*B' | 15     | 15     | -      | -      | 30     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|FPGA_CPU_32_bits_cache__GB6 | C+(A*B)'       | 17     | 15     | 48     | -      | 47     | 0    | 0    | 0    | -    | -     | 1    | 0    | 
++----------------------------+----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
 
 
 Report BlackBoxes: 
@@ -1171,50 +792,49 @@ Report Cell Usage:
 |3     |BUFG        |     1|
 |4     |CARRY4      |   303|
 |5     |DSP48E1     |     7|
-|8     |LUT1        |   295|
-|9     |LUT2        |   964|
-|10    |LUT3        |   853|
-|11    |LUT4        |   959|
-|12    |LUT5        |  1357|
-|13    |LUT6        |  4990|
-|14    |MUXF7       |   452|
-|15    |MUXF8       |   149|
+|8     |LUT1        |   316|
+|9     |LUT2        |   969|
+|10    |LUT3        |   818|
+|11    |LUT4        |  1077|
+|12    |LUT5        |  1670|
+|13    |LUT6        |  5611|
+|14    |MUXF7       |   198|
+|15    |MUXF8       |    16|
 |16    |RAM256X1S   |   176|
 |17    |RAMB18E1    |     2|
 |19    |RAMB36E1    |    30|
 |21    |FDCE        |    28|
 |22    |FDPE        |     6|
-|23    |FDRE        |  2407|
-|24    |FDSE        |    22|
+|23    |FDRE        |  2439|
+|24    |FDSE        |    17|
 |25    |IBUF        |    19|
 |26    |OBUF        |    44|
 +------+------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:07:52 ; elapsed = 00:08:11 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 1980 ; free virtual = 21710
+Finished Writing Synthesis Report : Time (s): cpu = 00:05:00 ; elapsed = 00:04:35 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 1131 ; free virtual = 18733
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 1 critical warnings and 3 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:07:18 ; elapsed = 00:07:42 . Memory (MB): peak = 2894.570 ; gain = 798.508 ; free physical = 7349 ; free virtual = 27079
-Synthesis Optimization Complete : Time (s): cpu = 00:07:52 ; elapsed = 00:08:15 . Memory (MB): peak = 2894.570 ; gain = 1211.266 ; free physical = 7357 ; free virtual = 27080
+Synthesis finished with 0 errors, 0 critical warnings and 2 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:04:49 ; elapsed = 00:04:29 . Memory (MB): peak = 3039.824 ; gain = 851.039 ; free physical = 6640 ; free virtual = 24242
+Synthesis Optimization Complete : Time (s): cpu = 00:05:00 ; elapsed = 00:04:40 . Memory (MB): peak = 3039.824 ; gain = 1300.867 ; free physical = 6651 ; free virtual = 24246
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.13 . Memory (MB): peak = 2894.570 ; gain = 0.000 ; free physical = 7358 ; free virtual = 27081
-INFO: [Netlist 29-17] Analyzing 1119 Unisim elements for replacement
+Netlist sorting complete. Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.12 . Memory (MB): peak = 3039.824 ; gain = 0.000 ; free physical = 6651 ; free virtual = 24246
+INFO: [Netlist 29-17] Analyzing 732 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 2938.672 ; gain = 0.000 ; free physical = 7362 ; free virtual = 27085
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3083.926 ; gain = 0.000 ; free physical = 6652 ; free virtual = 24247
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 176 instances were transformed.
   RAM256X1S => RAM256X1S (MUXF7(x2), MUXF8, RAMS64E(x4)): 176 instances
 
-Synth Design complete | Checksum: ca229311
+Synth Design complete | Checksum: 1c7d9fb4
 INFO: [Common 17-83] Releasing license: Synthesis
-325 Infos, 4 Warnings, 1 Critical Warnings and 0 Errors encountered.
+318 Infos, 4 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:08:07 ; elapsed = 00:08:31 . Memory (MB): peak = 2938.707 ; gain = 1426.660 ; free physical = 7362 ; free virtual = 27085
-INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 8553.814; main = 1998.281; forked = 6711.602
-INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 17181.590; main = 2938.676; forked = 14298.938
-INFO: [runtcl-6] Synthesis results are not added to the cache due to CRITICAL_WARNING
-Write ShapeDB Complete: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.03 . Memory (MB): peak = 2962.684 ; gain = 0.000 ; free physical = 7362 ; free virtual = 27086
+synth_design: Time (s): cpu = 00:05:09 ; elapsed = 00:04:49 . Memory (MB): peak = 3083.961 ; gain = 1521.230 ; free physical = 6652 ; free virtual = 24248
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 8865.216; main = 2100.482; forked = 6921.210
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 17890.723; main = 3083.930; forked = 14862.816
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.02 . Memory (MB): peak = 3107.938 ; gain = 0.000 ; free physical = 6652 ; free virtual = 24249
 INFO: [Common 17-1381] The checkpoint '/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/FPGA_CPU_32_bits_cache.dcp' has been generated.
 INFO: [Vivado 12-24828] Executing command : report_utilization -file FPGA_CPU_32_bits_cache_utilization_synth.rpt -pb FPGA_CPU_32_bits_cache_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Thu Dec 11 16:34:38 2025...
+INFO: [Common 17-206] Exiting Vivado at Fri Dec 12 21:05:32 2025...
