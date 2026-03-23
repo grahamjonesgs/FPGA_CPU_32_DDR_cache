@@ -91,8 +91,8 @@ endtask
 task t_set_interrupt_regs;
    reg [1:0] r_interrupt_number;
    begin
-      r_interrupt_number = r_register[r_reg_1][1:0];
-      r_interrupt_table[r_interrupt_number] <= r_register[r_reg_2][23:0];
+      r_interrupt_number = r_reg_port_a[1:0];
+      r_interrupt_table[r_interrupt_number] <= r_reg_port_b[23:0];
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
    end

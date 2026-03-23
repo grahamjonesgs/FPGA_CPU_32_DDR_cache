@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="impl_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1765565945">
+<GenRun Id="impl_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1774272069" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/impl_1/FPGA_CPU_32_bits_cache_routed.dcp" LaunchDirective="RuntimeOptimized">
   <File Type="POSTROUTE-PHYSOPT-RQS-RPT" Name="postroute_physopt_report_qor_suggestions_0.rpt"/>
   <File Type="ROUTE-RQS-RPT" Name="route_report_qor_suggestions_0.rpt"/>
   <File Type="POSTROUTE-PHYSOPT-RQS" Name="FPGA_CPU_32_bits_cache_postroute_physopted.rqs"/>
@@ -59,28 +59,28 @@
   <File Type="POSTROUTE-PHYSOPT-TIMING" Name="FPGA_CPU_32_bits_cache_timing_summary_postroute_physopted.rpt"/>
   <File Type="POSTROUTE-PHYSOPT-BLACKBOX-DCP" Name="FPGA_CPU_32_bits_cache_postroute_physopt_bb.dcp"/>
   <File Type="POSTROUTE-PHYSOPT-DCP" Name="FPGA_CPU_32_bits_cache_postroute_physopt.dcp"/>
-  <File Type="ROUTE-RQS-PB" Name="FPGA_CPU_32_bits_cache_rqs_routed.pb"/>
-  <File Type="ROUTE-BUS-SKEW-RPX" Name="FPGA_CPU_32_bits_cache_bus_skew_routed.rpx"/>
-  <File Type="ROUTE-BUS-SKEW-PB" Name="FPGA_CPU_32_bits_cache_bus_skew_routed.pb"/>
-  <File Type="ROUTE-BUS-SKEW" Name="FPGA_CPU_32_bits_cache_bus_skew_routed.rpt"/>
-  <File Type="ROUTE-CLK" Name="FPGA_CPU_32_bits_cache_clock_utilization_routed.rpt"/>
-  <File Type="ROUTE-SIMILARITY" Name="FPGA_CPU_32_bits_cache_incremental_reuse_routed.rpt"/>
-  <File Type="ROUTE-TIMING-RPX" Name="FPGA_CPU_32_bits_cache_timing_summary_routed.rpx"/>
+  <File Type="ROUTE-RQS-PB" Name="route_report_qor_suggestions_0.pb"/>
+  <File Type="ROUTE-BUS-SKEW-RPX" Name="route_report_bus_skew_0.rpx"/>
+  <File Type="ROUTE-BUS-SKEW-PB" Name="route_report_bus_skew_0.pb"/>
+  <File Type="ROUTE-BUS-SKEW" Name="route_report_bus_skew_0.rpt"/>
+  <File Type="ROUTE-CLK" Name="route_report_clock_utilization_0.rpt"/>
+  <File Type="ROUTE-SIMILARITY" Name="route_report_incremental_reuse_0.rpt"/>
+  <File Type="ROUTE-TIMING-RPX" Name="route_report_timing_summary_0.rpx"/>
   <File Type="ROUTE-TIMING-PB" Name="FPGA_CPU_32_bits_cache_timing_summary_routed.pb"/>
-  <File Type="ROUTE-TIMINGSUMMARY" Name="FPGA_CPU_32_bits_cache_timing_summary_routed.rpt"/>
-  <File Type="ROUTE-STATUS-PB" Name="FPGA_CPU_32_bits_cache_route_status.pb"/>
-  <File Type="ROUTE-STATUS" Name="FPGA_CPU_32_bits_cache_route_status.rpt"/>
-  <File Type="ROUTE-PWR-RPX" Name="FPGA_CPU_32_bits_cache_power_routed.rpx"/>
-  <File Type="ROUTE-PWR-SUM" Name="FPGA_CPU_32_bits_cache_power_summary_routed.pb"/>
-  <File Type="ROUTE-PWR" Name="FPGA_CPU_32_bits_cache_power_routed.rpt"/>
+  <File Type="ROUTE-TIMINGSUMMARY" Name="route_report_timing_summary_0.rpt"/>
+  <File Type="ROUTE-STATUS-PB" Name="route_report_route_status_0.pb"/>
+  <File Type="ROUTE-STATUS" Name="route_report_route_status_0.rpt"/>
+  <File Type="ROUTE-PWR-RPX" Name="route_report_power_0.rpx"/>
+  <File Type="ROUTE-PWR-SUM" Name="route_report_power_summary_0.pb"/>
+  <File Type="ROUTE-PWR" Name="route_report_power_0.rpt"/>
   <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="FPGA_CPU_32_bits_cache_methodology_drc_routed.pb"/>
   <File Type="ROUTE-METHODOLOGY-DRC-RPX" Name="FPGA_CPU_32_bits_cache_methodology_drc_routed.rpx"/>
   <File Type="ROUTE-METHODOLOGY-DRC" Name="FPGA_CPU_32_bits_cache_methodology_drc_routed.rpt"/>
-  <File Type="ROUTE-DRC-RPX" Name="FPGA_CPU_32_bits_cache_drc_routed.rpx"/>
-  <File Type="ROUTE-DRC-PB" Name="FPGA_CPU_32_bits_cache_drc_routed.pb"/>
-  <File Type="ROUTE-DRC" Name="FPGA_CPU_32_bits_cache_drc_routed.rpt"/>
-  <File Type="ROUTE-UTIL-PB" Name="FPGA_CPU_32_bits_cache_utilization_routed.pb"/>
-  <File Type="ROUTE-UTIL" Name="FPGA_CPU_32_bits_cache_utilization_routed.rpt"/>
+  <File Type="ROUTE-DRC-RPX" Name="route_report_drc_0.rpx"/>
+  <File Type="ROUTE-DRC-PB" Name="route_report_drc_0.pb"/>
+  <File Type="ROUTE-DRC" Name="route_report_drc_0.rpt"/>
+  <File Type="ROUTE-UTIL-PB" Name="route_report_utilization_0.pb"/>
+  <File Type="ROUTE-UTIL" Name="route_report_utilization_0.rpt"/>
   <File Type="ROUTE-BLACKBOX-DCP" Name="FPGA_CPU_32_bits_cache_routed_bb.dcp"/>
   <File Type="ROUTE-DCP" Name="FPGA_CPU_32_bits_cache_routed.dcp"/>
   <File Type="ROUTE-ERROR-DCP" Name="FPGA_CPU_32_bits_cache_routed_error.dcp"/>
@@ -89,26 +89,26 @@
   <File Type="PHYSOPT-DCP" Name="FPGA_CPU_32_bits_cache_physopt.dcp"/>
   <File Type="POSTPLACE-PWROPT-TIMING" Name="FPGA_CPU_32_bits_cache_timing_summary_postplace_pwropted.rpt"/>
   <File Type="POSTPLACE-PWROPT-DCP" Name="FPGA_CPU_32_bits_cache_postplace_pwropt.dcp"/>
-  <File Type="PLACE-RQA-PB" Name="FPGA_CPU_32_bits_cache_rqa_placed.pb"/>
-  <File Type="PLACE-TIMING" Name="FPGA_CPU_32_bits_cache_timing_summary_placed.rpt"/>
+  <File Type="PLACE-RQA-PB" Name="place_report_qor_assessment_0.pb"/>
+  <File Type="PLACE-TIMING" Name="place_report_timing_summary_0.rpt"/>
   <File Type="PLACE-PRE-SIMILARITY" Name="FPGA_CPU_32_bits_cache_incremental_reuse_pre_placed.rpt"/>
-  <File Type="PLACE-SIMILARITY" Name="FPGA_CPU_32_bits_cache_incremental_reuse_placed.rpt"/>
+  <File Type="PLACE-SIMILARITY" Name="place_report_incremental_reuse_0.rpt"/>
   <File Type="PLACE-CTRL" Name="FPGA_CPU_32_bits_cache_control_sets_placed.rpt"/>
   <File Type="PLACE-UTIL-PB" Name="FPGA_CPU_32_bits_cache_utilization_placed.pb"/>
   <File Type="PLACE-UTIL" Name="FPGA_CPU_32_bits_cache_utilization_placed.rpt"/>
   <File Type="PLACE-CLK" Name="FPGA_CPU_32_bits_cache_clock_utilization_placed.rpt"/>
-  <File Type="PLACE-IO" Name="FPGA_CPU_32_bits_cache_io_placed.rpt"/>
+  <File Type="PLACE-IO" Name="place_report_io_0.rpt"/>
   <File Type="PLACE-DCP" Name="FPGA_CPU_32_bits_cache_placed.dcp"/>
   <File Type="PWROPT-TIMING" Name="FPGA_CPU_32_bits_cache_timing_summary_pwropted.rpt"/>
   <File Type="PWROPT-DRC" Name="FPGA_CPU_32_bits_cache_drc_pwropted.rpt"/>
   <File Type="PWROPT-DCP" Name="FPGA_CPU_32_bits_cache_pwropt.dcp"/>
-  <File Type="OPT-RQA-PB" Name="FPGA_CPU_32_bits_cache_rqa_opted.pb"/>
-  <File Type="OPT-TIMING" Name="FPGA_CPU_32_bits_cache_timing_summary_opted.rpt"/>
+  <File Type="OPT-RQA-PB" Name="opt_report_qor_assessment_0.pb"/>
+  <File Type="OPT-TIMING" Name="opt_report_timing_summary_0.rpt"/>
   <File Type="OPT-HWDEF" Name="FPGA_CPU_32_bits_cache.hwdef"/>
-  <File Type="OPT-METHODOLOGY-DRC" Name="FPGA_CPU_32_bits_cache_methodology_drc_opted.rpt"/>
-  <File Type="OPT-UTIL-PB" Name="FPGA_CPU_32_bits_cache_utilization_opted.pb"/>
-  <File Type="OPT-UTIL" Name="FPGA_CPU_32_bits_cache_utilization_opted.rpt"/>
-  <File Type="OPT-DRC" Name="FPGA_CPU_32_bits_cache_drc_opted.rpt"/>
+  <File Type="OPT-METHODOLOGY-DRC" Name="opt_report_methodology_0.rpt"/>
+  <File Type="OPT-UTIL-PB" Name="opt_report_utilization_0.pb"/>
+  <File Type="OPT-UTIL" Name="opt_report_utilization_0.rpt"/>
+  <File Type="OPT-DRC" Name="opt_report_drc_0.rpt"/>
   <File Type="OPT-DCP" Name="FPGA_CPU_32_bits_cache_opt.dcp"/>
   <File Type="INIT-TIMING" Name="FPGA_CPU_32_bits_cache_timing_summary_init.rpt"/>
   <File Type="REPORTS-TCL" Name="FPGA_CPU_32_bits_cache_reports.tcl"/>
@@ -329,30 +329,36 @@
         <Attr Name="AutoDcp" Val="1"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/utils_1/imports/impl_1/FPGA_CPU_32_bits_cache_routed.dcp">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedInSteps" Val="impl_1"/>
+        <Attr Name="AutoDcp" Val="1"/>
+      </FileInfo>
+    </File>
     <Config>
       <Option Name="TopAutoSet" Val="TRUE"/>
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
+    <StratHandle Name="Flow_RuntimeOptimized" Flow="Vivado Implementation 2025">
+      <Desc>Each implementation step trades design performance for better runtime. Physical optimization (phys_opt_design) is disabled.</Desc>
+    </StratHandle>
     <Step Id="init_design"/>
     <Step Id="opt_design">
-      <Option Id="Directive">0</Option>
+      <Option Id="Directive">4</Option>
     </Step>
     <Step Id="power_opt_design"/>
     <Step Id="place_design">
-      <Option Id="Directive">2</Option>
+      <Option Id="Directive">15</Option>
     </Step>
     <Step Id="post_place_power_opt_design"/>
-    <Step Id="phys_opt_design">
-      <Option Id="Directive">2</Option>
-    </Step>
+    <Step Id="phys_opt_design" EnableStepBool="0"/>
     <Step Id="route_design">
-      <Option Id="Directive">8</Option>
+      <Option Id="Directive">5</Option>
     </Step>
-    <Step Id="post_route_phys_opt_design" EnableStepBool="1">
-      <Option Id="Directive">1</Option>
-    </Step>
+    <Step Id="post_route_phys_opt_design"/>
     <Step Id="write_bitstream"/>
   </Strategy>
   <BlockFileSet Type="BlockSrcs" Name="clk_wiz_0"/>

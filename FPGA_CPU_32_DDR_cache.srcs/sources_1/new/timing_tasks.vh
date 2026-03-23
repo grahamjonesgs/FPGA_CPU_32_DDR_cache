@@ -40,8 +40,7 @@ task t_delay_reg;
 
         if(r_timing_start==0) // first cycle of timing
         begin
-            reg_1 = w_opcode[3:0];
-            r_timeout_fraction = r_register[reg_1];
+            r_timeout_fraction = r_reg_port_b;
             r_timeout_max <= r_timeout_fraction << 13;
             r_timeout_counter <= 0;
             r_timing_start <= 1;

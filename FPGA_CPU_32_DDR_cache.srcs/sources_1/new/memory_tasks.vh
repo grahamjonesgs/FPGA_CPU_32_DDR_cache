@@ -7,7 +7,7 @@ task t_set_mem_from_value_reg;
    begin
       if (r_extra_clock == 0) begin
          r_mem_addr <= i_location[23:0];
-         r_mem_write_data <= r_register[r_reg_2];
+         r_mem_write_data <= r_reg_port_b;
          r_mem_write_DV = 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
@@ -29,8 +29,8 @@ endtask
 task t_set_mem_from_reg_reg;
    begin
       if (r_extra_clock == 0) begin
-         r_mem_addr <= r_register[r_reg_2][23:0];
-         r_mem_write_data <= r_register[r_reg_1];
+         r_mem_addr <= r_reg_port_b[23:0];
+         r_mem_write_data <= r_reg_port_a;
          r_mem_write_DV = 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
@@ -60,8 +60,9 @@ task t_set_reg_from_mem_value;
         else
         begin
          if (w_mem_ready) begin
-            r_register[r_reg_2]<=w_mem_read_data; // the memory location, allows read of code as well as data
-            r_SM <= OPCODE_REQUEST;
+            r_writeback_value <= w_mem_read_data;
+            r_writeback_reg <= r_reg_2;
+            r_SM <= WRITEBACK;
             r_mem_read_DV <= 1'b0;
             r_PC <= r_PC + 2;
          end  // if ready asserted, else will loop until ready
@@ -76,15 +77,16 @@ endtask
 task t_set_reg_from_mem_reg;
    begin
       if (r_extra_clock == 0) begin
-         r_mem_addr <= r_register[r_reg_2][23:0];
+         r_mem_addr <= r_reg_port_b[23:0];
          r_mem_read_DV = 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
         else
         begin
          if (w_mem_ready) begin
-            r_register[r_reg_1]<=w_mem_read_data; // the memory location, allows read of code as well as data
-            r_SM <= OPCODE_REQUEST;
+            r_writeback_value <= w_mem_read_data;
+            r_writeback_reg <= r_reg_1;
+            r_SM <= WRITEBACK;
             r_mem_read_DV <= 1'b0;
             if (r_mem_read_DV) begin
                r_PC <= r_PC + 1;

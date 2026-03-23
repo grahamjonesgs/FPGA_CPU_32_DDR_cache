@@ -28,7 +28,7 @@ eval( EAInclude(ISEJScriptLib) );
 
 
 // pre-commands:
-ISETouchFile( "write_bitstream", "begin" );
+ISETouchFile( "init_design", "begin" );
 ISEStep( "vivado",
          "-log FPGA_CPU_32_bits_cache.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source FPGA_CPU_32_bits_cache.tcl -notrace" );
 

@@ -17,10 +17,8 @@ endtask
 // Increment PC 1
 // Increment r_SM_msg
 task t_led_reg;
-   reg [3:0] reg_1;
    begin
-      reg_1 = w_opcode[3:0];
-      o_led <= r_register[reg_1][15:0];
+      o_led <= r_reg_port_b[15:0];
       r_SM  <= OPCODE_REQUEST;
       r_PC  <= r_PC + 1;
    end
@@ -44,10 +42,8 @@ endtask
 // Increment PC 1
 // Increment r_SM_msg
 task t_led_rgb1_reg;
-   reg [3:0] reg_1;
    begin
-      reg_1 = w_opcode[3:0];
-      r_RGB_LED_1 <= r_register[reg_1][11:0];
+      r_RGB_LED_1 <= r_reg_port_b[11:0];
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
    end
@@ -71,10 +67,8 @@ endtask
 // Increment PC 1
 // Increment r_SM_msg
 task t_led_rgb2_reg;
-   reg [3:0] reg_1;
    begin
-      reg_1 = w_opcode[3:0];
-      r_RGB_LED_2 <= r_register[reg_1][11:0];
+      r_RGB_LED_2 <= r_reg_port_b[11:0];
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
    end
@@ -85,11 +79,10 @@ endtask
 // Increment PC 1
 // Increment r_SM_msg
 task t_get_switch_reg;
-   reg [3:0] reg_1;
    begin
-      reg_1 = w_opcode[3:0];
-      r_register[reg_1][15:0] <= i_switch;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= {r_reg_port_b[31:16], i_switch};
+      r_writeback_reg <= r_reg_2;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask

@@ -17,11 +17,9 @@ endtask
 // increment PC
 // increment r_SM_msg
 task t_stack_push_reg;
-   reg [3:0] reg_1;
    begin
-      reg_1 = w_opcode[3:0];
       r_stack_write_flag <= 1'h1;  // to move stack pointer 1
-      r_stack_write_value <= r_register[reg_1];
+      r_stack_write_value <= r_reg_port_b;
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
 
@@ -33,12 +31,11 @@ endtask
 // increment PC
 // increment r_SM_msg
 task t_stack_pop_reg;
-   reg [3:0] reg_1;
    begin
-      reg_1 = w_opcode[3:0];
-      r_register[reg_1] <= i_stack_top_value;
+      r_writeback_value <= i_stack_top_value;
+      r_writeback_reg <= r_reg_2;
       r_stack_read_flag <= 1'h1;  // to move stack pointer
-      r_SM <= OPCODE_REQUEST;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask

@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date         : Fri Dec 12 21:05:32 2025
+| Date         : Mon Mar 23 15:30:05 2026
 | Host         : Garuda running 64-bit Garuda Linux Broadwing
 | Command      : report_utilization -file FPGA_CPU_32_bits_cache_utilization_synth.rpt -pb FPGA_CPU_32_bits_cache_utilization_synth.pb
 | Design       : FPGA_CPU_32_bits_cache
@@ -31,17 +31,17 @@ Table of Contents
 +----------------------------+------+-------+------------+-----------+-------+
 |          Site Type         | Used | Fixed | Prohibited | Available | Util% |
 +----------------------------+------+-------+------------+-----------+-------+
-| Slice LUTs*                | 9902 |     0 |          0 |     63400 | 15.62 |
-|   LUT as Logic             | 9198 |     0 |          0 |     63400 | 14.51 |
-|   LUT as Memory            |  704 |     0 |          0 |     19000 |  3.71 |
-|     LUT as Distributed RAM |  704 |     0 |            |           |       |
+| Slice LUTs*                | 6408 |     0 |          0 |     63400 | 10.11 |
+|   LUT as Logic             | 5640 |     0 |          0 |     63400 |  8.90 |
+|   LUT as Memory            |  768 |     0 |          0 |     19000 |  4.04 |
+|     LUT as Distributed RAM |  768 |     0 |            |           |       |
 |     LUT as Shift Register  |    0 |     0 |            |           |       |
-| Slice Registers            | 2490 |     0 |          0 |    126800 |  1.96 |
-|   Register as Flip Flop    | 2490 |     0 |          0 |    126800 |  1.96 |
+| Slice Registers            | 1981 |     0 |          0 |    126800 |  1.56 |
+|   Register as Flip Flop    | 1981 |     0 |          0 |    126800 |  1.56 |
 |   Register as Latch        |    0 |     0 |          0 |    126800 |  0.00 |
-| F7 Muxes                   |  550 |     0 |          0 |     31700 |  1.74 |
-| F8 Muxes                   |  192 |     0 |          0 |     15850 |  1.21 |
-| Unique Control Sets        |  127 |       |          0 |     15850 |  0.80 |
+| F7 Muxes                   |  458 |     0 |          0 |     31700 |  1.44 |
+| F8 Muxes                   |  185 |     0 |          0 |     15850 |  1.17 |
+| Unique Control Sets        |   95 |       |          0 |     15850 |  0.60 |
 +----------------------------+------+-------+------------+-----------+-------+
 * Warning! The Final LUT count, after physical optimizations and full implementation, is typically lower. Run opt_design after synthesis, if not already completed, for a more realistic count.
 Warning! LUT value is adjusted to account for LUT combining.
@@ -63,8 +63,8 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 | 0     |          Yes |           - |            - |
 | 6     |          Yes |           - |          Set |
 | 28    |          Yes |           - |        Reset |
-| 17    |          Yes |         Set |            - |
-| 2439  |          Yes |       Reset |            - |
+| 29    |          Yes |         Set |            - |
+| 1918  |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
 
 
@@ -89,8 +89,8 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 +----------------+------+-------+------------+-----------+-------+
 |    Site Type   | Used | Fixed | Prohibited | Available | Util% |
 +----------------+------+-------+------------+-----------+-------+
-| DSPs           |    7 |     0 |          0 |       240 |  2.92 |
-|   DSP48E1 only |    7 |       |            |           |       |
+| DSPs           |    4 |     0 |          0 |       240 |  1.67 |
+|   DSP48E1 only |    4 |       |            |           |       |
 +----------------+------+-------+------------+-----------+-------+
 
 
@@ -156,24 +156,26 @@ Warning! For any ECO changes, please run place_design if there are unplaced inst
 +----------+------+---------------------+
 | Ref Name | Used | Functional Category |
 +----------+------+---------------------+
-| LUT6     | 5611 |                 LUT |
-| FDRE     | 2439 |        Flop & Latch |
-| LUT5     | 1670 |                 LUT |
-| LUT4     | 1077 |                 LUT |
-| LUT2     |  969 |                 LUT |
-| LUT3     |  818 |                 LUT |
+| LUT6     | 3174 |                 LUT |
+| FDRE     | 1918 |        Flop & Latch |
+| LUT5     | 1006 |                 LUT |
+| LUT4     |  786 |                 LUT |
 | RAMS64E  |  704 |  Distributed Memory |
-| MUXF7    |  550 |               MuxFx |
-| LUT1     |  316 |                 LUT |
-| CARRY4   |  303 |          CarryLogic |
-| MUXF8    |  192 |               MuxFx |
+| LUT3     |  638 |                 LUT |
+| LUT2     |  601 |                 LUT |
+| MUXF7    |  458 |               MuxFx |
+| LUT1     |  264 |                 LUT |
+| CARRY4   |  254 |          CarryLogic |
+| MUXF8    |  185 |               MuxFx |
+| RAMD32   |   92 |  Distributed Memory |
 | OBUF     |   44 |                  IO |
 | RAMB36E1 |   30 |        Block Memory |
+| FDSE     |   29 |        Flop & Latch |
+| RAMS32   |   28 |  Distributed Memory |
 | FDCE     |   28 |        Flop & Latch |
 | IBUF     |   19 |                  IO |
-| FDSE     |   17 |        Flop & Latch |
-| DSP48E1  |    7 |    Block Arithmetic |
 | FDPE     |    6 |        Flop & Latch |
+| DSP48E1  |    4 |    Block Arithmetic |
 | RAMB18E1 |    2 |        Block Memory |
 | BUFG     |    1 |               Clock |
 +----------+------+---------------------+

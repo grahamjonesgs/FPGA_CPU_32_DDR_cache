@@ -49,7 +49,7 @@ endtask
 task t_tx_char_from_reg_value;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_register[r_reg_2][23:0];
+            r_mem_addr <= r_reg_port_b[23:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -80,7 +80,7 @@ endtask
 task t_tx_value_of_mem_at_reg;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_register[r_reg_2][23:0];
+            r_mem_addr <= r_reg_port_b[23:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -192,7 +192,7 @@ endtask
 task t_tx_string_at_reg;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_register[r_reg_2][23:0];
+            r_mem_addr <= r_reg_port_b[23:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -244,14 +244,14 @@ endtask
 task t_tx_reg;
     begin
         if (!w_sending_msg) begin
-            r_msg[7:0] <= return_ascii_from_hex(r_register[r_reg_2][31:28]);
-            r_msg[15:8] <= return_ascii_from_hex(r_register[r_reg_2][27:24]);
-            r_msg[23:16] <= return_ascii_from_hex(r_register[r_reg_2][23:20]);
-            r_msg[31:24] <= return_ascii_from_hex(r_register[r_reg_2][19:16]);
-            r_msg[39:32] <= return_ascii_from_hex(r_register[r_reg_2][15:12]);
-            r_msg[47:40] <= return_ascii_from_hex(r_register[r_reg_2][11:8]);
-            r_msg[55:48] <= return_ascii_from_hex(r_register[r_reg_2][7:4]);
-            r_msg[63:56] <= return_ascii_from_hex(r_register[r_reg_2][3:0]);
+            r_msg[7:0] <= return_ascii_from_hex(r_reg_port_b[31:28]);
+            r_msg[15:8] <= return_ascii_from_hex(r_reg_port_b[27:24]);
+            r_msg[23:16] <= return_ascii_from_hex(r_reg_port_b[23:20]);
+            r_msg[31:24] <= return_ascii_from_hex(r_reg_port_b[19:16]);
+            r_msg[39:32] <= return_ascii_from_hex(r_reg_port_b[15:12]);
+            r_msg[47:40] <= return_ascii_from_hex(r_reg_port_b[11:8]);
+            r_msg[55:48] <= return_ascii_from_hex(r_reg_port_b[7:4]);
+            r_msg[63:56] <= return_ascii_from_hex(r_reg_port_b[3:0]);
             r_msg_length <= 8'h8;
             r_msg_send_DV <= 1'b1;
             r_SM <= UART_DELAY;

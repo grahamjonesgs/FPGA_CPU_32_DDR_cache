@@ -37,13 +37,13 @@ task t_7_seg1_reg;
    begin
       r_seven_seg_value1 <= {
          4'h0,
-         r_register[r_reg_2][15:12],
+         r_reg_port_b[15:12],
          4'h0,
-         r_register[r_reg_2][11:8],
+         r_reg_port_b[11:8],
          4'h0,
-         r_register[r_reg_2][7:4],
+         r_reg_port_b[7:4],
          4'h0,
-         r_register[r_reg_2][3:0]
+         r_reg_port_b[3:0]
       };
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
@@ -59,13 +59,13 @@ task t_7_seg2_reg;
    begin
       r_seven_seg_value2 <= {
          4'h0,
-         r_register[r_reg_2][15:12],
+         r_reg_port_b[15:12],
          4'h0,
-         r_register[r_reg_2][11:8],
+         r_reg_port_b[11:8],
          4'h0,
-         r_register[r_reg_2][7:4],
+         r_reg_port_b[7:4],
          4'h0,
-         r_register[r_reg_2][3:0]
+         r_reg_port_b[3:0]
       };
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
@@ -80,23 +80,23 @@ task t_7_seg_reg;
    begin
       r_seven_seg_value1 <= {
          4'h0,
-         r_register[r_reg_2][31:28],
+         r_reg_port_b[31:28],
          4'h0,
-         r_register[r_reg_2][27:24],
+         r_reg_port_b[27:24],
          4'h0,
-         r_register[r_reg_2][23:20],
+         r_reg_port_b[23:20],
          4'h0,
-         r_register[r_reg_2][19:16]
+         r_reg_port_b[19:16]
       };
       r_seven_seg_value2 <= {
          4'h0,
-         r_register[r_reg_2][15:12],
+         r_reg_port_b[15:12],
          4'h0,
-         r_register[r_reg_2][11:8],
+         r_reg_port_b[11:8],
          4'h0,
-         r_register[r_reg_2][7:4],
+         r_reg_port_b[7:4],
          4'h0,
-         r_register[r_reg_2][3:0]
+         r_reg_port_b[3:0]
       };
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;

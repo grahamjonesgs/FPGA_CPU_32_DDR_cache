@@ -71,8 +71,10 @@ module FPGA_CPU_32_bits_cache (
    localparam LOAD_COMPLETE = 32'h10_000, LOAD_WAIT = 32'h20_000;
    localparam DEBUG_DATA = 32'h40_000, DEBUG_DATA2 = 32'h80_000, DEBUG_DATA3 = 32'h100_000;
    localparam DEBUG_WAIT = 32'h200_000;
-localparam MULTIPLY_CALC      = 32'h0040_0000;  // DSP computing
+localparam MULTIPLY_CALC      = 32'h0040_0000;  // DSP pipeline stage 1 (MREG)
+localparam MULTIPLY_PIPE      = 32'h0100_0000;  // DSP pipeline stage 2 (PREG)
 localparam MULTIPLY_WRITEBACK = 32'h0080_0000;  // Write result
+localparam WRITEBACK          = 32'h0200_0000;  // Register file writeback stage
 
    // Error Codes
    localparam ERR_INV_OPCODE = 8'h1, ERR_INV_FSM_STATE = 8'h2, ERR_STACK = 8'h3;
@@ -199,14 +201,30 @@ localparam MULTIPLY_WRITEBACK = 32'h0080_0000;  // Write result
   //=============================================================================
 
   // Pipeline stage registers (active during s_multiply state)
-  reg [31:0] r_mul_result_lo;
-  reg [31:0] r_mul_result_hi;
+  reg [63:0] r_mul_pipe1;        // Stage 1: multiply result (maps to DSP48 MREG)
+  reg [63:0] r_mul_pipe2;        // Stage 2: registered output (maps to DSP48 PREG)
+  wire [31:0] r_mul_result_lo;
+  wire [31:0] r_mul_result_hi;
+  assign r_mul_result_lo = r_mul_pipe2[31:0];
+  assign r_mul_result_hi = r_mul_pipe2[63:32];
+
   reg        r_mul_is_high;      // Are we capturing high word?
   reg        r_mul_is_unsigned;  // Unsigned operation?
   reg [3:0]  r_mul_dest_reg;     // Destination register
   // Dedicated multiply operand capture (breaks path from register file)
   reg [31:0] r_mul_operand_a;
   reg [31:0] r_mul_operand_b;
+
+  // Free-running 2-stage multiply pipeline (lets Vivado use DSP48 MREG + PREG)
+  always @(posedge i_Clk) begin
+     // Stage 1: multiply
+     if (r_mul_is_unsigned)
+        r_mul_pipe1 <= r_mul_operand_a * r_mul_operand_b;
+     else
+        r_mul_pipe1 <= $signed(r_mul_operand_a) * $signed(r_mul_operand_b);
+     // Stage 2: register
+     r_mul_pipe2 <= r_mul_pipe1;
+  end
 
 
    //=========================================================================
@@ -231,6 +249,10 @@ localparam MULTIPLY_WRITEBACK = 32'h0080_0000;  // Write result
    // Dedicated read ports - registered every cycle
    reg [31:0] r_reg_port_a;
    reg [31:0] r_reg_port_b;
+
+   // Writeback pipeline registers
+   reg [31:0] r_writeback_value;
+   reg [3:0]  r_writeback_reg;
 
     always @(posedge i_Clk) begin
        r_reg_port_a <= r_register[r_reg_1];
@@ -900,23 +922,24 @@ rams_sp_nc rams_sp_nc1 (
             end
             
              MULTIPLY_CALC: begin
-    // Multiply is computed AND registered in this state
-    // No intermediate wires - DSP48 will be fully pipelined
-    if (r_mul_is_unsigned) begin
-        {r_mul_result_hi, r_mul_result_lo} <= r_mul_operand_a * r_mul_operand_b;
-    end else begin
-        {r_mul_result_hi, r_mul_result_lo} <= $signed(r_mul_operand_a) * $signed(r_mul_operand_b);
-    end
+    // Wait for pipeline stage 1 (MREG) - multiply is computed
+    // by the free-running pipeline from r_mul_operand_a/b
+    r_SM <= MULTIPLY_PIPE;
+end
+
+MULTIPLY_PIPE: begin
+    // Wait for pipeline stage 2 (PREG) - result now in r_mul_result_hi/lo
     r_SM <= MULTIPLY_WRITEBACK;
 end
 
 MULTIPLY_WRITEBACK: begin
-    // Write ONLY from pipeline registers
+    // Stage result into writeback pipeline
     if (r_mul_is_high)
-        r_register[r_mul_dest_reg] <= r_mul_result_hi;
+        r_writeback_value <= r_mul_result_hi;
     else
-        r_register[r_mul_dest_reg] <= r_mul_result_lo;
-    
+        r_writeback_value <= r_mul_result_lo;
+    r_writeback_reg <= r_mul_dest_reg;
+
     // Flags from registered values
     if (r_mul_is_high) begin
         r_zero_flag     <= (r_mul_result_hi == 32'b0);
@@ -930,15 +953,20 @@ MULTIPLY_WRITEBACK: begin
         else
             r_overflow_flag <= (r_mul_result_hi != {32{r_mul_result_lo[31]}});
     end
-    
+
     // PC increment depends on instruction type
     if (r_mul_is_immediate)
-        r_PC <= r_PC + 2;  // Immediate instructions use 2 words
+        r_PC <= r_PC + 2;
     else
-        r_PC <= r_PC + 1;  // Register-only instructions use 1 word
-    
-    r_SM <= OPCODE_REQUEST;
+        r_PC <= r_PC + 1;
+
+    r_SM <= WRITEBACK;
 end
+
+            WRITEBACK: begin
+               r_register[r_writeback_reg] <= r_writeback_value;
+               r_SM <= OPCODE_REQUEST;
+            end
 
             default: r_SM <= HCF_1;  // loop in error
          endcase  // case(r_SM)

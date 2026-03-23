@@ -48,11 +48,9 @@ endtask
 // Increment r_SM
 
 task spi_dc_write_command_reg;
-   reg [3:0] reg_1;
    begin
-      reg_1 = w_opcode[3:0];
       if (i_TX_LCD_Ready) begin
-         o_TX_LCD_Byte <= r_register[reg_1][7:0];
+         o_TX_LCD_Byte <= r_reg_port_b[7:0];
          o_LCD_DC <= 0;
          o_TX_LCD_DV <= 1'b1;
          r_timeout_counter <= 0;
@@ -71,11 +69,9 @@ endtask
 // Increment PC 1
 // Increment r_SM
 task spi_dc_data_command_reg;
-   reg [3:0] reg_1;
    begin
-      reg_1 = w_opcode[3:0];
       if (i_TX_LCD_Ready) begin
-         o_TX_LCD_Byte <= r_register[reg_1][7:0];
+         o_TX_LCD_Byte <= r_reg_port_b[7:0];
          o_LCD_DC <= 1;
          o_TX_LCD_DV <= 1'b1;
          r_timeout_counter <= 0;
