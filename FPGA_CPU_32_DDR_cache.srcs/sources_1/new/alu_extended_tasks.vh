@@ -853,10 +853,11 @@ endtask
 
 // LDIDX - Load indexed: reg1 = mem[reg2 + immediate]
 task t_load_indexed;
+   input [31:0] i_offset;
    reg [23:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
-         effective_addr = r_reg_port_b[23:0] + w_var1[23:0];
+         effective_addr = r_reg_port_b[23:0] + i_offset[23:0];
          r_mem_addr <= effective_addr;
          r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
@@ -875,10 +876,11 @@ endtask
 
 // STIDX - Store indexed: mem[reg2 + immediate] = reg1
 task t_store_indexed;
+   input [31:0] i_offset;
    reg [23:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
-         effective_addr = r_reg_port_b[23:0] + w_var1[23:0];
+         effective_addr = r_reg_port_b[23:0] + i_offset[23:0];
          r_mem_addr <= effective_addr;
          r_mem_write_data <= r_reg_port_a;
          r_mem_write_DV <= 1'b1;

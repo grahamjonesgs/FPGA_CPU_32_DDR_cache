@@ -93,8 +93,8 @@ task t_opcode_select;
          //=====================================================================
          // Indexed memory access 0C0x-0CFx
          //=====================================================================
-         16'h0C??: t_load_indexed;                          // LDIDX Load indexed: first = mem[second + var1]
-         16'h0D??: t_store_indexed;                         // STIDX Store indexed: mem[second + var1] = first
+         16'h0C??: t_load_indexed(w_var1);                   // LDIDX Load indexed: first = mem[second + var1]
+         16'h0D??: t_store_indexed(w_var1);                  // STIDX Store indexed: mem[second + var1] = first
          16'h0E??: t_load_indexed_reg;                      // LDIDXR Load indexed: first = mem[second + third]
 
          //=====================================================================
