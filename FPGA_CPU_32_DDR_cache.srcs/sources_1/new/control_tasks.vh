@@ -63,13 +63,12 @@ task t_nop;
    end
 endtask
 
-// Stop and hang
+// Stop and hang - enters low-power halted state until reset
 // On completion
 // Do not change PC
-// Increment r_SM
 task t_halt;
    begin
-      r_SM <= OPCODE_REQUEST;
+      r_SM <= HALTED;
    end
 endtask
 

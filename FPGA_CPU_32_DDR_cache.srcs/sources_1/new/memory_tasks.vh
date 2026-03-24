@@ -8,7 +8,7 @@ task t_set_mem_from_value_reg;
       if (r_extra_clock == 0) begin
          r_mem_addr <= i_location[23:0];
          r_mem_write_data <= r_reg_port_b;
-         r_mem_write_DV = 1'b1;
+         r_mem_write_DV <= 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
         else
@@ -31,7 +31,7 @@ task t_set_mem_from_reg_reg;
       if (r_extra_clock == 0) begin
          r_mem_addr <= r_reg_port_b[23:0];
          r_mem_write_data <= r_reg_port_a;
-         r_mem_write_DV = 1'b1;
+         r_mem_write_DV <= 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
         else
@@ -54,7 +54,7 @@ task t_set_reg_from_mem_value;
    begin
       if (r_extra_clock == 0) begin
          r_mem_addr <= i_location[23:0];
-         r_mem_read_DV = 1'b1;
+         r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
         else
@@ -78,7 +78,7 @@ task t_set_reg_from_mem_reg;
    begin
       if (r_extra_clock == 0) begin
          r_mem_addr <= r_reg_port_b[23:0];
-         r_mem_read_DV = 1'b1;
+         r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
         else

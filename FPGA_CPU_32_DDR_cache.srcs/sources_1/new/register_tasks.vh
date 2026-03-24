@@ -155,7 +155,7 @@ task t_add_value;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} + {1'b0, i_value};
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
-      r_overflow_flag = (r_reg_port_b[31]&&i_value[31]&&!hold[31])||(!r_reg_port_b[31]&&!i_value[31]&&hold[31]) ? 1'b1 : 1'b0;
+      r_overflow_flag <= (r_reg_port_b[31]&&i_value[31]&&!hold[31])||(!r_reg_port_b[31]&&!i_value[31]&&hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
@@ -170,7 +170,7 @@ task t_minus_value;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} - {1'b0, i_value};
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
-      r_overflow_flag = (r_reg_port_b[31]&&!i_value[31]&&!hold[31])||(!r_reg_port_b[31]&&i_value[31]&&hold[31]) ? 1'b1 : 1'b0;
+      r_overflow_flag <= (r_reg_port_b[31]&&!i_value[31]&&!hold[31])||(!r_reg_port_b[31]&&i_value[31]&&hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
@@ -184,7 +184,7 @@ task t_dec_reg;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} - {33'b1};
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
-      r_overflow_flag = (r_reg_port_b[31] && !hold[31]) ? 1'b1 : 1'b0;
+      r_overflow_flag <= (r_reg_port_b[31] && !hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
@@ -198,7 +198,7 @@ task t_inc_reg;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} + 33'b1;
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
-      r_overflow_flag = (!r_reg_port_b[31] && hold[31]) ? 1'b1 : 1'b0;
+      r_overflow_flag <= (!r_reg_port_b[31] && hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
@@ -222,7 +222,7 @@ task t_minus_regs;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_a} - {1'b0, r_reg_port_b};
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
-      r_overflow_flag = (r_reg_port_a[31]&&!r_reg_port_b[31]&&!hold[31])||(!r_reg_port_a[31]&&r_reg_port_b[31]&&hold[31]) ? 1'b1 : 1'b0;
+      r_overflow_flag <= (r_reg_port_a[31]&&!r_reg_port_b[31]&&!hold[31])||(!r_reg_port_a[31]&&r_reg_port_b[31]&&hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_1;
       r_SM <= WRITEBACK;

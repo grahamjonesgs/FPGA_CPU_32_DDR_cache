@@ -75,6 +75,8 @@ localparam MULTIPLY_CALC      = 32'h0040_0000;  // DSP pipeline stage 1 (MREG)
 localparam MULTIPLY_PIPE      = 32'h0100_0000;  // DSP pipeline stage 2 (PREG)
 localparam MULTIPLY_WRITEBACK = 32'h0080_0000;  // Write result
 localparam WRITEBACK          = 32'h0200_0000;  // Register file writeback stage
+localparam HALTED             = 32'h0400_0000;  // CPU halted, waiting for reset
+localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
 
    // Error Codes
    localparam ERR_INV_OPCODE = 8'h1, ERR_INV_FSM_STATE = 8'h2, ERR_STACK = 8'h3;
@@ -111,7 +113,6 @@ localparam WRITEBACK          = 32'h0200_0000;  // Register file writeback stage
    reg [3:0] r_reg_2;
    reg r_extra_clock;
    reg r_hcf_message_sent;
-   reg [23:0] r_SP;
    reg [31:0] r_stack_limit;
    reg [31:0] r_start_wait_counter;
 
@@ -241,6 +242,8 @@ localparam WRITEBACK          = 32'h0200_0000;  // Register file writeback stage
    reg        r_div_sign_r;      // Sign of remainder
    reg        r_div_is_signed;
    reg [1:0]  r_div_op;          // 0=none, 1=div, 2=mod
+   reg [3:0]  r_div_dest_reg;    // Destination register for division result
+   reg        r_div_pc_inc;      // 0=PC+1, 1=PC+2
    
    localparam DIV_OP_NONE = 2'd0;
    localparam DIV_OP_DIV  = 2'd1;
@@ -461,7 +464,9 @@ rams_sp_nc rams_sp_nc1 (
       if (w_reset_H) begin
 
          r_SM <= NO_PROGRAM;
-        
+         for (i = 0; i < 16; i = i + 1)
+            r_register[i] <= 32'b0;
+
       end // if (w_reset_H)
     // else if(w_uart_rx_DV&w_uart_rx_value==8'h53&i_load_H) // Load start flag received and down button pressed
       else if(w_uart_rx_DV&w_uart_rx_value==8'h53) // Load start flag received ignore if button pressed
@@ -576,7 +581,6 @@ rams_sp_nc rams_sp_nc1 (
                            r_calc_checksum<=r_old_checksum+o_ram_write_addr[15:0]*2+o_ram_write_value[31:16]; //adding number byte to checksum for zeros
                            r_rec_checksum <= o_ram_write_value[15:0];
                            o_ram_write_value <= 32'h0;
-                           r_SP<=o_ram_write_addr-1; // Set stack pointer, currently stack size not checked
 
                         end // (r_load_byte_counter==0)
                             else
@@ -681,7 +685,7 @@ rams_sp_nc rams_sp_nc1 (
                   r_seven_seg_value1 <= 32'h22_22_22_22;
                   r_seven_seg_value2 <= 32'h22_22_22_22;
                end else begin
-                  r_start_wait_counter = r_start_wait_counter - 1;
+                  r_start_wait_counter <= r_start_wait_counter - 1;
                   r_seven_seg_value1 <= 32'h21_21_21_21;
                   r_seven_seg_value2 <= 32'h21_21_21_21;
                end
@@ -698,7 +702,7 @@ rams_sp_nc rams_sp_nc1 (
 
             OPCODE_REQUEST: begin
                r_cache_reset <= 1'b0;
-               o_led[0] = i_switch[0];  // Temp showing change enabled status.
+               o_led[0] <= i_switch[0];  // Temp showing cache enabled status.
 
                r_stack_write_flag <= 1'h0;
                r_stack_read_flag <= 1'h0;
@@ -706,21 +710,20 @@ rams_sp_nc rams_sp_nc1 (
                r_extra_clock <= 1'b0;
                if (r_stack_write_flag) begin
                   r_stack_write_flag <= 0;
-                  r_SP <= r_SP + 1;
                end
                if (i_stack_error) begin
                   r_SM <= HCF_1;  // Halt and catch fire error 1
                   r_error_code <= ERR_STACK;
                end else begin
                   if (r_timer_interrupt && r_interrupt_table[0] != 24'h0) begin
-                     r_stack_write_value = {8'b0, r_PC};  // push PC on stack
+                     r_stack_write_value <= {8'b0, r_PC};  // push PC on stack
                      r_stack_write_flag <= 1'b1;  // to move stack pointer
                      r_timer_interrupt <= 0;
                      r_PC <= r_interrupt_table[0];
                   end
 
                   r_mem_addr <= r_PC;
-                  r_mem_read_DV = 1'b1;
+                  r_mem_read_DV <= 1'b1;
                   r_SM <= OPCODE_FETCH;
                end
             end
@@ -734,11 +737,11 @@ rams_sp_nc rams_sp_nc1 (
             end
 
             OPCODE_FETCH2: begin
-               r_reg_2 = w_opcode[3:0];
-               r_reg_1 = w_opcode[7:4];
+               r_reg_2 <= w_opcode[3:0];
+               r_reg_1 <= w_opcode[7:4];
                r_SM <= VAR1_FETCH;
                r_mem_addr <= (r_PC + 1);
-               r_mem_read_DV = 1'b1;
+               r_mem_read_DV <= 1'b1;
             end
 
 
@@ -750,7 +753,7 @@ rams_sp_nc rams_sp_nc1 (
                   end else begin
                      r_SM <= OPCODE_EXECUTE;
                   end
-                  r_mem_read_DV = 1'b0;
+                  r_mem_read_DV <= 1'b0;
 
                end  // if ready asserted, else will loop until ready
             end
@@ -962,6 +965,49 @@ MULTIPLY_WRITEBACK: begin
 
     r_SM <= WRITEBACK;
 end
+
+            HALTED: begin
+               // CPU halted - do nothing until reset
+            end
+
+            DIVIDE_STEP: begin
+               // Shared division iteration - avoids re-evaluating opcode casez each cycle
+               if (r_div_counter < 6'd32) begin
+                  // Restoring division step
+                  if ({r_div_remainder[30:0], r_div_dividend[31]} >= r_div_divisor) begin
+                     r_div_remainder <= {r_div_remainder[30:0], r_div_dividend[31]} - r_div_divisor;
+                     r_div_quotient <= {r_div_quotient[30:0], 1'b1};
+                  end
+                  else begin
+                     r_div_remainder <= {r_div_remainder[30:0], r_div_dividend[31]};
+                     r_div_quotient <= {r_div_quotient[30:0], 1'b0};
+                  end
+                  r_div_dividend <= {r_div_dividend[30:0], 1'b0};
+                  r_div_counter <= r_div_counter + 1;
+               end
+               else begin
+                  // Division complete - write result based on op type
+                  if (r_div_op == DIV_OP_DIV) begin
+                     if (r_div_is_signed && r_div_sign_q)
+                        r_writeback_value <= ~r_div_quotient + 1;
+                     else
+                        r_writeback_value <= r_div_quotient;
+                     r_zero_flag <= (r_div_quotient == 0) ? 1'b1 : 1'b0;
+                  end
+                  else begin  // DIV_OP_MOD
+                     if (r_div_is_signed && r_div_sign_r)
+                        r_writeback_value <= ~r_div_remainder + 1;
+                     else
+                        r_writeback_value <= r_div_remainder;
+                     r_zero_flag <= (r_div_remainder == 0) ? 1'b1 : 1'b0;
+                  end
+                  r_writeback_reg <= r_div_dest_reg;
+                  r_overflow_flag <= 1'b0;
+                  r_div_op <= DIV_OP_NONE;
+                  r_PC <= r_PC + (r_div_pc_inc ? 2 : 1);
+                  r_SM <= WRITEBACK;
+               end
+            end
 
             WRITEBACK: begin
                r_register[r_writeback_reg] <= r_writeback_value;

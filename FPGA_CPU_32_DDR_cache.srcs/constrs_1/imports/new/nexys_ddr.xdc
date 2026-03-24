@@ -255,3 +255,26 @@ set_property CONFIG_VOLTAGE 3.3 [current_design]
 set_property CFGBVS VCCO [current_design]
 
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
+
+## I/O Timing Constraints
+## These slow interfaces (LEDs, switches, UART, LCD, 7-seg) have no real
+## timing requirement, so use set_false_path to exclude them from timing analysis.
+## This eliminates the TIMING-18 warnings without over-constraining the paths.
+
+set_false_path -from [get_ports {i_switch[*]}]
+set_false_path -from [get_ports i_uart_rx]
+set_false_path -from [get_ports i_load_H]
+set_false_path -from [get_ports CPU_RESETN]
+set_false_path -from [get_ports i_SPI_LCD_MISO]
+
+set_false_path -to [get_ports {o_led[*]}]
+set_false_path -to [get_ports {o_LED_RGB_1[*]}]
+set_false_path -to [get_ports {o_LED_RGB_2[*]}]
+set_false_path -to [get_ports {o_LED_cathode[*]}]
+set_false_path -to [get_ports {o_Anode_Activate[*]}]
+set_false_path -to [get_ports o_uart_tx]
+set_false_path -to [get_ports o_SPI_LCD_MOSI]
+set_false_path -to [get_ports o_SPI_LCD_Clk]
+set_false_path -to [get_ports o_SPI_LCD_CS_n]
+set_false_path -to [get_ports o_LCD_DC]
+set_false_path -to [get_ports o_LCD_reset_n]

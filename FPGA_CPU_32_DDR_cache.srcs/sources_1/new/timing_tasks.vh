@@ -1,4 +1,4 @@
-// Delay execution input value *2^19 ticks
+// Delay execution input value *2^13 ticks
 // On completion
 // Increment PC by 2
 // Increment r_SM_msg
@@ -29,7 +29,7 @@ task t_delay;
     end
 endtask
 
-// Will delay execution input value *2^19 ticks from reg value
+// Will delay execution input value *2^13 ticks from reg value
 // On completion
 // Increment PC by 1
 // Increment r_SM_msg

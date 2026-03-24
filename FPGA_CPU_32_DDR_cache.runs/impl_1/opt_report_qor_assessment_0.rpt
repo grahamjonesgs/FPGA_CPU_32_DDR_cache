@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date         : Mon Mar 23 15:32:11 2026
+| Date         : Tue Mar 24 13:26:55 2026
 | Host         : Garuda running 64-bit Garuda Linux Broadwing
 | Command      : report_qor_assessment -max_paths 100 -file opt_report_qor_assessment_0.rpt -pb opt_report_qor_assessment_0.pb
 | Design       : FPGA_CPU_32_bits_cache
@@ -33,20 +33,18 @@ Table of Contents
 2. QoR Assessment Details
 -------------------------
 
-+----------------------------------------+-----------+--------+------+-----------+-------+--------+
-| Name                                   | Threshold | Actual | Used | Available | Score | Status |
-+----------------------------------------+-----------+--------+------+-----------+-------+--------+
-| Utilization                            |           |        |      |           |   5.0 |        |
-| *  Max LUT Combined                    |     20.00 |  24.42 | 2439 |      9989 |       | REVIEW |
-| Netlist                                |           |        |      |           |       |     OK |
-| *  High Fanout Nets driven by FFs/LUTs |         5 |   4.50 |   -  |        -  |       | REVIEW |
-| Clocking                               |           |        |      |           |   3.0 |        |
-|    Hold Skew                           |     0.400 |  1.960 |   -  |        -  |       | REVIEW |
-| Congestion                             |           |        |      |           |   3.0 |        |
-|    Predicted Congestion Score          |         5 |      3 |      |           |   3.0 | REVIEW |
-| Timing                                 |           |        |      |           |   3.0 |     OK |
-| Constraints                            |           |        |      |           |   5.0 |     OK |
-+----------------------------------------+-----------+--------+------+-----------+-------+--------+
++----------------------+-----------+--------+------+-----------+-------+--------+
+| Name                 | Threshold | Actual | Used | Available | Score | Status |
++----------------------+-----------+--------+------+-----------+-------+--------+
+| Utilization          |           |        |      |           |   5.0 |        |
+| *  Max LUT Combined  |     20.00 |  22.86 | 2347 |     10267 |       | REVIEW |
+| Netlist              |           |        |      |           |       |     OK |
+| Clocking             |           |        |      |           |   3.0 |        |
+|    Hold Skew         |     0.400 |  1.960 |   -  |        -  |       | REVIEW |
+| Congestion           |           |        |      |           |   5.0 |     OK |
+| Timing               |           |        |      |           |   3.0 |     OK |
+| Constraints          |           |        |      |           |   5.0 |     OK |
++----------------------+-----------+--------+------+-----------+-------+--------+
 * Sub-categories with prefix * do not impact score
 
 
@@ -57,7 +55,6 @@ Table of Contents
 | ID        | Description                      | Criticality | Number of Violations |
 +-----------+----------------------------------+-------------+----------------------+
 | TIMING-10 | Missing property on synchronizer | Warning     | 1                    |
-| TIMING-18 | Missing input or output delay    | Warning     | 62                   |
 +-----------+----------------------------------+-------------+----------------------+
 
 

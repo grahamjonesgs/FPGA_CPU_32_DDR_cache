@@ -488,336 +488,175 @@ endtask
 // These use the division state machine defined in the main module
 //=============================================================================
 
-// DIVRR - Signed divide
+// DIVRR - Signed divide (initialization only, iteration in DIVIDE_STEP)
 task t_div_regs_hw;
    reg [31:0] abs_dividend;
    reg [31:0] abs_divisor;
-   reg [31:0] temp_remainder;
    begin
-      if (r_div_op == DIV_OP_NONE) begin
-         // Initialize division
-         if (r_reg_port_b == 32'b0) begin
-            // Divide by zero
-            r_writeback_value <= 32'hFFFFFFFF;
-            r_writeback_reg <= r_reg_1;
-            r_overflow_flag <= 1'b1;
-            r_SM <= WRITEBACK;
-            r_PC <= r_PC + 1;
-         end
-         else begin
-            abs_dividend = r_reg_port_a[31] ? (~r_reg_port_a + 1) : r_reg_port_a;
-            abs_divisor = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
-            r_div_dividend <= abs_dividend;
-            r_div_divisor <= abs_divisor;
-            r_div_quotient <= 32'b0;
-            r_div_remainder <= 32'b0;
-            r_div_counter <= 6'd0;
-            r_div_sign_q <= r_reg_port_a[31] ^ r_reg_port_b[31];
-            r_div_sign_r <= r_reg_port_a[31];
-            r_div_is_signed <= 1'b1;
-            r_div_op <= DIV_OP_DIV;
-         end
-      end
-      else if (r_div_counter < 6'd32) begin
-         // Restoring division step
-         temp_remainder = {r_div_remainder[30:0], r_div_dividend[31]};
-         r_div_dividend <= {r_div_dividend[30:0], 1'b0};
-         
-         if (temp_remainder >= r_div_divisor) begin
-            r_div_remainder <= temp_remainder - r_div_divisor;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b1};
-         end
-         else begin
-            r_div_remainder <= temp_remainder;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b0};
-         end
-         r_div_counter <= r_div_counter + 1;
-      end
-      else begin
-         // Complete
-         if (r_div_sign_q) begin
-            r_writeback_value <= ~r_div_quotient + 1;
-         end
-         else begin
-            r_writeback_value <= r_div_quotient;
-         end
+      if (r_reg_port_b == 32'b0) begin
+         // Divide by zero
+         r_writeback_value <= 32'hFFFFFFFF;
          r_writeback_reg <= r_reg_1;
-         r_zero_flag <= (r_div_quotient == 0) ? 1'b1 : 1'b0;
-         r_overflow_flag <= 1'b0;
-         r_div_op <= DIV_OP_NONE;
+         r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 1;
+      end
+      else begin
+         abs_dividend = r_reg_port_a[31] ? (~r_reg_port_a + 1) : r_reg_port_a;
+         abs_divisor = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
+         r_div_dividend <= abs_dividend;
+         r_div_divisor <= abs_divisor;
+         r_div_quotient <= 32'b0;
+         r_div_remainder <= 32'b0;
+         r_div_counter <= 6'd0;
+         r_div_sign_q <= r_reg_port_a[31] ^ r_reg_port_b[31];
+         r_div_sign_r <= r_reg_port_a[31];
+         r_div_is_signed <= 1'b1;
+         r_div_op <= DIV_OP_DIV;
+         r_div_dest_reg <= r_reg_1;
+         r_div_pc_inc <= 1'b0;  // PC += 1
+         r_SM <= DIVIDE_STEP;
       end
    end
 endtask
 
-// DIVURR - Unsigned divide
+// DIVURR - Unsigned divide (initialization only, iteration in DIVIDE_STEP)
 task t_divu_regs_hw;
-   reg [31:0] temp_remainder;
    begin
-      if (r_div_op == DIV_OP_NONE) begin
-         if (r_reg_port_b == 32'b0) begin
-            r_writeback_value <= 32'hFFFFFFFF;
-            r_writeback_reg <= r_reg_1;
-            r_overflow_flag <= 1'b1;
-            r_SM <= WRITEBACK;
-            r_PC <= r_PC + 1;
-         end
-         else begin
-            r_div_dividend <= r_reg_port_a;
-            r_div_divisor <= r_reg_port_b;
-            r_div_quotient <= 32'b0;
-            r_div_remainder <= 32'b0;
-            r_div_counter <= 6'd0;
-            r_div_is_signed <= 1'b0;
-            r_div_op <= DIV_OP_DIV;
-         end
-      end
-      else if (r_div_counter < 6'd32) begin
-         temp_remainder = {r_div_remainder[30:0], r_div_dividend[31]};
-         r_div_dividend <= {r_div_dividend[30:0], 1'b0};
-         
-         if (temp_remainder >= r_div_divisor) begin
-            r_div_remainder <= temp_remainder - r_div_divisor;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b1};
-         end
-         else begin
-            r_div_remainder <= temp_remainder;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b0};
-         end
-         r_div_counter <= r_div_counter + 1;
-      end
-      else begin
-         r_writeback_value <= r_div_quotient;
+      if (r_reg_port_b == 32'b0) begin
+         r_writeback_value <= 32'hFFFFFFFF;
          r_writeback_reg <= r_reg_1;
-         r_zero_flag <= (r_div_quotient == 0) ? 1'b1 : 1'b0;
-         r_overflow_flag <= 1'b0;
-         r_div_op <= DIV_OP_NONE;
+         r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 1;
+      end
+      else begin
+         r_div_dividend <= r_reg_port_a;
+         r_div_divisor <= r_reg_port_b;
+         r_div_quotient <= 32'b0;
+         r_div_remainder <= 32'b0;
+         r_div_counter <= 6'd0;
+         r_div_is_signed <= 1'b0;
+         r_div_op <= DIV_OP_DIV;
+         r_div_dest_reg <= r_reg_1;
+         r_div_pc_inc <= 1'b0;  // PC += 1
+         r_SM <= DIVIDE_STEP;
       end
    end
 endtask
 
-// MODRR - Signed modulo
+// MODRR - Signed modulo (initialization only, iteration in DIVIDE_STEP)
 task t_mod_regs_hw;
    reg [31:0] abs_dividend;
    reg [31:0] abs_divisor;
-   reg [31:0] temp_remainder;
    begin
-      if (r_div_op == DIV_OP_NONE) begin
-         if (r_reg_port_b == 32'b0) begin
-            r_writeback_value <= r_reg_port_a;  // Return dividend
-            r_writeback_reg <= r_reg_1;
-            r_overflow_flag <= 1'b1;
-            r_SM <= WRITEBACK;
-            r_PC <= r_PC + 1;
-         end
-         else begin
-            abs_dividend = r_reg_port_a[31] ? (~r_reg_port_a + 1) : r_reg_port_a;
-            abs_divisor = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
-            r_div_dividend <= abs_dividend;
-            r_div_divisor <= abs_divisor;
-            r_div_quotient <= 32'b0;
-            r_div_remainder <= 32'b0;
-            r_div_counter <= 6'd0;
-            r_div_sign_r <= r_reg_port_a[31];  // Remainder sign follows dividend
-            r_div_is_signed <= 1'b1;
-            r_div_op <= DIV_OP_MOD;
-         end
-      end
-      else if (r_div_counter < 6'd32) begin
-         temp_remainder = {r_div_remainder[30:0], r_div_dividend[31]};
-         r_div_dividend <= {r_div_dividend[30:0], 1'b0};
-         
-         if (temp_remainder >= r_div_divisor) begin
-            r_div_remainder <= temp_remainder - r_div_divisor;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b1};
-         end
-         else begin
-            r_div_remainder <= temp_remainder;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b0};
-         end
-         r_div_counter <= r_div_counter + 1;
-      end
-      else begin
-         if (r_div_sign_r) begin
-            r_writeback_value <= ~r_div_remainder + 1;
-         end
-         else begin
-            r_writeback_value <= r_div_remainder;
-         end
+      if (r_reg_port_b == 32'b0) begin
+         r_writeback_value <= r_reg_port_a;  // Return dividend
          r_writeback_reg <= r_reg_1;
-         r_zero_flag <= (r_div_remainder == 0) ? 1'b1 : 1'b0;
-         r_overflow_flag <= 1'b0;
-         r_div_op <= DIV_OP_NONE;
+         r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 1;
+      end
+      else begin
+         abs_dividend = r_reg_port_a[31] ? (~r_reg_port_a + 1) : r_reg_port_a;
+         abs_divisor = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
+         r_div_dividend <= abs_dividend;
+         r_div_divisor <= abs_divisor;
+         r_div_quotient <= 32'b0;
+         r_div_remainder <= 32'b0;
+         r_div_counter <= 6'd0;
+         r_div_sign_r <= r_reg_port_a[31];  // Remainder sign follows dividend
+         r_div_is_signed <= 1'b1;
+         r_div_op <= DIV_OP_MOD;
+         r_div_dest_reg <= r_reg_1;
+         r_div_pc_inc <= 1'b0;  // PC += 1
+         r_SM <= DIVIDE_STEP;
       end
    end
 endtask
 
-// MODURR - Unsigned modulo
+// MODURR - Unsigned modulo (initialization only, iteration in DIVIDE_STEP)
 task t_modu_regs_hw;
-   reg [31:0] temp_remainder;
    begin
-      if (r_div_op == DIV_OP_NONE) begin
-         if (r_reg_port_b == 32'b0) begin
-            r_writeback_value <= r_reg_port_a;
-            r_writeback_reg <= r_reg_1;
-            r_overflow_flag <= 1'b1;
-            r_SM <= WRITEBACK;
-            r_PC <= r_PC + 1;
-         end
-         else begin
-            r_div_dividend <= r_reg_port_a;
-            r_div_divisor <= r_reg_port_b;
-            r_div_quotient <= 32'b0;
-            r_div_remainder <= 32'b0;
-            r_div_counter <= 6'd0;
-            r_div_is_signed <= 1'b0;
-            r_div_op <= DIV_OP_MOD;
-         end
-      end
-      else if (r_div_counter < 6'd32) begin
-         temp_remainder = {r_div_remainder[30:0], r_div_dividend[31]};
-         r_div_dividend <= {r_div_dividend[30:0], 1'b0};
-         
-         if (temp_remainder >= r_div_divisor) begin
-            r_div_remainder <= temp_remainder - r_div_divisor;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b1};
-         end
-         else begin
-            r_div_remainder <= temp_remainder;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b0};
-         end
-         r_div_counter <= r_div_counter + 1;
-      end
-      else begin
-         r_writeback_value <= r_div_remainder;
+      if (r_reg_port_b == 32'b0) begin
+         r_writeback_value <= r_reg_port_a;
          r_writeback_reg <= r_reg_1;
-         r_zero_flag <= (r_div_remainder == 0) ? 1'b1 : 1'b0;
-         r_overflow_flag <= 1'b0;
-         r_div_op <= DIV_OP_NONE;
+         r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 1;
+      end
+      else begin
+         r_div_dividend <= r_reg_port_a;
+         r_div_divisor <= r_reg_port_b;
+         r_div_quotient <= 32'b0;
+         r_div_remainder <= 32'b0;
+         r_div_counter <= 6'd0;
+         r_div_is_signed <= 1'b0;
+         r_div_op <= DIV_OP_MOD;
+         r_div_dest_reg <= r_reg_1;
+         r_div_pc_inc <= 1'b0;  // PC += 1
+         r_SM <= DIVIDE_STEP;
       end
    end
 endtask
 
-// DIVV - Divide by immediate value (signed)
+// DIVV - Divide by immediate value (signed, initialization only)
 task t_div_value_hw;
    input [31:0] i_value;
    reg [31:0] abs_dividend;
    reg [31:0] abs_divisor;
-   reg [31:0] temp_remainder;
    begin
-      if (r_div_op == DIV_OP_NONE) begin
-         if (i_value == 32'b0) begin
-            r_writeback_value <= 32'hFFFFFFFF;
-            r_writeback_reg <= r_reg_2;
-            r_overflow_flag <= 1'b1;
-            r_SM <= WRITEBACK;
-            r_PC <= r_PC + 2;
-         end
-         else begin
-            abs_dividend = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
-            abs_divisor = i_value[31] ? (~i_value + 1) : i_value;
-            r_div_dividend <= abs_dividend;
-            r_div_divisor <= abs_divisor;
-            r_div_quotient <= 32'b0;
-            r_div_remainder <= 32'b0;
-            r_div_counter <= 6'd0;
-            r_div_sign_q <= r_reg_port_b[31] ^ i_value[31];
-            r_div_is_signed <= 1'b1;
-            r_div_op <= DIV_OP_DIV;
-         end
-      end
-      else if (r_div_counter < 6'd32) begin
-         temp_remainder = {r_div_remainder[30:0], r_div_dividend[31]};
-         r_div_dividend <= {r_div_dividend[30:0], 1'b0};
-         
-         if (temp_remainder >= r_div_divisor) begin
-            r_div_remainder <= temp_remainder - r_div_divisor;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b1};
-         end
-         else begin
-            r_div_remainder <= temp_remainder;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b0};
-         end
-         r_div_counter <= r_div_counter + 1;
-      end
-      else begin
-         if (r_div_sign_q) begin
-            r_writeback_value <= ~r_div_quotient + 1;
-         end
-         else begin
-            r_writeback_value <= r_div_quotient;
-         end
+      if (i_value == 32'b0) begin
+         r_writeback_value <= 32'hFFFFFFFF;
          r_writeback_reg <= r_reg_2;
-         r_zero_flag <= (r_div_quotient == 0) ? 1'b1 : 1'b0;
-         r_overflow_flag <= 1'b0;
-         r_div_op <= DIV_OP_NONE;
+         r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 2;
+      end
+      else begin
+         abs_dividend = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
+         abs_divisor = i_value[31] ? (~i_value + 1) : i_value;
+         r_div_dividend <= abs_dividend;
+         r_div_divisor <= abs_divisor;
+         r_div_quotient <= 32'b0;
+         r_div_remainder <= 32'b0;
+         r_div_counter <= 6'd0;
+         r_div_sign_q <= r_reg_port_b[31] ^ i_value[31];
+         r_div_is_signed <= 1'b1;
+         r_div_op <= DIV_OP_DIV;
+         r_div_dest_reg <= r_reg_2;
+         r_div_pc_inc <= 1'b1;  // PC += 2
+         r_SM <= DIVIDE_STEP;
       end
    end
 endtask
 
-// MODV - Modulo by immediate value (signed)
+// MODV - Modulo by immediate value (signed, initialization only)
 task t_mod_value_hw;
    input [31:0] i_value;
    reg [31:0] abs_dividend;
    reg [31:0] abs_divisor;
-   reg [31:0] temp_remainder;
    begin
-      if (r_div_op == DIV_OP_NONE) begin
-         if (i_value == 32'b0) begin
-            // Return dividend on mod by zero
-            r_overflow_flag <= 1'b1;
-            r_SM <= OPCODE_REQUEST;
-            r_PC <= r_PC + 2;
-         end
-         else begin
-            abs_dividend = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
-            abs_divisor = i_value[31] ? (~i_value + 1) : i_value;
-            r_div_dividend <= abs_dividend;
-            r_div_divisor <= abs_divisor;
-            r_div_quotient <= 32'b0;
-            r_div_remainder <= 32'b0;
-            r_div_counter <= 6'd0;
-            r_div_sign_r <= r_reg_port_b[31];
-            r_div_is_signed <= 1'b1;
-            r_div_op <= DIV_OP_MOD;
-         end
-      end
-      else if (r_div_counter < 6'd32) begin
-         temp_remainder = {r_div_remainder[30:0], r_div_dividend[31]};
-         r_div_dividend <= {r_div_dividend[30:0], 1'b0};
-         
-         if (temp_remainder >= r_div_divisor) begin
-            r_div_remainder <= temp_remainder - r_div_divisor;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b1};
-         end
-         else begin
-            r_div_remainder <= temp_remainder;
-            r_div_quotient <= {r_div_quotient[30:0], 1'b0};
-         end
-         r_div_counter <= r_div_counter + 1;
+      if (i_value == 32'b0) begin
+         // Return dividend on mod by zero
+         r_overflow_flag <= 1'b1;
+         r_SM <= OPCODE_REQUEST;
+         r_PC <= r_PC + 2;
       end
       else begin
-         if (r_div_sign_r) begin
-            r_writeback_value <= ~r_div_remainder + 1;
-         end
-         else begin
-            r_writeback_value <= r_div_remainder;
-         end
-         r_writeback_reg <= r_reg_2;
-         r_zero_flag <= (r_div_remainder == 0) ? 1'b1 : 1'b0;
-         r_overflow_flag <= 1'b0;
-         r_div_op <= DIV_OP_NONE;
-         r_SM <= WRITEBACK;
-         r_PC <= r_PC + 2;
+         abs_dividend = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
+         abs_divisor = i_value[31] ? (~i_value + 1) : i_value;
+         r_div_dividend <= abs_dividend;
+         r_div_divisor <= abs_divisor;
+         r_div_quotient <= 32'b0;
+         r_div_remainder <= 32'b0;
+         r_div_counter <= 6'd0;
+         r_div_sign_r <= r_reg_port_b[31];
+         r_div_is_signed <= 1'b1;
+         r_div_op <= DIV_OP_MOD;
+         r_div_dest_reg <= r_reg_2;
+         r_div_pc_inc <= 1'b1;  // PC += 2
+         r_SM <= DIVIDE_STEP;
       end
    end
 endtask

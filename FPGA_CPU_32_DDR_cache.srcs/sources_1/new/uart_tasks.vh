@@ -229,7 +229,7 @@ task t_tx_newline;
         if (!w_sending_msg) begin
             r_msg[7:0] <= 8'h0A;
             r_msg[15:8] <= 8'h0D;
-            r_msg_length <= 8'hf2;
+            r_msg_length <= 8'h2;
             r_msg_send_DV <= 1'b1;
             r_SM <= UART_DELAY;
             r_PC <= r_PC + 1;
