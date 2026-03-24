@@ -897,17 +897,14 @@ task t_store_indexed;
 endtask
 
 // LDIDXR - Load indexed with register offset: reg1 = mem[reg2 + reg3]
-// Opcode format: 0EXY where X=dest, Y=base (third reg from var1 low nibble)
-// NOTE: This needs a third register read - see note below
+// Opcode format: 0EXY where X=dest, Y=base, var1[3:0] = offset register
 task t_load_indexed_reg;
+   input [31:0] i_var1;
    reg [23:0] effective_addr;
    reg [3:0] offset_reg;
    begin
       if (r_extra_clock == 0) begin
-         offset_reg = w_var1[3:0];
-         // NOTE: r_register[offset_reg] is NOT through read ports
-         // This could be a timing issue if offset_reg varies
-         // Consider adding a third read port or using a pipeline stage
+         offset_reg = i_var1[3:0];
          effective_addr = r_reg_port_b[23:0] + r_register[offset_reg][23:0];
          r_mem_addr <= effective_addr;
          r_mem_read_DV <= 1'b1;
@@ -926,14 +923,14 @@ task t_load_indexed_reg;
 endtask
 
 // STIDXR - Store indexed with register offset: mem[reg2 + reg3] = reg1
-// NOTE: Same issue as LDIDXR - needs third register read
+// Opcode format: 73XY where X=source, Y=base, var1[3:0] = offset register
 task t_store_indexed_reg;
+   input [31:0] i_var1;
    reg [23:0] effective_addr;
    reg [3:0] offset_reg;
    begin
       if (r_extra_clock == 0) begin
-         offset_reg = w_var1[3:0];
-         // NOTE: r_register[offset_reg] is NOT through read ports
+         offset_reg = i_var1[3:0];
          effective_addr = r_reg_port_b[23:0] + r_register[offset_reg][23:0];
          r_mem_addr <= effective_addr;
          r_mem_write_data <= r_reg_port_a;

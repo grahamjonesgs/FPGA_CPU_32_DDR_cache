@@ -56,7 +56,6 @@ if {$::dispatch::connected} {
 }
 
 OPTRACE "synth_1" START { ROLLUP_AUTO }
-set_param chipscope.maxJobs 1
 set_param xicom.use_bs_reader 1
 set_param general.usePosixSpawnForFork 1
 set_msg_config  -string {{HW Target shutdown}}  -suppress 
