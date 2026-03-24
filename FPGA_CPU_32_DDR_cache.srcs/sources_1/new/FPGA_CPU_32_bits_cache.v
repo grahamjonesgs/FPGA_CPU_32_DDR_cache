@@ -1011,6 +1011,7 @@ end
 
             WRITEBACK: begin
                r_register[r_writeback_reg] <= r_writeback_value;
+               r_stack_read_flag <= 1'h0;
                r_SM <= OPCODE_REQUEST;
             end
 

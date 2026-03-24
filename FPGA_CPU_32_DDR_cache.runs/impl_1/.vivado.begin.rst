@@ -3,3 +3,18 @@
     <Process Command="vivado" Owner="graham" Host="Garuda" Pid="3937" HostCore="4" HostMemory="16359580">
     </Process>
 </ProcessHandle>
+<?xml version="1.0"?>
+<ProcessHandle Version="1" Minor="0">
+    <Process Command="vivado" Owner="graham" Host="Garuda" Pid="15643" HostCore="4" HostMemory="16359580">
+    </Process>
+</ProcessHandle>
+<?xml version="1.0"?>
+<ProcessHandle Version="1" Minor="0">
+    <Process Command="vivado" Owner="graham" Host="Garuda" Pid="16039" HostCore="4" HostMemory="16359580">
+    </Process>
+</ProcessHandle>
+<?xml version="1.0"?>
+<ProcessHandle Version="1" Minor="0">
+    <Process Command="vivado" Owner="graham" Host="Garuda" Pid="23490" HostCore="4" HostMemory="16359580">
+    </Process>
+</ProcessHandle>
