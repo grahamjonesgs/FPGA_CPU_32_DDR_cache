@@ -29,8 +29,8 @@ task t_opcode_select;
          16'h07??: t_minus_regs;                            // MINUSRR Minus registers, result in first register
          
          16'h080?: t_set_reg(w_var1);                       // SETR Set register to a value
-         16'h081?: t_add_value(w_var1);                     // ADDV Increment register by a value
-         16'h082?: t_minus_value(w_var1);                   // MINUSV Decrement register by a value
+         16'h081?: t_add_value(w_var1);                     // ADDV Add value to register
+         16'h082?: t_minus_value(w_var1);                   // MINUSV Subtract value from register
          16'h083?: t_compare_reg_value(w_var1);             // CMPRV Compare register to value, sets equal/less/sign flags
          16'h084?: t_inc_reg;                               // INCR Increment register
          16'h085?: t_dec_reg;                               // DECR Decrement register
@@ -145,7 +145,7 @@ task t_opcode_select;
          16'h1012: t_ret;                                   // RET Return from call
          16'h1013: t_cond_jump(w_var1, r_sign_flag);        // JMPS Jump if sign (negative)
          16'h1014: t_cond_jump(w_var1, !r_sign_flag);       // JMPNS Jump if not sign (positive)
-         // New signed comparison jumps
+         // Signed comparison jumps (use after CMPLTRR/CMPRR etc.)
          16'h1015: t_cond_jump(w_var1, r_less_flag);        // JMPLT Jump if less-than (signed)
          16'h1016: t_cond_jump(w_var1, r_less_flag | r_equal_flag); // JMPLE Jump if less-or-equal
          16'h1017: t_cond_jump(w_var1, !r_less_flag & !r_equal_flag); // JMPGT Jump if greater-than
@@ -186,7 +186,7 @@ task t_opcode_select;
          16'h4020: t_stack_push_value(w_var1);              // PUSHV Push value onto stack
 
          //=====================================================================
-         // Communication 5xxxx
+         // Communication 5xxx
          //=====================================================================
          16'h5000: t_test_message;                          // TESTMSG send test UART message
          16'h5001: t_tx_newline;                            // NEWLINE send UART newline
@@ -198,15 +198,15 @@ task t_opcode_select;
          16'h504?: t_tx_string_at_reg;                      // TXSTRMEMR send string at memory location from register
 
          //=====================================================================
-         // CPU Setting 6xxxx
+         // CPU Setting 6xxx
          //=====================================================================
          16'h60??: t_set_interrupt_regs;                    // INTSETRR Set interrupt from registers
 
          //=====================================================================
          // Memory actions 7xxx
          //=====================================================================
-         16'h70??: t_set_mem_from_reg_reg;                  // MEMSETRR Set memory from register to register
-         16'h71??: t_set_reg_from_mem_reg;                  // MEMREADRR Set register from memory at register
+         16'h70??: t_set_mem_from_reg_reg;                  // MEMSETRR mem[second] = first
+         16'h71??: t_set_reg_from_mem_reg;                  // MEMREADRR first = mem[second]
          16'h720?: t_set_mem_from_value_reg(w_var1);        // MEMSETR Set memory from value
          16'h721?: t_set_reg_from_mem_value(w_var1);        // MEMREADR Set register from memory at value
          16'h73??: t_store_indexed_reg(w_var1);              // STIDXR Store indexed: mem[second + reg[var1]] = first
@@ -218,7 +218,7 @@ task t_opcode_select;
          16'hF010: t_nop;                                   // NOP No operation
          16'hF011: t_halt;                                  // HALT Freeze and hang
          16'hF012: t_reset;                                 // RESET Reset
-         16'hF013: t_delay(w_var1);                         // DELAYV Set by value 
+         16'hF013: t_delay(w_var1);                         // DELAYV Delay by value
 
          default: begin
             r_SM <= HCF_1;  // Halt and catch fire error 1
