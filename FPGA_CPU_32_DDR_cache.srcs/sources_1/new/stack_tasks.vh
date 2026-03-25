@@ -8,7 +8,7 @@ task t_stack_push_value;
       r_stack_write_value <= i_value;
       r_stack_write_flag <= 1'h1;  // to move stack pointer 1
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 2;
    end
 endtask
 

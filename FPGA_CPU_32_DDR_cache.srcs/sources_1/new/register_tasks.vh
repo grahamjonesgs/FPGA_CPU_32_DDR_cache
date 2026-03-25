@@ -155,6 +155,7 @@ task t_add_value;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} + {1'b0, i_value};
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[31];
       r_overflow_flag <= (r_reg_port_b[31]&&i_value[31]&&!hold[31])||(!r_reg_port_b[31]&&!i_value[31]&&hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
@@ -170,6 +171,7 @@ task t_minus_value;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} - {1'b0, i_value};
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[31];
       r_overflow_flag <= (r_reg_port_b[31]&&!i_value[31]&&!hold[31])||(!r_reg_port_b[31]&&i_value[31]&&hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
@@ -184,6 +186,7 @@ task t_dec_reg;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} - {33'b1};
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[31];
       r_overflow_flag <= (r_reg_port_b[31] && !hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
@@ -198,6 +201,7 @@ task t_inc_reg;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} + 33'b1;
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[31];
       r_overflow_flag <= (!r_reg_port_b[31] && hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
@@ -222,6 +226,7 @@ task t_minus_regs;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_a} - {1'b0, r_reg_port_b};
       r_zero_flag <= hold == 0 ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[31];
       r_overflow_flag <= (r_reg_port_a[31]&&!r_reg_port_b[31]&&!hold[31])||(!r_reg_port_a[31]&&r_reg_port_b[31]&&hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_1;
@@ -272,8 +277,10 @@ endtask
 
 // Right shift arithmetical reg
 task t_right_shift_a_reg;
+   reg signed [31:0] signed_val;
    begin
-      r_writeback_value <= r_reg_port_b >>> 1;
+      signed_val = r_reg_port_b;
+      r_writeback_value <= signed_val >>> 1;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
@@ -298,6 +305,7 @@ task t_add_regs;
       hold = {1'b0, r_reg_port_a} + {1'b0, r_reg_port_b};
       r_carry_flag <= hold[32];
       r_zero_flag <= (hold[31:0] == 0) ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[31];
       r_overflow_flag <= (r_reg_port_a[31] == r_reg_port_b[31]) &&
                          (hold[31] != r_reg_port_a[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold[31:0];
