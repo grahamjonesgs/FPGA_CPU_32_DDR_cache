@@ -213,8 +213,14 @@ endtask
 // Compare register to value (no register write)
 task t_compare_reg_value;
    input [31:0] i_value;
+   reg signed [31:0] s_reg;
+   reg signed [31:0] s_val;
    begin
-      r_equal_flag <= r_reg_port_b == i_value ? 1'b1 : 1'b0;
+      s_reg = r_reg_port_b;
+      s_val = i_value;
+      r_equal_flag <= (r_reg_port_b == i_value) ? 1'b1 : 1'b0;
+      r_less_flag <= (s_reg < s_val) ? 1'b1 : 1'b0;
+      r_sign_flag <= (s_reg - s_val) < 0 ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 2;
    end
@@ -289,8 +295,14 @@ endtask
 
 // Compare registers (no register write)
 task t_compare_regs;
+   reg signed [31:0] s_a;
+   reg signed [31:0] s_b;
    begin
-      r_equal_flag <= r_reg_port_a == r_reg_port_b ? 1'b1 : 1'b0;
+      s_a = r_reg_port_a;
+      s_b = r_reg_port_b;
+      r_equal_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
+      r_less_flag <= (s_a < s_b) ? 1'b1 : 1'b0;
+      r_sign_flag <= (s_a - s_b) < 0 ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
    end

@@ -100,14 +100,15 @@ task t_rotate_right_n;
 endtask
 
 // ROLRR - Rotate left by amount in second register
+// r_reg_port_b = r_reg_2 (value), r_reg_port_a = r_reg_2+1 (count)
 task t_rotate_left_reg;
    reg [4:0] count;
    reg [31:0] result;
    begin
-      count = r_reg_port_b[4:0];
-      result = (r_reg_port_a << count) | (r_reg_port_a >> (32 - count));
+      count = r_reg_port_a[4:0];
+      result = (r_reg_port_b << count) | (r_reg_port_b >> (32 - count));
       r_writeback_value <= result;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_2;
       r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
@@ -115,14 +116,15 @@ task t_rotate_left_reg;
 endtask
 
 // RORRR - Rotate right by amount in second register
+// r_reg_port_b = r_reg_2 (value), r_reg_port_a = r_reg_2+1 (count)
 task t_rotate_right_reg;
    reg [4:0] count;
    reg [31:0] result;
    begin
-      count = r_reg_port_b[4:0];
-      result = (r_reg_port_a >> count) | (r_reg_port_a << (32 - count));
+      count = r_reg_port_a[4:0];
+      result = (r_reg_port_b >> count) | (r_reg_port_b << (32 - count));
       r_writeback_value <= result;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_2;
       r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
@@ -347,7 +349,7 @@ task t_cmp_gt_regs;
    begin
       s_reg1 = r_reg_port_b;
       s_reg2 = r_reg_port_a;
-      r_less_flag <= (s_reg1 > s_reg2) ? 1'b1 : 1'b0;  // Reusing less_flag as "condition true"
+      r_less_flag <= (s_reg1 < s_reg2) ? 1'b1 : 1'b0;  // Set actual less-than for JMPGT/JMPGE
       r_equal_flag <= (s_reg1 == s_reg2) ? 1'b1 : 1'b0;
       r_zero_flag <= (s_reg1 == s_reg2) ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
@@ -363,7 +365,7 @@ task t_cmp_ge_regs;
    begin
       s_reg1 = r_reg_port_b;
       s_reg2 = r_reg_port_a;
-      r_less_flag <= (s_reg1 >= s_reg2) ? 1'b1 : 1'b0;
+      r_less_flag <= (s_reg1 < s_reg2) ? 1'b1 : 1'b0;  // Set actual less-than for JMPGT/JMPGE
       r_equal_flag <= (s_reg1 == s_reg2) ? 1'b1 : 1'b0;
       r_zero_flag <= (s_reg1 == s_reg2) ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
@@ -399,7 +401,7 @@ endtask
 // r_reg_port_b = r_reg_2, r_reg_port_a = r_reg_2+1
 task t_cmp_ugt_regs;
    begin
-      r_carry_flag <= (r_reg_port_b > r_reg_port_a) ? 1'b1 : 1'b0;
+      r_carry_flag <= (r_reg_port_b < r_reg_port_a) ? 1'b1 : 1'b0;  // actual less-than
       r_equal_flag <= (r_reg_port_b == r_reg_port_a) ? 1'b1 : 1'b0;
       r_zero_flag <= (r_reg_port_b == r_reg_port_a) ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
@@ -411,7 +413,7 @@ endtask
 // r_reg_port_b = r_reg_2, r_reg_port_a = r_reg_2+1
 task t_cmp_uge_regs;
    begin
-      r_carry_flag <= (r_reg_port_b >= r_reg_port_a) ? 1'b1 : 1'b0;
+      r_carry_flag <= (r_reg_port_b < r_reg_port_a) ? 1'b1 : 1'b0;  // actual less-than
       r_equal_flag <= (r_reg_port_b == r_reg_port_a) ? 1'b1 : 1'b0;
       r_zero_flag <= (r_reg_port_b == r_reg_port_a) ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;

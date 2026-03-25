@@ -28,3 +28,8 @@
     <Process Command="vivado" Owner="graham" Host="Garuda" Pid="91377" HostCore="4" HostMemory="16359548">
     </Process>
 </ProcessHandle>
+<?xml version="1.0"?>
+<ProcessHandle Version="1" Minor="0">
+    <Process Command="vivado" Owner="graham" Host="Garuda" Pid="107302" HostCore="4" HostMemory="16359548">
+    </Process>
+</ProcessHandle>

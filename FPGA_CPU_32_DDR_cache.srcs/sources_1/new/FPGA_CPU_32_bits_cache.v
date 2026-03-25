@@ -742,10 +742,11 @@ rams_sp_nc rams_sp_nc1 (
                // For opcodes where sub-op is in [7:4], redirect r_reg_1
                // to reg_2+1 to get the paired register via r_reg_port_a
                // 0B0?-0B7? = mul/div/mod RR, 098?-09B? = min/max RR
-               // 0F0?-0F7? = compare RR (CMPLTRR, CMPLERR, etc.)
+               // 0F0?-0F7? = compare RR, 0FE?-0FF? = rotate by register
                if ((w_opcode[15:8] == 8'h0B && w_opcode[7] == 1'b0) ||
                    (w_opcode[15:8] == 8'h09 && w_opcode[7] == 1'b1) ||
-                   (w_opcode[15:8] == 8'h0F && w_opcode[7] == 1'b0))
+                   (w_opcode[15:8] == 8'h0F && w_opcode[7] == 1'b0) ||
+                   (w_opcode[15:8] == 8'h0F && w_opcode[7:5] == 3'b111))
                   r_reg_1 <= w_opcode[3:0] + 4'd1;
                else
                   r_reg_1 <= w_opcode[7:4];
