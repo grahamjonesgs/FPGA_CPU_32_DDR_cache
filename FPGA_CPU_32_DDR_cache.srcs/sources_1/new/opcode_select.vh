@@ -20,18 +20,18 @@ task t_opcode_select;
          //=====================================================================
          // Register control 0xxx
          //=====================================================================
-         16'h01??: t_copy_regs;                             // COPY Copy registers, first to second
+         16'h01??: t_copy_regs;                             // COPY Copy second register into first
          16'h02??: t_and_regs;                              // AND And registers, result in first register
          16'h03??: t_or_regs;                               // OR Or registers, result in first register
          16'h04??: t_xor_regs;                              // XOR XOR registers, result in first register
-         16'h05??: t_compare_regs;                          // CMPRR Compare registers, result in equal flag
+         16'h05??: t_compare_regs;                          // CMPRR Compare registers, sets equal/less/sign flags
          16'h06??: t_add_regs;                              // ADDRR Add registers, result in first register
          16'h07??: t_minus_regs;                            // MINUSRR Minus registers, result in first register
          
          16'h080?: t_set_reg(w_var1);                       // SETR Set register to a value
          16'h081?: t_add_value(w_var1);                     // ADDV Increment register by a value
          16'h082?: t_minus_value(w_var1);                   // MINUSV Decrement register by a value
-         16'h083?: t_compare_reg_value(w_var1);             // CMPRV Compare register to value, result in equal flag
+         16'h083?: t_compare_reg_value(w_var1);             // CMPRV Compare register to value, sets equal/less/sign flags
          16'h084?: t_inc_reg;                               // INCR Increment register
          16'h085?: t_dec_reg;                               // DECR Decrement register
          16'h086?: t_and_reg_value(w_var1);                 // ANDV AND register with value, result in register
@@ -52,10 +52,10 @@ task t_opcode_select;
          16'h095?: t_zero_extend_byte;                      // ZEXTB Zero extend byte to 32 bits
          16'h096?: t_zero_extend_half;                      // ZEXTH Zero extend halfword to 32 bits
          16'h097?: t_byte_swap;                             // BSWAP Byte swap (endian conversion)
-         16'h098?: t_min_regs;                              // MINRR Minimum of two registers (signed)
-         16'h099?: t_max_regs;                              // MAXRR Maximum of two registers (signed)
-         16'h09A?: t_minu_regs;                             // MINURR Minimum unsigned
-         16'h09B?: t_maxu_regs;                             // MAXURR Maximum unsigned
+         16'h098?: t_min_regs;                              // MINRR Minimum of reg and reg+1 (signed), result in reg
+         16'h099?: t_max_regs;                              // MAXRR Maximum of reg and reg+1 (signed), result in reg
+         16'h09A?: t_minu_regs;                             // MINURR Minimum of reg and reg+1 (unsigned), result in reg
+         16'h09B?: t_maxu_regs;                             // MAXURR Maximum of reg and reg+1 (unsigned), result in reg
 
          //=====================================================================
          // Bit manipulation 0A0x-0AFx
@@ -78,14 +78,14 @@ task t_opcode_select;
          //=====================================================================
          // Hardware multiply/divide 0B0x-0BFx (using DSP)
          //=====================================================================
-         16'h0B0?: t_mul_regs_hw;                           // MULRR Multiply registers (signed), result in first
-         16'h0B1?: t_mulu_regs_hw;                          // MULURR Multiply registers (unsigned)
-         16'h0B2?: t_mulh_regs_hw;                          // MULHRR Multiply high word (signed)
-         16'h0B3?: t_mulhu_regs_hw;                         // MULHURR Multiply high word (unsigned)
-         16'h0B4?: t_div_regs_hw;                           // DIVRR Divide registers (signed)
-         16'h0B5?: t_divu_regs_hw;                          // DIVURR Divide registers (unsigned)
-         16'h0B6?: t_mod_regs_hw;                           // MODRR Modulo registers (signed)
-         16'h0B7?: t_modu_regs_hw;                          // MODURR Modulo registers (unsigned)
+         16'h0B0?: t_mul_regs_hw;                           // MULRR Multiply reg by reg+1 (signed), result in reg
+         16'h0B1?: t_mulu_regs_hw;                          // MULURR Multiply reg by reg+1 (unsigned), result in reg
+         16'h0B2?: t_mulh_regs_hw;                          // MULHRR Multiply high word reg * reg+1 (signed), result in reg
+         16'h0B3?: t_mulhu_regs_hw;                         // MULHURR Multiply high word reg * reg+1 (unsigned), result in reg
+         16'h0B4?: t_div_regs_hw;                           // DIVRR Divide reg / reg+1 (signed), result in reg
+         16'h0B5?: t_divu_regs_hw;                          // DIVURR Divide reg / reg+1 (unsigned), result in reg
+         16'h0B6?: t_mod_regs_hw;                           // MODRR Modulo reg % reg+1 (signed), result in reg
+         16'h0B7?: t_modu_regs_hw;                          // MODURR Modulo reg % reg+1 (unsigned), result in reg
          16'h0B8?: t_mul_value_hw(w_var1);                  // MULV Multiply register by value (signed)
          16'h0B9?: t_div_value_hw(w_var1);                  // DIVV Divide register by value (signed)
          16'h0BA?: t_mod_value_hw(w_var1);                  // MODV Modulo register by value (signed)
@@ -98,16 +98,16 @@ task t_opcode_select;
          16'h0E??: t_load_indexed_reg(w_var1);               // LDIDXR Load indexed: first = mem[second + reg[var1]]
 
          //=====================================================================
-         // Comparison operations 0F0x-0F7x
+         // Comparison operations 0F0x-0F7x (reg vs reg+1 pair)
          //=====================================================================
-         16'h0F0?: t_cmp_lt_regs;                           // CMPLTRR Compare signed less-than
-         16'h0F1?: t_cmp_le_regs;                           // CMPLERR Compare signed less-or-equal
-         16'h0F2?: t_cmp_gt_regs;                           // CMPGTRR Compare signed greater-than
-         16'h0F3?: t_cmp_ge_regs;                           // CMPGERR Compare signed greater-or-equal
-         16'h0F4?: t_cmp_ult_regs;                          // CMPULTRR Compare unsigned less-than
-         16'h0F5?: t_cmp_ule_regs;                          // CMPULERR Compare unsigned less-or-equal
-         16'h0F6?: t_cmp_ugt_regs;                          // CMPUGTRR Compare unsigned greater-than
-         16'h0F7?: t_cmp_uge_regs;                          // CMPUGERR Compare unsigned greater-or-equal
+         16'h0F0?: t_cmp_lt_regs;                           // CMPLTRR Compare reg < reg+1 (signed), sets less/equal flags
+         16'h0F1?: t_cmp_le_regs;                           // CMPLERR Compare reg <= reg+1 (signed), sets less/equal flags
+         16'h0F2?: t_cmp_gt_regs;                           // CMPGTRR Compare reg > reg+1 (signed), sets less/equal flags
+         16'h0F3?: t_cmp_ge_regs;                           // CMPGERR Compare reg >= reg+1 (signed), sets less/equal flags
+         16'h0F4?: t_cmp_ult_regs;                          // CMPULTRR Compare reg < reg+1 (unsigned), sets carry/equal flags
+         16'h0F5?: t_cmp_ule_regs;                          // CMPULERR Compare reg <= reg+1 (unsigned), sets carry/equal flags
+         16'h0F6?: t_cmp_ugt_regs;                          // CMPUGTRR Compare reg > reg+1 (unsigned), sets carry/equal flags
+         16'h0F7?: t_cmp_uge_regs;                          // CMPUGERR Compare reg >= reg+1 (unsigned), sets carry/equal flags
          
          //=====================================================================
          // Rotate operations 0F8x-0FFx
@@ -118,8 +118,8 @@ task t_opcode_select;
          16'h0FB?: t_rotate_right_carry;                    // RORCR Rotate right through carry
          16'h0FC?: t_rotate_left_n(w_var1);                 // ROLV Rotate left by N bits
          16'h0FD?: t_rotate_right_n(w_var1);                // RORV Rotate right by N bits
-         16'h0FE?: t_rotate_left_reg;                       // ROLRR Rotate left by register amount
-         16'h0FF?: t_rotate_right_reg;                      // RORRR Rotate right by register amount
+         16'h0FE?: t_rotate_left_reg;                       // ROLRR Rotate reg left by reg+1 bits
+         16'h0FF?: t_rotate_right_reg;                      // RORRR Rotate reg right by reg+1 bits
 
          //=====================================================================
          // Flow control 1xxx
