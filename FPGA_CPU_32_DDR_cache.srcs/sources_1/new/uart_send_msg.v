@@ -16,6 +16,7 @@ module uart_send_msg (
     reg     [7:0] i_msg_count;
     reg     [2:0] r_SM_Main;
     reg     [7:0] r_msg          [255:0];
+    reg     [7:0] r_msg_length;            // Latched copy of i_msg_length
 
     // for lower module
     reg           r_UART_Tx_DV;
@@ -49,6 +50,7 @@ module uart_send_msg (
                     r_SM_Main <= s_TX_MSG;
                     r_UART_Tx_DV <= 1'b1;
                     o_sending_msg <= 'b1;
+                    r_msg_length <= i_msg_length;  // Latch length at start
                     r_UART_Tx_Byte[7:0] <= i_msg_flat[7:0];  // Set first byte directly
                     for (i = 0; i <= 255; i = i + 1) begin
                         r_msg[i][7:0] <= i_msg_flat[8*i+:8];
@@ -59,7 +61,7 @@ module uart_send_msg (
             s_TX_MSG: begin
                 if (w_Tx_Done == 1'b1) begin
                     i_msg_count = i_msg_count + 1;
-                    if (i_msg_count > i_msg_length - 1) begin
+                    if (i_msg_count > r_msg_length - 1) begin
                         i_msg_count = 0;
                         r_SM_Main <= s_CLEANUP;
                         r_UART_Tx_DV <= 1'b0;

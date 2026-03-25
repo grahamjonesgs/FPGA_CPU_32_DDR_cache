@@ -853,10 +853,11 @@ endtask
 
 // LDIDX - Load indexed: reg1 = mem[reg2 + immediate]
 task t_load_indexed;
+   input [31:0] i_offset;
    reg [23:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
-         effective_addr = r_reg_port_b[23:0] + w_var1[23:0];
+         effective_addr = r_reg_port_b[23:0] + i_offset[23:0];
          r_mem_addr <= effective_addr;
          r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
@@ -875,10 +876,11 @@ endtask
 
 // STIDX - Store indexed: mem[reg2 + immediate] = reg1
 task t_store_indexed;
+   input [31:0] i_offset;
    reg [23:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
-         effective_addr = r_reg_port_b[23:0] + w_var1[23:0];
+         effective_addr = r_reg_port_b[23:0] + i_offset[23:0];
          r_mem_addr <= effective_addr;
          r_mem_write_data <= r_reg_port_a;
          r_mem_write_DV <= 1'b1;
@@ -895,24 +897,32 @@ task t_store_indexed;
 endtask
 
 // LDIDXR - Load indexed with register offset: reg1 = mem[reg2 + reg3]
-// Opcode format: 0EXY where X=dest, Y=base (third reg from var1 low nibble)
-// NOTE: This needs a third register read - see note below
+// Opcode format: 0EXY where X=dest, Y=base, var1[3:0] = offset register
+// Uses 3-stage pipeline to read offset register through existing read port
+// (avoids direct r_register[n] mux which causes timing violations)
 task t_load_indexed_reg;
+   input [31:0] i_var1;
    reg [23:0] effective_addr;
-   reg [3:0] offset_reg;
    begin
       if (r_extra_clock == 0) begin
-         offset_reg = w_var1[3:0];
-         // NOTE: r_register[offset_reg] is NOT through read ports
-         // This could be a timing issue if offset_reg varies
-         // Consider adding a third read port or using a pipeline stage
-         effective_addr = r_reg_port_b[23:0] + r_register[offset_reg][23:0];
-         r_mem_addr <= effective_addr;
-         r_mem_read_DV <= 1'b1;
-         r_extra_clock <= 1'b1;
+         // Stage 0: Save base address, redirect port B to offset register
+         r_idx_base_addr <= r_reg_port_b[23:0];
+         r_reg_2 <= i_var1[3:0];
+         r_extra_clock <= 2'd1;
+      end
+      else if (r_extra_clock == 1) begin
+         // Stage 1: Wait for read port to update with offset register value
+         r_extra_clock <= 2'd2;
       end
       else begin
-         if (w_mem_ready) begin
+         if (!r_mem_read_DV) begin
+            // Stage 2a: Compute effective address and start memory read
+            effective_addr = r_idx_base_addr + r_reg_port_b[23:0];
+            r_mem_addr <= effective_addr;
+            r_mem_read_DV <= 1'b1;
+         end
+         else if (w_mem_ready) begin
+            // Stage 2b: Memory ready, capture result
             r_writeback_value <= w_mem_read_data;
             r_writeback_reg <= r_reg_1;
             r_SM <= WRITEBACK;
@@ -924,22 +934,32 @@ task t_load_indexed_reg;
 endtask
 
 // STIDXR - Store indexed with register offset: mem[reg2 + reg3] = reg1
-// NOTE: Same issue as LDIDXR - needs third register read
+// Opcode format: 73XY where X=source, Y=base, var1[3:0] = offset register
+// Uses 3-stage pipeline to read offset register through existing read port
 task t_store_indexed_reg;
+   input [31:0] i_var1;
    reg [23:0] effective_addr;
-   reg [3:0] offset_reg;
    begin
       if (r_extra_clock == 0) begin
-         offset_reg = w_var1[3:0];
-         // NOTE: r_register[offset_reg] is NOT through read ports
-         effective_addr = r_reg_port_b[23:0] + r_register[offset_reg][23:0];
-         r_mem_addr <= effective_addr;
+         // Stage 0: Save base address and store data, redirect port B to offset register
+         r_idx_base_addr <= r_reg_port_b[23:0];
          r_mem_write_data <= r_reg_port_a;
-         r_mem_write_DV <= 1'b1;
-         r_extra_clock <= 1'b1;
+         r_reg_2 <= i_var1[3:0];
+         r_extra_clock <= 2'd1;
+      end
+      else if (r_extra_clock == 1) begin
+         // Stage 1: Wait for read port to update with offset register value
+         r_extra_clock <= 2'd2;
       end
       else begin
-         if (w_mem_ready) begin
+         if (!r_mem_write_DV) begin
+            // Stage 2a: Compute effective address and start memory write
+            effective_addr = r_idx_base_addr + r_reg_port_b[23:0];
+            r_mem_addr <= effective_addr;
+            r_mem_write_DV <= 1'b1;
+         end
+         else if (w_mem_ready) begin
+            // Stage 2b: Memory write complete
             r_SM <= OPCODE_REQUEST;
             r_mem_write_DV <= 1'b0;
             r_PC <= r_PC + 2;

@@ -331,7 +331,7 @@ OPTRACE "read constraints: write_bitstream" END { }
   catch { write_mem_info -force -no_partial_mmi FPGA_CPU_32_bits_cache.mmi }
 OPTRACE "write_bitstream setup" END { }
 OPTRACE "write_bitstream" START { }
-  write_bitstream -force FPGA_CPU_32_bits_cache.bit -bin_file
+  write_bitstream -force FPGA_CPU_32_bits_cache.bit 
 OPTRACE "write_bitstream" END { }
 OPTRACE "write_bitstream misc" START { }
 OPTRACE "read constraints: write_bitstream_post" START { }

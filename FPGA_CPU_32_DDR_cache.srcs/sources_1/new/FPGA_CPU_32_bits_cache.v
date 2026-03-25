@@ -111,7 +111,8 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    wire [31:0] w_mem;
    reg [3:0] r_reg_1;
    reg [3:0] r_reg_2;
-   reg r_extra_clock;
+   reg [1:0] r_extra_clock;
+   reg [23:0] r_idx_base_addr;  // Saved base address for indexed register ops
    reg r_hcf_message_sent;
    reg [31:0] r_stack_limit;
    reg [31:0] r_start_wait_counter;
@@ -707,7 +708,7 @@ rams_sp_nc rams_sp_nc1 (
                r_stack_write_flag <= 1'h0;
                r_stack_read_flag <= 1'h0;
                r_msg_send_DV <= 1'b0;
-               r_extra_clock <= 1'b0;
+               r_extra_clock <= 2'b0;
                if (r_stack_write_flag) begin
                   r_stack_write_flag <= 0;
                end
