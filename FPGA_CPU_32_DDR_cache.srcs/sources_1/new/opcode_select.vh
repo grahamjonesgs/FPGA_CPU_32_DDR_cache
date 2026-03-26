@@ -52,10 +52,7 @@ task t_opcode_select;
          16'h095?: t_zero_extend_byte;                      // ZEXTB Zero extend byte to 32 bits
          16'h096?: t_zero_extend_half;                      // ZEXTH Zero extend halfword to 32 bits
          16'h097?: t_byte_swap;                             // BSWAP Byte swap (endian conversion)
-         16'h098?: t_min_regs;                              // MINRR Minimum of reg and reg+1 (signed), result in reg
-         16'h099?: t_max_regs;                              // MAXRR Maximum of reg and reg+1 (signed), result in reg
-         16'h09A?: t_minu_regs;                             // MINURR Minimum of reg and reg+1 (unsigned), result in reg
-         16'h09B?: t_maxu_regs;                             // MAXURR Maximum of reg and reg+1 (unsigned), result in reg
+         // MINRR/MAXRR moved to A0??-A3?? for full two-register encoding
 
          //=====================================================================
          // Bit manipulation 0A0x-0AFx
@@ -76,16 +73,9 @@ task t_opcode_select;
          16'h0AD?: t_deposit_bits(w_var1);                  // BDEP Deposit bit field
          
          //=====================================================================
-         // Hardware multiply/divide 0B0x-0BFx (using DSP)
+         // Hardware multiply/divide by value (using DSP)
          //=====================================================================
-         16'h0B0?: t_mul_regs_hw;                           // MULRR Multiply reg by reg+1 (signed), result in reg
-         16'h0B1?: t_mulu_regs_hw;                          // MULURR Multiply reg by reg+1 (unsigned), result in reg
-         16'h0B2?: t_mulh_regs_hw;                          // MULHRR Multiply high word reg * reg+1 (signed), result in reg
-         16'h0B3?: t_mulhu_regs_hw;                         // MULHURR Multiply high word reg * reg+1 (unsigned), result in reg
-         16'h0B4?: t_div_regs_hw;                           // DIVRR Divide reg / reg+1 (signed), result in reg
-         16'h0B5?: t_divu_regs_hw;                          // DIVURR Divide reg / reg+1 (unsigned), result in reg
-         16'h0B6?: t_mod_regs_hw;                           // MODRR Modulo reg % reg+1 (signed), result in reg
-         16'h0B7?: t_modu_regs_hw;                          // MODURR Modulo reg % reg+1 (unsigned), result in reg
+         // MULRR/DIVRR etc. moved to 80??-87?? for full two-register encoding
          16'h0B8?: t_mul_value_hw(w_var1);                  // MULV Multiply register by value (signed)
          16'h0B9?: t_div_value_hw(w_var1);                  // DIVV Divide register by value (signed)
          16'h0BA?: t_mod_value_hw(w_var1);                  // MODV Modulo register by value (signed)
@@ -97,20 +87,10 @@ task t_opcode_select;
          16'h0D??: t_store_indexed(w_var1);                  // STIDX Store indexed: mem[second + var1] = first
          16'h0E??: t_load_indexed_reg(w_var1);               // LDIDXR Load indexed: first = mem[second + reg[var1]]
 
+         // CMPLTRR etc. moved to 90??-97?? for full two-register encoding
+
          //=====================================================================
-         // Comparison operations 0F0x-0F7x (reg vs reg+1 pair)
-         //=====================================================================
-         16'h0F0?: t_cmp_lt_regs;                           // CMPLTRR Compare reg < reg+1 (signed), sets less/equal flags
-         16'h0F1?: t_cmp_le_regs;                           // CMPLERR Compare reg <= reg+1 (signed), sets less/equal flags
-         16'h0F2?: t_cmp_gt_regs;                           // CMPGTRR Compare reg > reg+1 (signed), sets less/equal flags
-         16'h0F3?: t_cmp_ge_regs;                           // CMPGERR Compare reg >= reg+1 (signed), sets less/equal flags
-         16'h0F4?: t_cmp_ult_regs;                          // CMPULTRR Compare reg < reg+1 (unsigned), sets carry/equal flags
-         16'h0F5?: t_cmp_ule_regs;                          // CMPULERR Compare reg <= reg+1 (unsigned), sets carry/equal flags
-         16'h0F6?: t_cmp_ugt_regs;                          // CMPUGTRR Compare reg > reg+1 (unsigned), sets carry/equal flags
-         16'h0F7?: t_cmp_uge_regs;                          // CMPUGERR Compare reg >= reg+1 (unsigned), sets carry/equal flags
-         
-         //=====================================================================
-         // Rotate operations 0F8x-0FFx
+         // Rotate operations 0F8x-0FDx
          //=====================================================================
          16'h0F8?: t_rotate_left;                           // ROLR Rotate left by 1
          16'h0F9?: t_rotate_right;                          // RORR Rotate right by 1
@@ -118,8 +98,7 @@ task t_opcode_select;
          16'h0FB?: t_rotate_right_carry;                    // RORCR Rotate right through carry
          16'h0FC?: t_rotate_left_n(w_var1);                 // ROLV Rotate left by N bits
          16'h0FD?: t_rotate_right_n(w_var1);                // RORV Rotate right by N bits
-         16'h0FE?: t_rotate_left_reg;                       // ROLRR Rotate reg left by reg+1 bits
-         16'h0FF?: t_rotate_right_reg;                      // RORRR Rotate reg right by reg+1 bits
+         // ROLRR/RORRR moved to B0??-B1?? for full two-register encoding
 
          //=====================================================================
          // Flow control 1xxx
@@ -210,6 +189,44 @@ task t_opcode_select;
          16'h720?: t_set_mem_from_value_reg(w_var1);        // MEMSETR Set memory from value
          16'h721?: t_set_reg_from_mem_value(w_var1);        // MEMREADR Set register from memory at value
          16'h73??: t_store_indexed_reg(w_var1);              // STIDXR Store indexed: mem[second + reg[var1]] = first
+
+         //=====================================================================
+         // Hardware multiply/divide registers 8xxx (using DSP)
+         //=====================================================================
+         16'h80??: t_mul_regs_hw;                           // MULRR Multiply first * second (signed), result in first
+         16'h81??: t_mulu_regs_hw;                          // MULURR Multiply first * second (unsigned), result in first
+         16'h82??: t_mulh_regs_hw;                          // MULHRR Multiply high word first * second (signed), result in first
+         16'h83??: t_mulhu_regs_hw;                         // MULHURR Multiply high word first * second (unsigned), result in first
+         16'h84??: t_div_regs_hw;                           // DIVRR Divide first / second (signed), result in first
+         16'h85??: t_divu_regs_hw;                          // DIVURR Divide first / second (unsigned), result in first
+         16'h86??: t_mod_regs_hw;                           // MODRR Modulo first % second (signed), result in first
+         16'h87??: t_modu_regs_hw;                          // MODURR Modulo first % second (unsigned), result in first
+
+         //=====================================================================
+         // Extended comparison 9xxx (two registers)
+         //=====================================================================
+         16'h90??: t_cmp_lt_regs;                           // CMPLTRR Compare first < second (signed), sets less/equal flags
+         16'h91??: t_cmp_le_regs;                           // CMPLERR Compare first <= second (signed), sets less/equal flags
+         16'h92??: t_cmp_gt_regs;                           // CMPGTRR Compare first > second (signed), sets less/equal flags
+         16'h93??: t_cmp_ge_regs;                           // CMPGERR Compare first >= second (signed), sets less/equal flags
+         16'h94??: t_cmp_ult_regs;                          // CMPULTRR Compare first < second (unsigned), sets carry/equal flags
+         16'h95??: t_cmp_ule_regs;                          // CMPULERR Compare first <= second (unsigned), sets carry/equal flags
+         16'h96??: t_cmp_ugt_regs;                          // CMPUGTRR Compare first > second (unsigned), sets carry/equal flags
+         16'h97??: t_cmp_uge_regs;                          // CMPUGERR Compare first >= second (unsigned), sets carry/equal flags
+
+         //=====================================================================
+         // Min/Max Axxx (two registers)
+         //=====================================================================
+         16'hA0??: t_min_regs;                              // MINRR Minimum of first and second (signed), result in first
+         16'hA1??: t_max_regs;                              // MAXRR Maximum of first and second (signed), result in first
+         16'hA2??: t_minu_regs;                             // MINURR Minimum of first and second (unsigned), result in first
+         16'hA3??: t_maxu_regs;                             // MAXURR Maximum of first and second (unsigned), result in first
+
+         //=====================================================================
+         // Rotate by register Bxxx (two registers)
+         //=====================================================================
+         16'hB0??: t_rotate_left_reg;                       // ROLRR Rotate first left by second bits
+         16'hB1??: t_rotate_right_reg;                      // RORRR Rotate first right by second bits
 
          //=====================================================================
          // Other Fxxx

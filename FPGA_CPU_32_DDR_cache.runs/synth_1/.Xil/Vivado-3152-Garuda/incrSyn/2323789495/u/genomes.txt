@@ -1,0 +1,3 @@
+FPGA_CPU_32_bits_cache__GB0
+FPGA_CPU_32_bits_cache__GB1
+FPGA_CPU_32_bits_cache__GB2
