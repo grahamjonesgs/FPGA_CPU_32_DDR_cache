@@ -1,0 +1,50 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
+| Date         : Thu Mar 26 09:01:58 2026
+| Host         : Garuda running 64-bit Garuda Linux Broadwing
+| Command      : report_qor_suggestions -max_paths 100 -file route_report_qor_suggestions_0.rpt -pb route_report_qor_suggestions_0.pb
+| Design       : FPGA_CPU_32_bits_cache
+| Device       : xc7a100t
+| Design State : Routed
+| ML Models    : v2020.1.0
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Report QoR Suggestions
+
+Table of Contents
+-----------------
+1. QoR Suggestions Report Summary
+2. ML Strategies
+3. QoR Suggestions - Utilization
+
+1. QoR Suggestions Report Summary
+---------------------------------
+
++---------------+-------------+-----------+--------------+----------------+-----------+-------------+----------------------+------------------------------------------------------------------------------------------+-------------+
+|      Name     |      Id     |   Status  | Generated At | Applicable For | Automatic |    Scope    | Incremental Friendly |                                        Description                                       |    Source   |
++---------------+-------------+-----------+--------------+----------------+-----------+-------------+----------------------+------------------------------------------------------------------------------------------+-------------+
+| RQS_UTIL-12-1 | RQS_UTIL-12 | Generated | route_design | place_design   | Yes       | GLOBALSCOPE | No                   | Remapping small SRL to Registers in the design.                                          | Current Run |
++---------------+-------------+-----------+--------------+----------------+-----------+-------------+----------------------+------------------------------------------------------------------------------------------+-------------+
+* No QoR suggestions are provided when the fully routed design is assessed to easily meet timing.
+
+
+2. ML Strategies
+----------------
+
++---+----+---------+---------+
+| # | Id | Command | Options |
++---+----+---------+---------+
+* The design is not compatible for suggesting strategy, as it was not run using vivado implementation default or vivado implementation explore strategy.
+
+
+3. QoR Suggestions - Utilization
+--------------------------------
+
++---------------+-----------------------------------+-----------+--------+
+|      Name     |            Description            | Hierarchy | Module |
++---------------+-----------------------------------+-----------+--------+
+| RQS_UTIL-12-1 | Remapping small SRL to Registers. | GLOBAL    | GLOBAL |
++---------------+-----------------------------------+-----------+--------+
+
+

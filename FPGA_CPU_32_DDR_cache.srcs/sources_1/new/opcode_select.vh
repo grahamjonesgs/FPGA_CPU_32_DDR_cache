@@ -61,10 +61,7 @@ task t_opcode_select;
          16'h0A1?: t_bit_clear_value(w_var1);               // BCLR Clear bit N in register
          16'h0A2?: t_bit_toggle_value(w_var1);              // BTGL Toggle bit N in register
          16'h0A3?: t_bit_test_value(w_var1);                // BTST Test bit N, result in zero flag
-         16'h0A4?: t_bit_set_reg;                           // BSETRR Set bit (bit number in second reg)
-         16'h0A5?: t_bit_clear_reg;                         // BCLRRR Clear bit (bit number in second reg)
-         16'h0A6?: t_bit_toggle_reg;                        // BTGLRR Toggle bit (bit number in second reg)
-         16'h0A7?: t_bit_test_reg;                          // BTSTRR Test bit (bit number in second reg)
+         // BSETRR/BCLRRR/BTGLRR/BTSTRR moved to B2??-B5?? for full two-register encoding
          16'h0A8?: t_popcnt;                                // POPCNT Population count (count 1 bits)
          16'h0A9?: t_clz;                                   // CLZ Count leading zeros
          16'h0AA?: t_ctz;                                   // CTZ Count trailing zeros
@@ -227,6 +224,14 @@ task t_opcode_select;
          //=====================================================================
          16'hB0??: t_rotate_left_reg;                       // ROLRR Rotate first left by second bits
          16'hB1??: t_rotate_right_reg;                      // RORRR Rotate first right by second bits
+
+         //=====================================================================
+         // Bit manipulation by register Bxxx (two registers)
+         //=====================================================================
+         16'hB2??: t_bit_set_reg;                           // BSETRR Set bit in first (bit number in second)
+         16'hB3??: t_bit_clear_reg;                         // BCLRRR Clear bit in first (bit number in second)
+         16'hB4??: t_bit_toggle_reg;                        // BTGLRR Toggle bit in first (bit number in second)
+         16'hB5??: t_bit_test_reg;                          // BTSTRR Test bit in first (bit number in second), result in zero flag
 
          //=====================================================================
          // Other Fxxx
