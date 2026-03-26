@@ -21,7 +21,7 @@ task t_rotate_left;
       r_writeback_value <= {r_reg_port_b[30:0], r_reg_port_b[31]};
       r_writeback_reg <= r_reg_2;
       r_carry_flag <= r_reg_port_b[31];
-      r_zero_flag <= (r_reg_port_b == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -33,7 +33,7 @@ task t_rotate_right;
       r_writeback_value <= {r_reg_port_b[0], r_reg_port_b[31:1]};
       r_writeback_reg <= r_reg_2;
       r_carry_flag <= r_reg_port_b[0];
-      r_zero_flag <= (r_reg_port_b == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -47,7 +47,7 @@ task t_rotate_left_carry;
       r_writeback_value <= {temp[31:0]};
       r_writeback_reg <= r_reg_2;
       r_carry_flag <= temp[32];
-      r_zero_flag <= (temp[31:0] == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -61,7 +61,7 @@ task t_rotate_right_carry;
       r_writeback_value <= temp[32:1];
       r_writeback_reg <= r_reg_2;
       r_carry_flag <= temp[0];
-      r_zero_flag <= (temp[32:1] == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -77,7 +77,7 @@ task t_rotate_left_n;
       result = (r_reg_port_b << count) | (r_reg_port_b >> (32 - count));
       r_writeback_value <= result;
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 2;
    end
@@ -93,7 +93,7 @@ task t_rotate_right_n;
       result = (r_reg_port_b >> count) | (r_reg_port_b << (32 - count));
       r_writeback_value <= result;
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 2;
    end
@@ -108,7 +108,7 @@ task t_rotate_left_reg;
       result = (r_reg_port_a << count) | (r_reg_port_a >> (32 - count));
       r_writeback_value <= result;
       r_writeback_reg <= r_reg_1;
-      r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -123,7 +123,7 @@ task t_rotate_right_reg;
       result = (r_reg_port_a >> count) | (r_reg_port_a << (32 - count));
       r_writeback_value <= result;
       r_writeback_reg <= r_reg_1;
-      r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -223,7 +223,7 @@ task t_popcnt;
    begin
       r_writeback_value <= {26'b0, popcount(r_reg_port_b)};
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (r_reg_port_b == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -274,7 +274,7 @@ task t_extract_bits;
       result = (r_reg_port_b >> start_pos) & mask;
       r_writeback_value <= result;
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 2;
    end
@@ -677,7 +677,7 @@ task t_abs_reg;
          r_writeback_value <= r_reg_port_b;
       end
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (r_reg_port_b == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -688,7 +688,7 @@ task t_sign_extend_byte;
    begin
       r_writeback_value <= {{24{r_reg_port_b[7]}}, r_reg_port_b[7:0]};
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (r_reg_port_b[7:0] == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_sign_flag <= r_reg_port_b[7];
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
@@ -700,7 +700,7 @@ task t_sign_extend_half;
    begin
       r_writeback_value <= {{16{r_reg_port_b[15]}}, r_reg_port_b[15:0]};
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (r_reg_port_b[15:0] == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_sign_flag <= r_reg_port_b[15];
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
@@ -712,7 +712,7 @@ task t_zero_extend_byte;
    begin
       r_writeback_value <= {24'b0, r_reg_port_b[7:0]};
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (r_reg_port_b[7:0] == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -723,7 +723,7 @@ task t_zero_extend_half;
    begin
       r_writeback_value <= {16'b0, r_reg_port_b[15:0]};
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (r_reg_port_b[15:0] == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -752,7 +752,7 @@ task t_left_shift_n;
       result = r_reg_port_b << i_count[4:0];
       r_writeback_value <= result;
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 2;
    end
@@ -766,7 +766,7 @@ task t_right_shift_n;
       result = r_reg_port_b >> i_count[4:0];
       r_writeback_value <= result;
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 2;
    end
@@ -782,7 +782,7 @@ task t_right_shift_a_n;
       result = signed_val >>> i_count[4:0];
       r_writeback_value <= result;
       r_writeback_reg <= r_reg_2;
-      r_zero_flag <= (result == 0) ? 1'b1 : 1'b0;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 2;
    end
@@ -841,7 +841,7 @@ endtask
 // JMPR - Jump to address in register
 task t_jump_reg;
    begin
-      r_PC <= r_reg_port_b[23:0];
+      r_PC <= r_reg_port_b[24:0];
       r_SM <= OPCODE_REQUEST;
    end
 endtask
@@ -854,10 +854,10 @@ endtask
 // LDIDX - Load indexed: reg1 = mem[reg2 + immediate]
 task t_load_indexed;
    input [31:0] i_offset;
-   reg [23:0] effective_addr;
+   reg [24:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
-         effective_addr = r_reg_port_b[23:0] + i_offset[23:0];
+         effective_addr = r_reg_port_b[24:0] + i_offset[24:0];
          r_mem_addr <= effective_addr;
          r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
@@ -877,10 +877,10 @@ endtask
 // STIDX - Store indexed: mem[reg2 + immediate] = reg1
 task t_store_indexed;
    input [31:0] i_offset;
-   reg [23:0] effective_addr;
+   reg [24:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
-         effective_addr = r_reg_port_b[23:0] + i_offset[23:0];
+         effective_addr = r_reg_port_b[24:0] + i_offset[24:0];
          r_mem_addr <= effective_addr;
          r_mem_write_data <= r_reg_port_a;
          r_mem_write_DV <= 1'b1;
@@ -902,11 +902,11 @@ endtask
 // (avoids direct r_register[n] mux which causes timing violations)
 task t_load_indexed_reg;
    input [31:0] i_var1;
-   reg [23:0] effective_addr;
+   reg [24:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
          // Stage 0: Save base address, redirect port B to offset register
-         r_idx_base_addr <= r_reg_port_b[23:0];
+         r_idx_base_addr <= r_reg_port_b[24:0];
          r_reg_2 <= i_var1[3:0];
          r_extra_clock <= 2'd1;
       end
@@ -917,7 +917,7 @@ task t_load_indexed_reg;
       else begin
          if (!r_mem_read_DV) begin
             // Stage 2a: Compute effective address and start memory read
-            effective_addr = r_idx_base_addr + r_reg_port_b[23:0];
+            effective_addr = r_idx_base_addr + r_reg_port_b[24:0];
             r_mem_addr <= effective_addr;
             r_mem_read_DV <= 1'b1;
          end
@@ -938,11 +938,11 @@ endtask
 // Uses 3-stage pipeline to read offset register through existing read port
 task t_store_indexed_reg;
    input [31:0] i_var1;
-   reg [23:0] effective_addr;
+   reg [24:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
          // Stage 0: Save base address and store data, redirect port B to offset register
-         r_idx_base_addr <= r_reg_port_b[23:0];
+         r_idx_base_addr <= r_reg_port_b[24:0];
          r_mem_write_data <= r_reg_port_a;
          r_reg_2 <= i_var1[3:0];
          r_extra_clock <= 2'd1;
@@ -954,7 +954,7 @@ task t_store_indexed_reg;
       else begin
          if (!r_mem_write_DV) begin
             // Stage 2a: Compute effective address and start memory write
-            effective_addr = r_idx_base_addr + r_reg_port_b[23:0];
+            effective_addr = r_idx_base_addr + r_reg_port_b[24:0];
             r_mem_addr <= effective_addr;
             r_mem_write_DV <= 1'b1;
          end

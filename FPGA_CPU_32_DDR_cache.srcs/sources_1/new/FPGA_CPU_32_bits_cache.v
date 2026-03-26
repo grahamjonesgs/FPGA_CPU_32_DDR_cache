@@ -103,7 +103,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
 
    // Machine control
    reg [31:0] r_SM;
-   reg [23:0] r_PC;
+   reg [24:0] r_PC;
    reg [31:0] r_mem_read_addr;
    wire [15:0] w_opcode;
    wire [31:0] w_var1;
@@ -112,7 +112,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    reg [3:0] r_reg_1;
    reg [3:0] r_reg_2;
    reg [1:0] r_extra_clock;
-   reg [23:0] r_idx_base_addr;  // Saved base address for indexed register ops
+   reg [24:0] r_idx_base_addr;  // Saved base address for indexed register ops
    reg r_hcf_message_sent;
    reg [31:0] r_stack_limit;
    reg [31:0] r_start_wait_counter;
@@ -120,15 +120,15 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    //load control
    //reg          o_ram_write_DV;
    reg [31:0] o_ram_write_value;
-   reg [23:0] o_ram_write_addr;
-   reg [23:0] r_ram_next_write_addr;
+   reg [24:0] o_ram_write_addr;
+   reg [24:0] r_ram_next_write_addr;
    reg [7:0] rx_count;
    reg [2:0] r_load_byte_counter;
    reg [15:0] r_checksum;
    reg [15:0] r_old_checksum;
    reg [15:0] r_calc_checksum;
    reg [15:0] r_rec_checksum;
-   reg [23:0] r_PC_requested;
+   reg [24:0] r_PC_requested;
 
    // Register control
    reg [31:0] r_register[15:0];
@@ -165,7 +165,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    reg r_timing_start;
 
    // Interrupt handler
-   reg [23:0] r_interrupt_table[3:0];
+   reg [24:0] r_interrupt_table[3:0];
    reg r_timer_interrupt;
    reg [31:0] r_timer_interrupt_counter;
    reg [63:0] r_timer_interrupt_counter_sec;
@@ -173,7 +173,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    // Memory
    reg r_mem_write_DV;
    reg r_mem_read_DV;
-   reg [23:0] r_mem_addr;
+   reg [24:0] r_mem_addr;
    reg [31:0] r_mem_write_data;
    wire [31:0] w_mem_read_data;
    wire w_mem_ready;
@@ -257,6 +257,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    // Writeback pipeline registers
    reg [31:0] r_writeback_value;
    reg [3:0]  r_writeback_reg;
+   reg        r_writeback_set_zero_flag;  // Set zero flag from writeback value in WRITEBACK stage
 
     always @(posedge i_Clk) begin
        r_reg_port_a <= r_register[r_reg_1];
@@ -430,7 +431,7 @@ rams_sp_nc rams_sp_nc1 (
       r_SM = NO_PROGRAM;
       r_timeout_counter = 0;
       o_LCD_reset_n = 1'b0;
-      r_PC = 24'h0;
+      r_PC = 25'h0;
       r_zero_flag = 0;
       r_equal_flag = 0;
       r_carry_flag = 0;
@@ -441,8 +442,8 @@ rams_sp_nc rams_sp_nc1 (
       r_seven_seg_value2 = 32'h21_21_21_21;
       o_led <= 16'h0;
       rx_count = 8'b0;
-      o_ram_write_addr = 24'h0;
-      r_ram_next_write_addr = 24'h0;
+      o_ram_write_addr = 25'h0;
+      r_ram_next_write_addr = 25'h0;
       r_stack_reset = 1'b0;
       r_msg_send_DV <= 1'b0;
       r_hcf_message_sent <= 1'b0;
@@ -459,6 +460,7 @@ rams_sp_nc rams_sp_nc1 (
       r_debug_flag = 0;
       r_debug_step_flag = 0;
       r_debug_step_run = 0;
+      r_writeback_set_zero_flag = 0;
    end
 
    always @(posedge i_Clk) begin
@@ -474,8 +476,8 @@ rams_sp_nc rams_sp_nc1 (
     begin
          r_SM <= LOADING_BYTE;
          r_load_byte_counter <= 0;
-         o_ram_write_addr <= 24'h0;
-         r_ram_next_write_addr <= 24'h0;
+         o_ram_write_addr <= 25'h0;
+         r_ram_next_write_addr <= 25'h0;
          r_checksum <= 16'h0;
          r_old_checksum <= 16'h0;
          r_RGB_LED_1 <= 12'h0;
@@ -592,7 +594,7 @@ rams_sp_nc rams_sp_nc1 (
                      end  // case 8'h58
                      8'h5A: // Start data flag Z
                         begin
-                        r_PC_requested <= o_ram_write_value[23:0];
+                        r_PC_requested <= o_ram_write_value[24:0];
                      end
                      8'h0a: ;  // ignore LF
                      8'h0d: ;  // ignore CR
@@ -616,7 +618,7 @@ rams_sp_nc rams_sp_nc1 (
                            endcase
                            o_ram_write_addr <= r_ram_next_write_addr;
                            r_ram_next_write_addr <= r_ram_next_write_addr + 1;
-                           if (r_ram_next_write_addr>24'h10_000) // Nexys has 128 MiB ram, but is addresses in 128 bit chunks and on 32 bits are used
+                           if (r_ram_next_write_addr>25'h1FF_FFFF) // Nexys has 128 MiB DDR2, 32M words of 32-bit
                                 begin
                               r_SM <= HCF_1;  // Halt and catch fire error
                               r_error_code <= ERR_OVERFLOW;
@@ -643,7 +645,7 @@ rams_sp_nc rams_sp_nc1 (
                 begin  // Reset all flags and jump to first instruction
                   o_LCD_reset_n <= 1'b0;
                   o_led <= 16'h0;
-                  o_ram_write_addr <= 24'h0;
+                  o_ram_write_addr <= 25'h0;
                   o_TX_LCD_Byte <= 8'b0;
                   o_TX_LCD_Count <= 4'd1;
                   r_carry_flag <= 1'b0;
@@ -657,7 +659,7 @@ rams_sp_nc rams_sp_nc1 (
                   r_msg_send_DV <= 1'b0;
                   r_overflow_flag <= 1'b0;
                   r_PC <= r_PC_requested;
-                  r_ram_next_write_addr <= 24'h0;
+                  r_ram_next_write_addr <= 25'h0;
                   r_RGB_LED_1 <= 12'h000;
                   r_RGB_LED_2 <= 12'h000;
                   r_seven_seg_value1 <= 32'h22_22_22_22;
@@ -716,8 +718,8 @@ rams_sp_nc rams_sp_nc1 (
                   r_SM <= HCF_1;  // Halt and catch fire error 1
                   r_error_code <= ERR_STACK;
                end else begin
-                  if (r_timer_interrupt && r_interrupt_table[0] != 24'h0) begin
-                     r_stack_write_value <= {8'b0, r_PC};  // push PC on stack
+                  if (r_timer_interrupt && r_interrupt_table[0] != 25'h0) begin
+                     r_stack_write_value <= {7'b0, r_PC};  // push PC on stack
                      r_stack_write_flag <= 1'b1;  // to move stack pointer
                      r_timer_interrupt <= 0;
                      r_PC <= r_interrupt_table[0];
@@ -1012,6 +1014,9 @@ end
 
             WRITEBACK: begin
                r_register[r_writeback_reg] <= r_writeback_value;
+               if (r_writeback_set_zero_flag)
+                  r_zero_flag <= (r_writeback_value == 32'b0);
+               r_writeback_set_zero_flag <= 1'b0;
                r_stack_read_flag <= 1'h0;
                r_SM <= OPCODE_REQUEST;
             end

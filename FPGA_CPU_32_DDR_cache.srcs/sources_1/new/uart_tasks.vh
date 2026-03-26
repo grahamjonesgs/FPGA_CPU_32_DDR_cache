@@ -13,16 +13,17 @@ task t_debug_message;
             r_msg[39:32] <= 8'h73;  // s
             r_msg[47:40] <= 8'h20;  //  
 
-            r_msg[55:48] <= return_ascii_from_hex(r_PC[23:20]);
-            r_msg[63:56] <= return_ascii_from_hex(r_PC[19:16]);
-            r_msg[71:64] <= return_ascii_from_hex(r_PC[15:12]);
-            r_msg[79:72] <= return_ascii_from_hex(r_PC[11:8]);
-            r_msg[87:80] <= return_ascii_from_hex(r_PC[7:4]);
-            r_msg[95:88] <= return_ascii_from_hex(r_PC[3:0]);
+            r_msg[55:48] <= return_ascii_from_hex({3'b0, r_PC[24]});
+            r_msg[63:56] <= return_ascii_from_hex(r_PC[23:20]);
+            r_msg[71:64] <= return_ascii_from_hex(r_PC[19:16]);
+            r_msg[79:72] <= return_ascii_from_hex(r_PC[15:12]);
+            r_msg[87:80] <= return_ascii_from_hex(r_PC[11:8]);
+            r_msg[95:88] <= return_ascii_from_hex(r_PC[7:4]);
+            r_msg[103:96] <= return_ascii_from_hex(r_PC[3:0]);
 
-            r_msg[103:96] <= 8'h0D;  // CR
+            r_msg[111:104] <= 8'h0D;  // CR
 
-            r_msg_length <= 8'h0D;
+            r_msg_length <= 8'h0E;
             r_msg_send_DV <= 1'b1;
         end
     end
@@ -49,7 +50,7 @@ endtask
 task t_tx_char_from_reg_value;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_reg_port_b[23:0];
+            r_mem_addr <= r_reg_port_b[24:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -80,7 +81,7 @@ endtask
 task t_tx_value_of_mem_at_reg;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_reg_port_b[23:0];
+            r_mem_addr <= r_reg_port_b[24:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -119,7 +120,7 @@ task t_tx_value_of_mem;
     input [31:0] i_location;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= i_location[23:0];
+            r_mem_addr <= i_location[24:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -158,7 +159,7 @@ task t_tx_string_at_mem;
     input [31:0] i_location;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= i_location[23:0];
+            r_mem_addr <= i_location[24:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -192,7 +193,7 @@ endtask
 task t_tx_string_at_reg;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_reg_port_b[23:0];
+            r_mem_addr <= r_reg_port_b[24:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;

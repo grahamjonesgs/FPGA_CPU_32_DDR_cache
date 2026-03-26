@@ -41,7 +41,7 @@ module mem_read_write (
 
     input             i_mem_write_DV,
     input             i_mem_read_DV,
-    input      [23:0] i_mem_addr,
+    input      [24:0] i_mem_addr,
     input      [31:0] i_mem_write_data,
     output reg [31:0] o_mem_read_data,
     output reg        o_mem_ready,
@@ -103,7 +103,7 @@ module mem_read_write (
 
    // Memory model based on the 16 bit data address of the DDR, thus the <<1 to make it 32 bit. Then remove 
    // the two lowest bits as we will always grab the 4*32 bits 
-   assign o_temp_ddr_mem_addr = {3'b0, i_mem_addr[23:0]};
+   assign o_temp_ddr_mem_addr = {2'b0, i_mem_addr[24:0]};
    assign o_temp_ddr_mem_addr2 = o_temp_ddr_mem_addr << 1;
    assign o_ddr_mem_addr = {o_temp_ddr_mem_addr2[26:3], 3'b0};
    // 19 tag ,5 index,3 zero

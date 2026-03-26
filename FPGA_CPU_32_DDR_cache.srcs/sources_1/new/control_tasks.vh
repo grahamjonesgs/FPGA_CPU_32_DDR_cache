@@ -8,7 +8,7 @@ task t_cond_jump;
    begin
       if (i_condition) begin
          r_SM <= OPCODE_REQUEST;
-         r_PC <= i_value[23:0];  // jump
+         r_PC <= i_value[24:0];  // jump
       end // if(i_condition)
         else
         begin
@@ -27,10 +27,10 @@ task t_cond_call;
    input i_condition;
    begin
       if (i_condition) begin
-         r_stack_write_value = {8'b0, r_PC + 24'd2};  // push PC on stack
+         r_stack_write_value = {7'b0, r_PC + 25'd2};  // push PC on stack
          r_stack_write_flag <= 1'b1;  // to move stack pointer
          r_SM <= OPCODE_REQUEST;
-         r_PC <= i_value[23:0];
+         r_PC <= i_value[24:0];
       end // if(i_condition)
         else
         begin
@@ -48,7 +48,7 @@ task t_ret;
    begin
       r_stack_read_flag <= 1'b1;  // to move stack pointer
       r_SM <= OPCODE_REQUEST;
-      r_PC <= i_stack_top_value[23:0];  // Pop PC from stack plus 2 to jump over call
+      r_PC <= i_stack_top_value[24:0];  // Pop PC from stack plus 2 to jump over call
    end
 endtask
 
@@ -79,7 +79,7 @@ endtask
 task t_reset;
    begin
       r_SM <= OPCODE_REQUEST;
-      r_PC <= 24'h1;
+      r_PC <= 25'h1;
    end  // Case FFFF
 endtask
 
@@ -91,7 +91,7 @@ task t_set_interrupt_regs;
    reg [1:0] r_interrupt_number;
    begin
       r_interrupt_number = r_reg_port_a[1:0];
-      r_interrupt_table[r_interrupt_number] <= r_reg_port_b[23:0];
+      r_interrupt_table[r_interrupt_number] <= r_reg_port_b[24:0];
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
    end
