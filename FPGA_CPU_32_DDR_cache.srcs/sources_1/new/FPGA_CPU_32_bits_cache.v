@@ -60,7 +60,7 @@ module FPGA_CPU_32_bits_cache (
     output [0:0] ddr2_odt
 );
 
-   localparam STACK_SIZE = 1024;
+   localparam STACK_TOP = 26'h200_0000;  // one word above top of 128 MiB (empty-stack sentinel)
 
    // State Machine Code
    localparam OPCODE_REQUEST = 32'h1, OPCODE_FETCH = 32'h2, OPCODE_FETCH2 = 32'h4;
@@ -114,7 +114,6 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    reg [1:0] r_extra_clock;
    reg [24:0] r_idx_base_addr;  // Saved base address for indexed register ops
    reg r_hcf_message_sent;
-   reg [31:0] r_stack_limit;
    reg [31:0] r_start_wait_counter;
 
    //load control
@@ -145,13 +144,10 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    reg [11:0] r_RGB_LED_1;
    reg [11:0] r_RGB_LED_2;
 
-   // Stack control
-   wire [31:0] i_stack_top_value;
-   wire i_stack_error;
-   reg r_stack_read_flag;
-   reg r_stack_write_flag;
-   reg [31:0] r_stack_write_value;
-   reg r_stack_reset;
+   // Stack control — stack now lives in DDR2 RAM, top of 128 MiB, growing down
+   // SP = 26'h200_0000 means empty; PUSH: SP--, mem[SP]=val; POP: val=mem[SP], SP++
+   // R15 is the frame pointer by convention (software convention only, no hardware enforcement)
+   reg [25:0] r_SP;
 
    // UART send message
    reg [2047:0] r_msg;
@@ -372,16 +368,7 @@ rams_sp_nc rams_sp_nc1 (
    assign w_var2   = r_var2_mem;
    
 
-   stack main_stack (
-       .clk(i_Clk),
-       .i_reset(w_reset_H),
-       .i_read_flag(r_stack_read_flag),
-       .i_write_flag(r_stack_write_flag),
-       .i_write_value(r_stack_write_value),
-       .i_stack_reset(r_stack_reset),
-       .o_stack_top_value(i_stack_top_value),
-       .o_stack_error(i_stack_error)
-   );
+   // Stack module removed — stack now uses DDR2 RAM via r_SP register
 
    RGB_LED RGB_LED (
        .i_sysclk(i_Clk),
@@ -444,7 +431,7 @@ rams_sp_nc rams_sp_nc1 (
       rx_count = 8'b0;
       o_ram_write_addr = 25'h0;
       r_ram_next_write_addr = 25'h0;
-      r_stack_reset = 1'b0;
+      r_SP = 26'h200_0000;          // empty-descending stack, top of 128 MiB
       r_msg_send_DV <= 1'b0;
       r_hcf_message_sent <= 1'b0;
       r_RGB_LED_1 = 12'h000;
@@ -467,6 +454,7 @@ rams_sp_nc rams_sp_nc1 (
       if (w_reset_H) begin
 
          r_SM <= NO_PROGRAM;
+         r_SP <= 26'h200_0000;
          for (i = 0; i < 16; i = i + 1)
             r_register[i] <= 32'b0;
 
@@ -552,7 +540,7 @@ rams_sp_nc rams_sp_nc1 (
                if (w_mem_ready) begin
                   r_mem_write_DV <= 1'b0;
                end
-               r_stack_reset <= 1'b1;
+               r_SP <= 26'h200_0000;  // reset stack pointer during program load
 
                r_seven_seg_value1 <= {
                   8'h24,
@@ -665,7 +653,6 @@ rams_sp_nc rams_sp_nc1 (
                   r_seven_seg_value1 <= 32'h22_22_22_22;
                   r_seven_seg_value2 <= 32'h22_22_22_22;
                   r_SM <= START_WAIT;
-                  r_stack_reset <= 1'b0;
                   r_timeout_counter <= 0;
                   r_timer_interrupt <= 0;
                   r_timer_interrupt_counter <= 0;
@@ -706,28 +693,34 @@ rams_sp_nc rams_sp_nc1 (
             OPCODE_REQUEST: begin
                r_cache_reset <= 1'b0;
                o_led[0] <= i_switch[0];  // Temp showing cache enabled status.
-
-               r_stack_write_flag <= 1'h0;
-               r_stack_read_flag <= 1'h0;
                r_msg_send_DV <= 1'b0;
-               r_extra_clock <= 2'b0;
-               if (r_stack_write_flag) begin
-                  r_stack_write_flag <= 0;
-               end
-               if (i_stack_error) begin
-                  r_SM <= HCF_1;  // Halt and catch fire error 1
-                  r_error_code <= ERR_STACK;
-               end else begin
-                  if (r_timer_interrupt && r_interrupt_table[0] != 25'h0) begin
-                     r_stack_write_value <= {7'b0, r_PC};  // push PC on stack
-                     r_stack_write_flag <= 1'b1;  // to move stack pointer
-                     r_timer_interrupt <= 0;
-                     r_PC <= r_interrupt_table[0];
-                  end
 
-                  r_mem_addr <= r_PC;
-                  r_mem_read_DV <= 1'b1;
-                  r_SM <= OPCODE_FETCH;
+               if (r_extra_clock == 1'b0) begin
+                  if (r_timer_interrupt && r_interrupt_table[0] != 25'h0) begin
+                     // Push current PC onto DDR2 stack, then jump to interrupt handler.
+                     // Uses extra_clock to wait for DDR2 write to complete.
+                     r_SP             <= r_SP - 1;
+                     r_mem_addr       <= r_SP[24:0] - 25'd1;
+                     r_mem_write_data <= {7'b0, r_PC};
+                     r_mem_write_DV   <= 1'b1;
+                     r_timer_interrupt <= 0;
+                     r_PC             <= r_interrupt_table[0];
+                     r_extra_clock    <= 1'b1;
+                  end else begin
+                     r_extra_clock <= 2'b0;
+                     r_mem_addr    <= r_PC;
+                     r_mem_read_DV <= 1'b1;
+                     r_SM          <= OPCODE_FETCH;
+                  end
+               end else begin
+                  // Waiting for interrupt PC-push to complete in DDR2
+                  if (w_mem_ready) begin
+                     r_mem_write_DV <= 1'b0;
+                     r_extra_clock  <= 1'b0;
+                     r_mem_addr     <= r_PC;  // r_PC already set to interrupt target
+                     r_mem_read_DV  <= 1'b1;
+                     r_SM           <= OPCODE_FETCH;
+                  end
                end
             end
 
@@ -798,8 +791,6 @@ rams_sp_nc rams_sp_nc1 (
                if (!r_hcf_message_sent) begin
                   r_hcf_message_sent <= 1'b1;
                end
-               r_stack_write_flag <= 1'h0;
-               r_stack_read_flag <= 1'h0;
                r_timeout_counter <= 0;
                r_SM <= HCF_2;
             end
@@ -1017,7 +1008,6 @@ end
                if (r_writeback_set_zero_flag)
                   r_zero_flag <= (r_writeback_value == 32'b0);
                r_writeback_set_zero_flag <= 1'b0;
-               r_stack_read_flag <= 1'h0;
                r_SM <= OPCODE_REQUEST;
             end
 

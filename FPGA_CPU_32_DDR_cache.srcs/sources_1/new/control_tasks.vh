@@ -18,37 +18,50 @@ task t_cond_jump;
    end
 endtask
 
-// Call if condition met - push PC on stack
-// On completion
-// PC  set to value, or increment by 2
-// Increment r_SM
+// Call if condition met — push return address (PC+2) onto DDR2 stack, jump to target.
+// 2-word instruction; uses multi-cycle DDR2 write (r_extra_clock pattern).
+// w_var1 (the jump target) stays valid across cycles as the instruction stays latched.
 task t_cond_call;
    input [31:0] i_value;
    input i_condition;
    begin
       if (i_condition) begin
-         r_stack_write_value = {7'b0, r_PC + 25'd2};  // push PC on stack
-         r_stack_write_flag <= 1'b1;  // to move stack pointer
-         r_SM <= OPCODE_REQUEST;
-         r_PC <= i_value[24:0];
-      end // if(i_condition)
-        else
-        begin
+         if (r_extra_clock == 0) begin
+            r_SP             <= r_SP - 1;
+            r_mem_addr       <= r_SP[24:0] - 25'd1;
+            r_mem_write_data <= {7'b0, r_PC + 25'd2};
+            r_mem_write_DV   <= 1'b1;
+            r_extra_clock    <= 1'b1;
+         end else begin
+            if (w_mem_ready) begin
+               r_mem_write_DV <= 1'b0;
+               r_SM           <= OPCODE_REQUEST;
+               r_PC           <= i_value[24:0];
+            end
+         end
+      end else begin
          r_SM <= OPCODE_REQUEST;
          r_PC <= r_PC + 2;
-      end  // else if(i_condition)
+      end
    end
 endtask
 
-// Return from call, pop new pc from stack
-// On completion
-// PC  set to top of stack
-// Increment r_SM
+// Return from call — pop return address from DDR2 stack, jump to it.
+// 1-word instruction; uses multi-cycle DDR2 read (r_extra_clock pattern).
 task t_ret;
    begin
-      r_stack_read_flag <= 1'b1;  // to move stack pointer
-      r_SM <= OPCODE_REQUEST;
-      r_PC <= i_stack_top_value[24:0];  // Pop PC from stack plus 2 to jump over call
+      if (r_extra_clock == 0) begin
+         r_mem_addr    <= r_SP[24:0];
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_PC          <= w_mem_read_data[24:0];
+            r_SP          <= r_SP + 1;
+            r_mem_read_DV <= 1'b0;
+            r_SM          <= OPCODE_REQUEST;
+         end
+      end
    end
 endtask
 

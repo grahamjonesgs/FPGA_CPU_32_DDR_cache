@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1774515016" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp">
+<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1774817673" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp">
   <File Type="VDS-TIMINGSUMMARY" Name="FPGA_CPU_32_bits_cache_timing_summary_synth.rpt"/>
   <File Type="RDS-DCP" Name="FPGA_CPU_32_bits_cache.dcp"/>
   <File Type="RDS-UTIL-PB" Name="FPGA_CPU_32_bits_cache_utilization_synth.pb"/>
@@ -31,6 +31,14 @@
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="ScopedToCell" Val="mig_7series_0"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/stack.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
     <File Path="$PSRCDIR/sources_1/new/RGB_LED.v">
@@ -69,13 +77,6 @@
       </FileInfo>
     </File>
     <File Path="$PSRCDIR/sources_1/new/mem_read_write.v">
-      <FileInfo>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="implementation"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
-    <File Path="$PSRCDIR/sources_1/new/stack.v">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
