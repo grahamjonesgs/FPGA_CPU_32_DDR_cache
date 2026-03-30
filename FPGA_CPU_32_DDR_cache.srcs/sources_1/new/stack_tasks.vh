@@ -72,7 +72,7 @@ endtask
 task t_get_sp;
    begin
       r_writeback_value <= {6'b0, r_SP};
-      r_writeback_reg   <= r_reg_1;
+      r_writeback_reg   <= r_reg_2;
       r_SM              <= WRITEBACK;
       r_PC              <= r_PC + 1;
    end
@@ -82,7 +82,7 @@ endtask
 // 1-word instruction (PC+1)
 task t_set_sp;
    begin
-      r_SP <= {2'b0, r_reg_port_a[24:0]};
+      r_SP <= {2'b0, r_reg_port_b[24:0]};
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;
    end
@@ -114,7 +114,7 @@ task t_call_reg;
          if (w_mem_ready) begin
             r_mem_write_DV <= 1'b0;
             r_SM           <= OPCODE_REQUEST;
-            r_PC           <= r_reg_port_a[24:0];
+            r_PC           <= r_reg_port_b[24:0];
          end
       end
    end

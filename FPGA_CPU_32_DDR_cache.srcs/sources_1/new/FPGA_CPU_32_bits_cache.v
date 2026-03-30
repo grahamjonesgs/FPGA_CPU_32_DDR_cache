@@ -148,6 +148,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    // SP = 26'h200_0000 means empty; PUSH: SP--, mem[SP]=val; POP: val=mem[SP], SP++
    // R15 is the frame pointer by convention (software convention only, no hardware enforcement)
    reg [25:0] r_SP;
+   reg        r_int_push_wait;  // set while waiting for DDR2 to complete interrupt PC-push
 
    // UART send message
    reg [2047:0] r_msg;
@@ -432,6 +433,7 @@ rams_sp_nc rams_sp_nc1 (
       o_ram_write_addr = 25'h0;
       r_ram_next_write_addr = 25'h0;
       r_SP = 26'h200_0000;          // empty-descending stack, top of 128 MiB
+      r_int_push_wait = 1'b0;
       r_msg_send_DV <= 1'b0;
       r_hcf_message_sent <= 1'b0;
       r_RGB_LED_1 = 12'h000;
@@ -455,6 +457,7 @@ rams_sp_nc rams_sp_nc1 (
 
          r_SM <= NO_PROGRAM;
          r_SP <= 26'h200_0000;
+         r_int_push_wait <= 1'b0;
          for (i = 0; i < 16; i = i + 1)
             r_register[i] <= 32'b0;
 
@@ -541,6 +544,7 @@ rams_sp_nc rams_sp_nc1 (
                   r_mem_write_DV <= 1'b0;
                end
                r_SP <= 26'h200_0000;  // reset stack pointer during program load
+               r_int_push_wait <= 1'b0;
 
                r_seven_seg_value1 <= {
                   8'h24,
@@ -694,33 +698,31 @@ rams_sp_nc rams_sp_nc1 (
                r_cache_reset <= 1'b0;
                o_led[0] <= i_switch[0];  // Temp showing cache enabled status.
                r_msg_send_DV <= 1'b0;
+               r_extra_clock <= 2'b0;  // always reset — all instructions rely on this
 
-               if (r_extra_clock == 1'b0) begin
-                  if (r_timer_interrupt && r_interrupt_table[0] != 25'h0) begin
-                     // Push current PC onto DDR2 stack, then jump to interrupt handler.
-                     // Uses extra_clock to wait for DDR2 write to complete.
-                     r_SP             <= r_SP - 1;
-                     r_mem_addr       <= r_SP[24:0] - 25'd1;
-                     r_mem_write_data <= {7'b0, r_PC};
-                     r_mem_write_DV   <= 1'b1;
-                     r_timer_interrupt <= 0;
-                     r_PC             <= r_interrupt_table[0];
-                     r_extra_clock    <= 1'b1;
-                  end else begin
-                     r_extra_clock <= 2'b0;
-                     r_mem_addr    <= r_PC;
-                     r_mem_read_DV <= 1'b1;
-                     r_SM          <= OPCODE_FETCH;
-                  end
-               end else begin
-                  // Waiting for interrupt PC-push to complete in DDR2
+               if (r_int_push_wait) begin
+                  // Waiting for DDR2 to finish the timer-interrupt PC push
                   if (w_mem_ready) begin
-                     r_mem_write_DV <= 1'b0;
-                     r_extra_clock  <= 1'b0;
-                     r_mem_addr     <= r_PC;  // r_PC already set to interrupt target
-                     r_mem_read_DV  <= 1'b1;
-                     r_SM           <= OPCODE_FETCH;
+                     r_mem_write_DV  <= 1'b0;
+                     r_int_push_wait <= 1'b0;
+                     r_mem_addr      <= r_PC;  // r_PC already set to interrupt target
+                     r_mem_read_DV   <= 1'b1;
+                     r_SM            <= OPCODE_FETCH;
                   end
+               end else if (r_timer_interrupt && r_interrupt_table[0] != 25'h0) begin
+                  // Start pushing current PC onto DDR2 stack before jumping to handler
+                  r_SP             <= r_SP - 1;
+                  r_mem_addr       <= r_SP[24:0] - 25'd1;
+                  r_mem_write_data <= {7'b0, r_PC};
+                  r_mem_write_DV   <= 1'b1;
+                  r_timer_interrupt <= 1'b0;
+                  r_PC             <= r_interrupt_table[0];
+                  r_int_push_wait  <= 1'b1;
+                  // stay in OPCODE_REQUEST until push completes
+               end else begin
+                  r_mem_addr    <= r_PC;
+                  r_mem_read_DV <= 1'b1;
+                  r_SM          <= OPCODE_FETCH;
                end
             end
 
