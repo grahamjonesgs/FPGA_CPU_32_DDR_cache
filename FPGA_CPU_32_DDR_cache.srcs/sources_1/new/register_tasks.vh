@@ -293,7 +293,7 @@ task t_right_shift_a_reg;
    end
 endtask
 
-// CMPRR - set flags from rs1-rs2, no writeback (for use with conditional jumps)
+// CMPRR - set flags from first-second, no writeback (for use with conditional jumps)
 task t_cmprr3;
    reg signed [31:0] s_a;
    reg signed [31:0] s_b;
