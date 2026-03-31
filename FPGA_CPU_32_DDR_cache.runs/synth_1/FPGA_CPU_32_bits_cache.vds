@@ -3,8 +3,8 @@
 # SW Build 6299465 on Fri Nov 14 12:34:56 MST 2025
 # IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
 # SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
-# Start of session at: Tue Mar 31 09:19:14 2026
-# Process ID         : 6431
+# Start of session at: Tue Mar 31 10:07:15 2026
+# Process ID         : 22288
 # Current directory  : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1
 # Command line       : vivado -log FPGA_CPU_32_bits_cache.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source FPGA_CPU_32_bits_cache.tcl
 # Log file           : /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/FPGA_CPU_32_bits_cache.vds
@@ -19,7 +19,7 @@
 # Host memory        : 16752 MB
 # Swap memory        : 16752 MB
 # Total Virtual      : 33504 MB
-# Available Virtual  : 25813 MB
+# Available Virtual  : 25785 MB
 #-----------------------------------------------------------
 source FPGA_CPU_32_bits_cache.tcl -notrace
 Command: read_checkpoint -auto_incremental -incremental /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/utils_1/imports/synth_1/FPGA_CPU_32_bits_cache.dcp
@@ -34,20 +34,20 @@ INFO: [Designutils 20-5440] No compile time benefit to using incremental synthes
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 7 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 6490
+INFO: [Synth 8-7075] Helper process launched with PID 22351
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 2221.953 ; gain = 483.156 ; free physical = 2588 ; free virtual = 23370
+Starting RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2221.703 ; gain = 479.875 ; free physical = 1770 ; free virtual = 23314
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'FPGA_CPU_32_bits_cache' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/FPGA_CPU_32_bits_cache.v:24]
 INFO: [Synth 8-6157] synthesizing module 'mem_read_write' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:23]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-6431-Garuda/realtime/clk_wiz_0_stub.v:6]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-6431-Garuda/realtime/clk_wiz_0_stub.v:6]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-22288-Garuda/realtime/clk_wiz_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-22288-Garuda/realtime/clk_wiz_0_stub.v:6]
 WARNING: [Synth 8-7071] port 'clk_80' of module 'clk_wiz_0' is unconnected for instance 'clk_wiz_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:260]
 WARNING: [Synth 8-7071] port 'locked' of module 'clk_wiz_0' is unconnected for instance 'clk_wiz_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:260]
 WARNING: [Synth 8-7023] instance 'clk_wiz_0' of module 'clk_wiz_0' has 5 connections declared, but only 3 given [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:260]
 INFO: [Synth 8-6157] synthesizing module 'ddr2_control' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/ddr2_control.v:23]
-INFO: [Synth 8-6157] synthesizing module 'mig_7series_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-6431-Garuda/realtime/mig_7series_0_stub.v:6]
-INFO: [Synth 8-6155] done synthesizing module 'mig_7series_0' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-6431-Garuda/realtime/mig_7series_0_stub.v:6]
+INFO: [Synth 8-6157] synthesizing module 'mig_7series_0' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-22288-Garuda/realtime/mig_7series_0_stub.v:6]
+INFO: [Synth 8-6155] done synthesizing module 'mig_7series_0' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-22288-Garuda/realtime/mig_7series_0_stub.v:6]
 INFO: [Synth 8-6155] done synthesizing module 'ddr2_control' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/ddr2_control.v:23]
 INFO: [Synth 8-6155] done synthesizing module 'mem_read_write' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/mem_read_write.v:23]
 INFO: [Synth 8-6157] synthesizing module 'uart_send_msg' [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/uart_send_msg.v:2]
@@ -71,54 +71,54 @@ INFO: [Synth 8-226] default block is never used [/home/graham/Documents/src/fpga
 INFO: [Synth 8-226] default block is never used [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/functions.vh:29]
 INFO: [Synth 8-6155] done synthesizing module 'FPGA_CPU_32_bits_cache' (0#1) [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/FPGA_CPU_32_bits_cache.v:24]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:11 ; elapsed = 00:00:13 . Memory (MB): peak = 2489.359 ; gain = 750.562 ; free physical = 2269 ; free virtual = 23056
+Finished RTL Elaboration : Time (s): cpu = 00:00:13 ; elapsed = 00:00:16 . Memory (MB): peak = 2490.109 ; gain = 748.281 ; free physical = 1483 ; free virtual = 23031
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:11 ; elapsed = 00:00:14 . Memory (MB): peak = 2489.359 ; gain = 750.562 ; free physical = 2269 ; free virtual = 23056
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:13 ; elapsed = 00:00:16 . Memory (MB): peak = 2490.109 ; gain = 748.281 ; free physical = 1483 ; free virtual = 23031
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:11 ; elapsed = 00:00:14 . Memory (MB): peak = 2489.359 ; gain = 750.562 ; free physical = 2269 ; free virtual = 23056
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:16 . Memory (MB): peak = 2490.109 ; gain = 748.281 ; free physical = 1483 ; free virtual = 23031
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00.91 ; elapsed = 00:00:00.93 . Memory (MB): peak = 2489.359 ; gain = 0.000 ; free physical = 2269 ; free virtual = 23056
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 2490.109 ; gain = 0.000 ; free physical = 1495 ; free virtual = 23042
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
 Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/mig_7series_0_in_context.xdc] for cell 'mem_read_write/ddr2_control/mig_7series_0'
 Finished Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/ip/mig_7series_0/mig_7series_0/mig_7series_0_in_context.xdc] for cell 'mem_read_write/ddr2_control/mig_7series_0'
-Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-6431-Garuda/clk_wiz_0_1/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'mem_read_write/clk_wiz_0'
-Finished Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-6431-Garuda/clk_wiz_0_1/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'mem_read_write/clk_wiz_0'
+Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-22288-Garuda/clk_wiz_0_1/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'mem_read_write/clk_wiz_0'
+Finished Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/.Xil/Vivado-22288-Garuda/clk_wiz_0_1/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'mem_read_write/clk_wiz_0'
 Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc]
 Finished Parsing XDC File [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc]
 INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/constrs_1/imports/new/nexys_ddr.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/FPGA_CPU_32_bits_cache_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/FPGA_CPU_32_bits_cache_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2955.629 ; gain = 0.000 ; free physical = 1875 ; free virtual = 22676
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2961.348 ; gain = 0.000 ; free physical = 1102 ; free virtual = 22650
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 2955.664 ; gain = 0.000 ; free physical = 1874 ; free virtual = 22676
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 2961.383 ; gain = 0.000 ; free physical = 1101 ; free virtual = 22649
 INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:30 ; elapsed = 00:00:34 . Memory (MB): peak = 2955.664 ; gain = 1216.867 ; free physical = 1844 ; free virtual = 22645
+Finished Constraint Validation : Time (s): cpu = 00:00:31 ; elapsed = 00:00:34 . Memory (MB): peak = 2961.383 ; gain = 1219.555 ; free physical = 1074 ; free virtual = 22621
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a100tcsg324-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:30 ; elapsed = 00:00:34 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1844 ; free virtual = 22645
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:31 ; elapsed = 00:00:34 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1074 ; free virtual = 22621
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:30 ; elapsed = 00:00:34 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1844 ; free virtual = 22645
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:31 ; elapsed = 00:00:34 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1074 ; free virtual = 22621
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'ddr2_control'
 INFO: [Synth 8-802] inferred FSM for state register 'r_SM_Main_reg' in module 'uart_tx'
@@ -164,7 +164,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'r_SM_Main_reg' using encod
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'r_SM_CS_reg' using encoding 'one-hot' in module 'SPI_Master_With_Single_CS'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:42 ; elapsed = 00:00:46 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1868 ; free virtual = 22673
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:41 ; elapsed = 00:00:44 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1089 ; free virtual = 22640
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -296,7 +296,7 @@ DSP Report: register r_mul_pipe1_reg is absorbed into DSP r_mul_pipe1_reg.
 DSP Report: operator r_mul_pipe10 is absorbed into DSP r_mul_pipe1_reg.
 DSP Report: operator r_mul_pipe10 is absorbed into DSP r_mul_pipe1_reg.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:14 ; elapsed = 00:02:22 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1822 ; free virtual = 22656
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:09 ; elapsed = 00:02:16 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1052 ; free virtual = 22632
 ---------------------------------------------------------------------------------
  Sort Area is FPGA_CPU_32_bits_cache__GB0 r_mul_pipe10_0 : 0 0 : 3101 5927 : Used 1 time 0
  Sort Area is FPGA_CPU_32_bits_cache__GB0 r_mul_pipe10_0 : 0 1 : 2826 5927 : Used 1 time 0
@@ -350,13 +350,13 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:21 ; elapsed = 00:02:29 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1813 ; free virtual = 22654
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:16 ; elapsed = 00:02:23 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1048 ; free virtual = 22628
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:03:04 ; elapsed = 00:03:14 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1160 ; free virtual = 22649
+Finished Timing Optimization : Time (s): cpu = 00:02:57 ; elapsed = 00:03:05 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1041 ; free virtual = 22621
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -406,7 +406,7 @@ INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_r
 INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_13 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance mem_read_write/cache_val_data_reg_14 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:03:12 ; elapsed = 00:03:22 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1160 ; free virtual = 22649
+Finished Technology Mapping : Time (s): cpu = 00:03:05 ; elapsed = 00:03:14 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1039 ; free virtual = 22619
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -424,37 +424,37 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:03:17 ; elapsed = 00:03:27 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1162 ; free virtual = 22651
+Finished IO Insertion : Time (s): cpu = 00:03:10 ; elapsed = 00:03:19 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1038 ; free virtual = 22618
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:03:17 ; elapsed = 00:03:27 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1162 ; free virtual = 22651
+Finished Renaming Generated Instances : Time (s): cpu = 00:03:10 ; elapsed = 00:03:19 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1038 ; free virtual = 22618
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:03:18 ; elapsed = 00:03:28 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1162 ; free virtual = 22651
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:03:12 ; elapsed = 00:03:20 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1038 ; free virtual = 22618
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:03:18 ; elapsed = 00:03:28 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1162 ; free virtual = 22651
+Finished Renaming Generated Ports : Time (s): cpu = 00:03:12 ; elapsed = 00:03:20 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1038 ; free virtual = 22618
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:03:18 ; elapsed = 00:03:29 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1162 ; free virtual = 22651
+Finished Handling Custom Attributes : Time (s): cpu = 00:03:12 ; elapsed = 00:03:21 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1038 ; free virtual = 22618
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:03:18 ; elapsed = 00:03:29 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1162 ; free virtual = 22651
+Finished Renaming Generated Nets : Time (s): cpu = 00:03:12 ; elapsed = 00:03:21 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1038 ; free virtual = 22618
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -513,18 +513,18 @@ Report Cell Usage:
 |26    |OBUF        |    44|
 +------+------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:03:18 ; elapsed = 00:03:29 . Memory (MB): peak = 2963.633 ; gain = 1224.836 ; free physical = 1162 ; free virtual = 22651
+Finished Writing Synthesis Report : Time (s): cpu = 00:03:12 ; elapsed = 00:03:21 . Memory (MB): peak = 2969.352 ; gain = 1227.523 ; free physical = 1038 ; free virtual = 22618
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 1 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:03:06 ; elapsed = 00:03:15 . Memory (MB): peak = 2963.633 ; gain = 758.531 ; free physical = 1164 ; free virtual = 22654
-Synthesis Optimization Complete : Time (s): cpu = 00:03:18 ; elapsed = 00:03:29 . Memory (MB): peak = 2963.641 ; gain = 1224.836 ; free physical = 1164 ; free virtual = 22654
+Synthesis Optimization Runtime : Time (s): cpu = 00:03:01 ; elapsed = 00:03:10 . Memory (MB): peak = 2969.352 ; gain = 756.250 ; free physical = 1038 ; free virtual = 22618
+Synthesis Optimization Complete : Time (s): cpu = 00:03:12 ; elapsed = 00:03:21 . Memory (MB): peak = 2969.359 ; gain = 1227.523 ; free physical = 1038 ; free virtual = 22618
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.08 . Memory (MB): peak = 2963.641 ; gain = 0.000 ; free physical = 1333 ; free virtual = 22823
+Netlist sorting complete. Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.07 . Memory (MB): peak = 2969.359 ; gain = 0.000 ; free physical = 1195 ; free virtual = 22775
 INFO: [Netlist 29-17] Analyzing 779 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3019.660 ; gain = 0.000 ; free physical = 1334 ; free virtual = 22825
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 3025.379 ; gain = 0.000 ; free physical = 1197 ; free virtual = 22777
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 192 instances were transformed.
   RAM256X1S => RAM256X1S (MUXF7(x2), MUXF8, RAMS64E(x4)): 192 instances
@@ -533,10 +533,10 @@ Synth Design complete | Checksum: 365db28e
 INFO: [Common 17-83] Releasing license: Synthesis
 73 Infos, 3 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:03:32 ; elapsed = 00:03:39 . Memory (MB): peak = 3019.695 ; gain = 1410.172 ; free physical = 1334 ; free virtual = 22825
-INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 2237.872; main = 2017.997; forked = 238.564
-INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 3951.934; main = 3019.664; forked = 988.297
-Write ShapeDB Complete: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.03 . Memory (MB): peak = 3043.672 ; gain = 0.000 ; free physical = 1334 ; free virtual = 22825
+synth_design: Time (s): cpu = 00:03:25 ; elapsed = 00:03:30 . Memory (MB): peak = 3025.414 ; gain = 1454.578 ; free physical = 1200 ; free virtual = 22780
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 2247.003; main = 2026.803; forked = 238.864
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 3957.652; main = 3025.383; forked = 988.297
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.03 . Memory (MB): peak = 3049.391 ; gain = 0.000 ; free physical = 1200 ; free virtual = 22781
 INFO: [Common 17-1381] The checkpoint '/home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/synth_1/FPGA_CPU_32_bits_cache.dcp' has been generated.
 INFO: [Vivado 12-24828] Executing command : report_utilization -file FPGA_CPU_32_bits_cache_utilization_synth.rpt -pb FPGA_CPU_32_bits_cache_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Tue Mar 31 09:23:03 2026...
+INFO: [Common 17-206] Exiting Vivado at Tue Mar 31 10:10:58 2026...

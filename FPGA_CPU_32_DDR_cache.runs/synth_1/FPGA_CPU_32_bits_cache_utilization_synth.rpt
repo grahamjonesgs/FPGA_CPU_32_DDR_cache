@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (lin64) Build 6299465 Fri Nov 14 12:34:56 MST 2025
-| Date         : Tue Mar 31 09:23:03 2026
+| Date         : Tue Mar 31 10:10:57 2026
 | Host         : Garuda running 64-bit Garuda Linux Broadwing
 | Command      : report_utilization -file FPGA_CPU_32_bits_cache_utilization_synth.rpt -pb FPGA_CPU_32_bits_cache_utilization_synth.pb
 | Design       : FPGA_CPU_32_bits_cache
