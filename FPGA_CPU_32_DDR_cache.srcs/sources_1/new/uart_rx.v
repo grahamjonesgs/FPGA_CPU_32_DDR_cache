@@ -18,14 +18,16 @@ module uart_rx #(
     input        i_Clock,
     input        i_Rx_Serial,
     output       o_Rx_DV,
-    output [7:0] o_Rx_Byte
+    output [7:0] o_Rx_Byte,
+    output       o_Break       // Pulses high for one clock on UART break condition
 );
 
-    localparam s_IDLE = 3'b000;
+    localparam s_IDLE       = 3'b000;
     localparam s_RX_START_BIT = 3'b001;
     localparam s_RX_DATA_BITS = 3'b010;
-    localparam s_RX_STOP_BIT = 3'b011;
-    localparam s_CLEANUP = 3'b100;
+    localparam s_RX_STOP_BIT  = 3'b011;
+    localparam s_CLEANUP    = 3'b100;
+    localparam s_BREAK_WAIT = 3'b101;  // Wait for line to return high after break
 
     reg        r_Rx_Data_R = 1'b1;
     reg        r_Rx_Data = 1'b1;
@@ -34,6 +36,7 @@ module uart_rx #(
     reg [ 2:0] r_Bit_Index = 0;  //8 bits total
     reg [ 7:0] r_Rx_Byte = 0;
     reg        r_Rx_DV = 0;
+    reg        r_Break = 0;
     reg [ 2:0] r_SM_Main = 0;
 
     // Purpose: Double-register the incoming data.
@@ -101,9 +104,19 @@ module uart_rx #(
                     r_Clock_Count <= r_Clock_Count + 1;
                     r_SM_Main     <= s_RX_STOP_BIT;
                 end else begin
-                    r_Rx_DV       <= 1'b1;
                     r_Clock_Count <= 0;
-                    r_SM_Main     <= s_CLEANUP;
+                    if (r_Rx_Data == 1'b1) begin
+                        // Normal stop bit: valid byte received
+                        r_Rx_DV   <= 1'b1;
+                        r_SM_Main <= s_CLEANUP;
+                    end else if (r_Rx_Byte == 8'h00) begin
+                        // Framing error with all-zero data: UART break condition
+                        r_Break   <= 1'b1;
+                        r_SM_Main <= s_BREAK_WAIT;
+                    end else begin
+                        // Framing error on non-zero byte: discard and return to idle
+                        r_SM_Main <= s_IDLE;
+                    end
                 end
             end  // case: s_RX_STOP_BIT
 
@@ -114,6 +127,15 @@ module uart_rx #(
                 r_Rx_DV   <= 1'b0;
             end
 
+            // Wait for line to return high before resuming normal reception
+            s_BREAK_WAIT: begin
+                r_Break <= 1'b0;  // Pulse break for exactly one clock cycle
+                if (r_Rx_Data == 1'b1)
+                    r_SM_Main <= s_IDLE;
+                else
+                    r_SM_Main <= s_BREAK_WAIT;
+            end
+
 
             default: r_SM_Main <= s_IDLE;
 
@@ -122,5 +144,6 @@ module uart_rx #(
 
     assign o_Rx_DV   = r_Rx_DV;
     assign o_Rx_Byte = r_Rx_Byte;
+    assign o_Break   = r_Break;
 
 endmodule  // uart_rx

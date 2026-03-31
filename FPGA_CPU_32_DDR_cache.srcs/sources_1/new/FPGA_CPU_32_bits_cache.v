@@ -86,6 +86,8 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    // UART receive control
    wire [7:0] w_uart_rx_value;  // Received value
    wire w_uart_rx_DV;  // receive flag
+   wire w_uart_break;  // Break condition detected
+   reg  r_break_received;  // Set after break, cleared after command byte
 
    // LCD control
    reg [3:0] o_TX_LCD_Count;  // # bytes per CS low
@@ -308,7 +310,8 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
        .i_Clock(i_Clk),
        .i_Rx_Serial(i_uart_rx),
        .o_Rx_DV(w_uart_rx_DV),
-       .o_Rx_Byte(w_uart_rx_value)
+       .o_Rx_Byte(w_uart_rx_value),
+       .o_Break(w_uart_break)
    );
 
 
@@ -450,6 +453,7 @@ rams_sp_nc rams_sp_nc1 (
       r_debug_flag = 0;
       r_debug_step_flag = 0;
       r_debug_step_run = 0;
+      r_break_received = 0;
       r_writeback_set_zero_flag = 0;
    end
 
@@ -459,46 +463,39 @@ rams_sp_nc rams_sp_nc1 (
          r_SM <= NO_PROGRAM;
          r_SP <= 26'h200_0000;
          r_int_push_wait <= 1'b0;
+         r_break_received <= 1'b0;
          for (i = 0; i < 16; i = i + 1)
             r_register[i] <= 32'b0;
 
       end // if (w_reset_H)
-    // else if(w_uart_rx_DV&w_uart_rx_value==8'h53&i_load_H) // Load start flag received and down button pressed
-      else if(w_uart_rx_DV&w_uart_rx_value==8'h53) // Load start flag received ignore if button pressed
-    begin
-         r_SM <= LOADING_BYTE;
-         r_load_byte_counter <= 0;
-         o_ram_write_addr <= 25'h0;
-         r_ram_next_write_addr <= 25'h0;
-         r_checksum <= 16'h0;
-         r_old_checksum <= 16'h0;
-         r_RGB_LED_1 <= 12'h0;
-         r_RGB_LED_2 <= 12'h0;
-         o_led <= 16'h0;
-         r_mem_write_DV <= 1'b0;
-         r_mem_read_DV <= 1'b0;
-
+      // Break received: arm the flag so next byte is treated as a command
+      else if (w_uart_break) begin
+         r_break_received <= 1'b1;
       end
-    else if(w_uart_rx_DV&w_uart_rx_value==8'h47) // Debug flag G sent
-    begin
-         r_debug_flag <= 1;
-      end
-    else if(w_uart_rx_DV&w_uart_rx_value==8'h67) // No debug flag g sent
-    
-    begin
-         r_debug_flag <= 0;
-      end
-    else if(w_uart_rx_DV&w_uart_rx_value==8'h57) // Step flag W sent
-    begin
-         r_debug_step_flag <= 1;
-      end
-    else if(w_uart_rx_DV&w_uart_rx_value==8'h77) // No step flag w sent
-    begin
-         r_debug_step_flag <= 0;
-      end 
-        else if(w_uart_rx_DV&w_uart_rx_value==8'h6E) // Next command n sent
-    begin
-         r_debug_step_run <= 1;
+      // Command characters are only accepted after a break
+      else if (w_uart_rx_DV & r_break_received) begin
+         r_break_received <= 1'b0;  // consume the break — one command per break
+         case (w_uart_rx_value)
+            8'h53: begin // 'S' — load start
+               r_SM <= LOADING_BYTE;
+               r_load_byte_counter <= 0;
+               o_ram_write_addr <= 25'h0;
+               r_ram_next_write_addr <= 25'h0;
+               r_checksum <= 16'h0;
+               r_old_checksum <= 16'h0;
+               r_RGB_LED_1 <= 12'h0;
+               r_RGB_LED_2 <= 12'h0;
+               o_led <= 16'h0;
+               r_mem_write_DV <= 1'b0;
+               r_mem_read_DV <= 1'b0;
+            end
+            8'h47: r_debug_flag      <= 1;  // 'G' — debug on
+            8'h67: r_debug_flag      <= 0;  // 'g' — debug off
+            8'h57: r_debug_step_flag <= 1;  // 'W' — step on
+            8'h77: r_debug_step_flag <= 0;  // 'w' — step off
+            8'h6E: r_debug_step_run  <= 1;  // 'n' — next step
+            // Any other byte after break: silently ignored
+         endcase
       end else begin
          r_msg_send_DV <= 1'b0;
 
