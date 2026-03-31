@@ -99,7 +99,7 @@ task t_rotate_right_n;
    end
 endtask
 
-// ROLRR - Rotate first left by second bits, result in first
+// ROLR - rd = rs1 rol rs2[4:0]
 task t_rotate_left_reg;
    reg [4:0] count;
    reg [31:0] result;
@@ -107,14 +107,14 @@ task t_rotate_left_reg;
       count = r_reg_port_b[4:0];
       result = (r_reg_port_a << count) | (r_reg_port_a >> (32 - count));
       r_writeback_value <= result;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// RORRR - Rotate first right by second bits, result in first
+// RORR - rd = rs1 ror rs2[4:0]
 task t_rotate_right_reg;
    reg [4:0] count;
    reg [31:0] result;
@@ -122,7 +122,7 @@ task t_rotate_right_reg;
       count = r_reg_port_b[4:0];
       result = (r_reg_port_a >> count) | (r_reg_port_a << (32 - count));
       r_writeback_value <= result;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
@@ -177,43 +177,44 @@ task t_bit_test_value;
    end
 endtask
 
-// BSETRR - Set bit (bit number in second register)
+// BSETRR - rd = rs1 with bit rs2 set
 task t_bit_set_reg;
    begin
       r_writeback_value <= r_reg_port_a | (32'b1 << r_reg_port_b[4:0]);
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// BCLRRR - Clear bit (bit number in second register)
+// BCLRRR - rd = rs1 with bit rs2 cleared
 task t_bit_clear_reg;
    begin
       r_writeback_value <= r_reg_port_a & ~(32'b1 << r_reg_port_b[4:0]);
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// BTGLRR - Toggle bit (bit number in second register)
+// BTGLRR - rd = rs1 with bit rs2 toggled
 task t_bit_toggle_reg;
    begin
       r_writeback_value <= r_reg_port_a ^ (32'b1 << r_reg_port_b[4:0]);
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// BTSTRR - Test bit (bit number in second register)
+// BTSTRR - rd = (rs1 >> rs2[4:0]) & 1
 task t_bit_test_reg;
    reg [4:0] bit_pos;
    begin
       bit_pos = r_reg_port_b[4:0];
-      r_zero_flag <= ~r_reg_port_a[bit_pos];
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= {31'b0, r_reg_port_a[bit_pos]};
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
@@ -303,110 +304,122 @@ endtask
 
 
 //=============================================================================
-// COMPARISON OPERATIONS (Signed and Unsigned)
+// COMPARISON OPERATIONS - result written to rd (0 or 1)
 // These benefit most from dedicated read ports - removes mux from compare path
 //=============================================================================
 
-// CMPLTRR - Compare first < second (signed), sets less/equal flags
-task t_cmp_lt_regs;
+// CMPEQR - rd = (rs1 == rs2) ? 1 : 0
+task t_cmpeqr;
+   begin
+      r_writeback_value <= (r_reg_port_a == r_reg_port_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
+      r_PC <= r_PC + 1;
+   end
+endtask
+
+// CMPNER - rd = (rs1 != rs2) ? 1 : 0
+task t_cmpner;
+   begin
+      r_writeback_value <= (r_reg_port_a != r_reg_port_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
+      r_PC <= r_PC + 1;
+   end
+endtask
+
+// CMPLTR - rd = (rs1 < rs2) ? 1 : 0, signed
+task t_cmpltr;
    reg signed [31:0] s_a;
    reg signed [31:0] s_b;
    begin
       s_a = r_reg_port_a;
       s_b = r_reg_port_b;
-      r_less_flag <= (s_a < s_b) ? 1'b1 : 1'b0;
-      r_equal_flag <= (s_a == s_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (s_a == s_b) ? 1'b1 : 1'b0;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= (s_a < s_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// CMPLERR - Compare first <= second (signed), sets less/equal flags
-task t_cmp_le_regs;
+// CMPLER - rd = (rs1 <= rs2) ? 1 : 0, signed
+task t_cmpler;
    reg signed [31:0] s_a;
    reg signed [31:0] s_b;
    begin
       s_a = r_reg_port_a;
       s_b = r_reg_port_b;
-      r_less_flag <= (s_a <= s_b) ? 1'b1 : 1'b0;
-      r_equal_flag <= (s_a == s_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (s_a == s_b) ? 1'b1 : 1'b0;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= (s_a <= s_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// CMPGTRR - Compare first > second (signed), sets less/equal flags
-task t_cmp_gt_regs;
+// CMPGTR - rd = (rs1 > rs2) ? 1 : 0, signed
+task t_cmpgtr;
    reg signed [31:0] s_a;
    reg signed [31:0] s_b;
    begin
       s_a = r_reg_port_a;
       s_b = r_reg_port_b;
-      r_less_flag <= (s_a < s_b) ? 1'b1 : 1'b0;  // Set actual less-than for JMPGT/JMPGE
-      r_equal_flag <= (s_a == s_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (s_a == s_b) ? 1'b1 : 1'b0;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= (s_a > s_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// CMPGERR - Compare first >= second (signed), sets less/equal flags
-task t_cmp_ge_regs;
+// CMPGER - rd = (rs1 >= rs2) ? 1 : 0, signed
+task t_cmpger;
    reg signed [31:0] s_a;
    reg signed [31:0] s_b;
    begin
       s_a = r_reg_port_a;
       s_b = r_reg_port_b;
-      r_less_flag <= (s_a < s_b) ? 1'b1 : 1'b0;  // Set actual less-than for JMPGT/JMPGE
-      r_equal_flag <= (s_a == s_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (s_a == s_b) ? 1'b1 : 1'b0;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= (s_a >= s_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// CMPULTRR - Compare first < second (unsigned), sets carry/equal flags
-task t_cmp_ult_regs;
+// CMPULTR - rd = (rs1 < rs2) ? 1 : 0, unsigned
+task t_cmpultr;
    begin
-      r_carry_flag <= (r_reg_port_a < r_reg_port_b) ? 1'b1 : 1'b0;
-      r_equal_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= (r_reg_port_a < r_reg_port_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// CMPULERR - Compare first <= second (unsigned), sets carry/equal flags
-task t_cmp_ule_regs;
+// CMPULER - rd = (rs1 <= rs2) ? 1 : 0, unsigned
+task t_cmpuler;
    begin
-      r_carry_flag <= (r_reg_port_a <= r_reg_port_b) ? 1'b1 : 1'b0;
-      r_equal_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= (r_reg_port_a <= r_reg_port_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// CMPUGTRR - Compare first > second (unsigned), sets carry/equal flags
-task t_cmp_ugt_regs;
+// CMPUGTR - rd = (rs1 > rs2) ? 1 : 0, unsigned
+task t_cmpugtr;
    begin
-      r_carry_flag <= (r_reg_port_a < r_reg_port_b) ? 1'b1 : 1'b0;  // actual less-than
-      r_equal_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= (r_reg_port_a > r_reg_port_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// CMPUGERR - Compare first >= second (unsigned), sets carry/equal flags
-task t_cmp_uge_regs;
+// CMPUGER - rd = (rs1 >= rs2) ? 1 : 0, unsigned
+task t_cmpuger;
    begin
-      r_carry_flag <= (r_reg_port_a < r_reg_port_b) ? 1'b1 : 1'b0;  // actual less-than
-      r_equal_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-      r_SM <= OPCODE_REQUEST;
+      r_writeback_value <= (r_reg_port_a >= r_reg_port_b) ? 32'b1 : 32'b0;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
@@ -417,12 +430,12 @@ endtask
 // ALL multiply operations must go through the pipeline to avoid timing violations
 //=============================================================================
 
-// MULRR - Signed multiply, lower 32 bits: first = first * second
+// MULR - rd = rs1 * rs2, signed lo
 task t_mul_regs_hw;
 begin
     r_mul_operand_a   <= r_reg_port_a;
     r_mul_operand_b   <= r_reg_port_b;
-    r_mul_dest_reg    <= r_reg_1;
+    r_mul_dest_reg    <= r_reg_dst;
     r_mul_is_high     <= 1'b0;
     r_mul_is_unsigned <= 1'b0;
     r_mul_is_immediate <= 1'b0;
@@ -430,12 +443,12 @@ begin
 end
 endtask
 
-// MULURR - Unsigned multiply, lower 32 bits: first = first * second
+// MULUR - rd = rs1 * rs2, unsigned lo
 task t_mulu_regs_hw;
 begin
     r_mul_operand_a   <= r_reg_port_a;
     r_mul_operand_b   <= r_reg_port_b;
-    r_mul_dest_reg    <= r_reg_1;
+    r_mul_dest_reg    <= r_reg_dst;
     r_mul_is_high     <= 1'b0;
     r_mul_is_unsigned <= 1'b1;
     r_mul_is_immediate <= 1'b0;
@@ -443,12 +456,12 @@ begin
 end
 endtask
 
-// MULHRR - Signed multiply, upper 32 bits: first = high(first * second)
+// MULHR - rd = high(rs1 * rs2), signed
 task t_mulh_regs_hw;
 begin
     r_mul_operand_a   <= r_reg_port_a;
     r_mul_operand_b   <= r_reg_port_b;
-    r_mul_dest_reg    <= r_reg_1;
+    r_mul_dest_reg    <= r_reg_dst;
     r_mul_is_high     <= 1'b1;
     r_mul_is_unsigned <= 1'b0;
     r_mul_is_immediate <= 1'b0;
@@ -456,12 +469,12 @@ begin
 end
 endtask
 
-// MULHURR - Unsigned multiply, upper 32 bits: first = high(first * second)
+// MULHUR - rd = high(rs1 * rs2), unsigned
 task t_mulhu_regs_hw;
 begin
     r_mul_operand_a   <= r_reg_port_a;
     r_mul_operand_b   <= r_reg_port_b;
-    r_mul_dest_reg    <= r_reg_1;
+    r_mul_dest_reg    <= r_reg_dst;
     r_mul_is_high     <= 1'b1;
     r_mul_is_unsigned <= 1'b1;
     r_mul_is_immediate <= 1'b0;
@@ -488,7 +501,7 @@ endtask
 // These use the division state machine defined in the main module
 //=============================================================================
 
-// DIVRR - Signed divide: first = first / second
+// DIVR - rd = rs1 / rs2, signed
 task t_div_regs_hw;
    reg [31:0] abs_dividend;
    reg [31:0] abs_divisor;
@@ -496,7 +509,7 @@ task t_div_regs_hw;
       if (r_reg_port_b == 32'b0) begin
          // Divide by zero
          r_writeback_value <= 32'hFFFFFFFF;
-         r_writeback_reg <= r_reg_1;
+         r_writeback_reg <= r_reg_dst;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 1;
@@ -513,19 +526,19 @@ task t_div_regs_hw;
          r_div_sign_r <= r_reg_port_a[31];
          r_div_is_signed <= 1'b1;
          r_div_op <= DIV_OP_DIV;
-         r_div_dest_reg <= r_reg_1;
+         r_div_dest_reg <= r_reg_dst;
          r_div_pc_inc <= 1'b0;  // PC += 1
          r_SM <= DIVIDE_STEP;
       end
    end
 endtask
 
-// DIVURR - Unsigned divide: first = first / second
+// DIVUR - rd = rs1 / rs2, unsigned
 task t_divu_regs_hw;
    begin
       if (r_reg_port_b == 32'b0) begin
          r_writeback_value <= 32'hFFFFFFFF;
-         r_writeback_reg <= r_reg_1;
+         r_writeback_reg <= r_reg_dst;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 1;
@@ -538,21 +551,21 @@ task t_divu_regs_hw;
          r_div_counter <= 6'd0;
          r_div_is_signed <= 1'b0;
          r_div_op <= DIV_OP_DIV;
-         r_div_dest_reg <= r_reg_1;
+         r_div_dest_reg <= r_reg_dst;
          r_div_pc_inc <= 1'b0;  // PC += 1
          r_SM <= DIVIDE_STEP;
       end
    end
 endtask
 
-// MODRR - Signed modulo: first = first % second
+// MODR - rd = rs1 % rs2, signed
 task t_mod_regs_hw;
    reg [31:0] abs_dividend;
    reg [31:0] abs_divisor;
    begin
       if (r_reg_port_b == 32'b0) begin
          r_writeback_value <= r_reg_port_a;  // Return dividend
-         r_writeback_reg <= r_reg_1;
+         r_writeback_reg <= r_reg_dst;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 1;
@@ -568,19 +581,19 @@ task t_mod_regs_hw;
          r_div_sign_r <= r_reg_port_a[31];  // Remainder sign follows dividend
          r_div_is_signed <= 1'b1;
          r_div_op <= DIV_OP_MOD;
-         r_div_dest_reg <= r_reg_1;
+         r_div_dest_reg <= r_reg_dst;
          r_div_pc_inc <= 1'b0;  // PC += 1
          r_SM <= DIVIDE_STEP;
       end
    end
 endtask
 
-// MODURR - Unsigned modulo: first = first % second
+// MODUR - rd = rs1 % rs2, unsigned
 task t_modu_regs_hw;
    begin
       if (r_reg_port_b == 32'b0) begin
          r_writeback_value <= r_reg_port_a;
-         r_writeback_reg <= r_reg_1;
+         r_writeback_reg <= r_reg_dst;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
          r_PC <= r_PC + 1;
@@ -593,7 +606,7 @@ task t_modu_regs_hw;
          r_div_counter <= 6'd0;
          r_div_is_signed <= 1'b0;
          r_div_op <= DIV_OP_MOD;
-         r_div_dest_reg <= r_reg_1;
+         r_div_dest_reg <= r_reg_dst;
          r_div_pc_inc <= 1'b0;  // PC += 1
          r_SM <= DIVIDE_STEP;
       end
@@ -788,7 +801,7 @@ task t_right_shift_a_n;
    end
 endtask
 
-// MINRR - Minimum of first and second (signed), result in first
+// MINR - rd = min(rs1, rs2), signed
 task t_min_regs;
    reg signed [31:0] s_a;
    reg signed [31:0] s_b;
@@ -796,13 +809,13 @@ task t_min_regs;
       s_a = r_reg_port_a;
       s_b = r_reg_port_b;
       r_writeback_value <= (s_a < s_b) ? r_reg_port_a : r_reg_port_b;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// MAXRR - Maximum of first and second (signed), result in first
+// MAXR - rd = max(rs1, rs2), signed
 task t_max_regs;
    reg signed [31:0] s_a;
    reg signed [31:0] s_b;
@@ -810,29 +823,68 @@ task t_max_regs;
       s_a = r_reg_port_a;
       s_b = r_reg_port_b;
       r_writeback_value <= (s_a > s_b) ? r_reg_port_a : r_reg_port_b;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// MINURR - Minimum of first and second (unsigned), result in first
+// MINUR - rd = min(rs1, rs2), unsigned
 task t_minu_regs;
    begin
       r_writeback_value <= (r_reg_port_a < r_reg_port_b) ?
                               r_reg_port_a : r_reg_port_b;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// MAXURR - Maximum of first and second (unsigned), result in first
+// MAXUR - rd = max(rs1, rs2), unsigned
 task t_maxu_regs;
    begin
       r_writeback_value <= (r_reg_port_a > r_reg_port_b) ?
                               r_reg_port_a : r_reg_port_b;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
+      r_PC <= r_PC + 1;
+   end
+endtask
+
+//=============================================================================
+// 3-REGISTER SHIFT OPERATIONS (shift amount from register)
+//=============================================================================
+
+// SHLR - rd = rs1 << rs2[4:0], logical left shift
+task t_shlr3;
+   begin
+      r_writeback_value <= r_reg_port_a << r_reg_port_b[4:0];
+      r_writeback_reg <= r_reg_dst;
+      r_writeback_set_zero_flag <= 1'b1;
+      r_SM <= WRITEBACK;
+      r_PC <= r_PC + 1;
+   end
+endtask
+
+// SHRR - rd = rs1 >> rs2[4:0], logical right shift
+task t_shrr3;
+   begin
+      r_writeback_value <= r_reg_port_a >> r_reg_port_b[4:0];
+      r_writeback_reg <= r_reg_dst;
+      r_writeback_set_zero_flag <= 1'b1;
+      r_SM <= WRITEBACK;
+      r_PC <= r_PC + 1;
+   end
+endtask
+
+// SARR - rd = rs1 >>> rs2[4:0], arithmetic right shift
+task t_sarr3;
+   reg signed [31:0] signed_val;
+   begin
+      signed_val = r_reg_port_a;
+      r_writeback_value <= signed_val >>> r_reg_port_b[4:0];
+      r_writeback_reg <= r_reg_dst;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end

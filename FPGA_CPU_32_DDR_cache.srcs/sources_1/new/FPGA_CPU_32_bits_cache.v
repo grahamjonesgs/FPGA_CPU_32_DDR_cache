@@ -105,12 +105,13 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    reg [31:0] r_SM;
    reg [24:0] r_PC;
    reg [31:0] r_mem_read_addr;
-   wire [15:0] w_opcode;
+   wire [31:0] w_opcode;
    wire [31:0] w_var1;
    wire [31:0] w_var2;
    wire [31:0] w_mem;
    reg [3:0] r_reg_1;
    reg [3:0] r_reg_2;
+   reg [3:0] r_reg_dst;
    reg [1:0] r_extra_clock;
    reg [24:0] r_idx_base_addr;  // Saved base address for indexed register ops
    reg r_hcf_message_sent;
@@ -174,7 +175,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    reg [31:0] r_mem_write_data;
    wire [31:0] w_mem_read_data;
    wire w_mem_ready;
-   reg [15:0] r_opcode_mem;
+   reg [31:0] r_opcode_mem;
    reg [31:0] r_var1_mem;
    reg [31:0] r_var2_mem;
    reg r_cache_reset;
@@ -728,15 +729,16 @@ rams_sp_nc rams_sp_nc1 (
 
             OPCODE_FETCH: begin
                if (w_mem_ready) begin
-                  r_opcode_mem<=w_mem_read_data[15:0]; // the memory location, allows read of code as well as data
+                  r_opcode_mem<=w_mem_read_data; // full 32-bit opcode word
                   r_mem_read_DV <= 1'b0;
                   r_SM <= OPCODE_FETCH2;
                end  // if ready asserted, else will loop until ready
             end
 
             OPCODE_FETCH2: begin
-               r_reg_1 <= w_opcode[7:4];
-               r_reg_2 <= w_opcode[3:0];
+               r_reg_1   <= w_opcode[7:4];
+               r_reg_2   <= w_opcode[3:0];
+               r_reg_dst <= w_opcode[11:8];
                r_SM <= VAR1_FETCH;
                r_mem_addr <= (r_PC + 1);
                r_mem_read_DV <= 1'b1;
@@ -746,7 +748,7 @@ rams_sp_nc rams_sp_nc1 (
             VAR1_FETCH: begin
                if (w_mem_ready) begin
                   r_var1_mem<=w_mem_read_data; // the memory location, allows read of code as well as data
-                  if (r_debug_flag&&w_opcode[15:12]!=4'hF) begin  // Ignore opcodes starting F as these are delay and
+                  if (r_debug_flag&&w_opcode[31:12]!=20'h0000F) begin  // Ignore delay/NOP opcodes (0x0000_F???)
                      r_SM <= DEBUG_DATA;
                   end else begin
                      r_SM <= OPCODE_EXECUTE;
@@ -894,13 +896,13 @@ rams_sp_nc rams_sp_nc1 (
                         r_seven_seg_value1 <= 32'h00_25_0C_0D;
                         r_seven_seg_value2 <= {
                            4'h0,
-                           w_opcode[15:12],
+                           w_opcode[31:28],
                            4'h0,
-                           w_opcode[11:8],
+                           w_opcode[27:24],
                            4'h0,
-                           w_opcode[7:4],
+                           w_opcode[23:20],
                            4'h0,
-                           w_opcode[3:0]
+                           w_opcode[19:16]
                         };
                      end
 

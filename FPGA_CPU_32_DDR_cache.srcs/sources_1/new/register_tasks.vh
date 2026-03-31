@@ -50,11 +50,11 @@ input [31:0] i_location; // Not used here, but needed to show this is a two word
 endtask
 */
 
-// Copy from second reg to first
-task t_copy_regs;
+// COPYR - Copy rs1 into rd
+task t_copyr3;
    begin
-      r_writeback_value <= r_reg_port_b;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_value <= r_reg_port_a;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -83,31 +83,31 @@ endtask
 
 // Bitwise operations
 
-// AND first reg with second, result in first
-task t_and_regs;
+// ANDR - rd = rs1 & rs2
+task t_andr3;
    begin
       r_writeback_value <= r_reg_port_a & r_reg_port_b;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// OR first reg with second, result in first
-task t_or_regs;
+// ORR - rd = rs1 | rs2
+task t_orr3;
    begin
       r_writeback_value <= r_reg_port_a | r_reg_port_b;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-// XOR first reg with second, result in first
-task t_xor_regs;
+// XORR - rd = rs1 ^ rs2
+task t_xorr3;
    begin
       r_writeback_value <= r_reg_port_a ^ r_reg_port_b;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -226,8 +226,8 @@ task t_compare_reg_value;
    end
 endtask
 
-// Subtract regs
-task t_minus_regs;
+// SUBR - rd = rs1 - rs2
+task t_subr3;
    reg [31:0] hold;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_a} - {1'b0, r_reg_port_b};
@@ -235,7 +235,7 @@ task t_minus_regs;
       r_sign_flag <= hold[31];
       r_overflow_flag <= (r_reg_port_a[31]&&!r_reg_port_b[31]&&!hold[31])||(!r_reg_port_a[31]&&r_reg_port_b[31]&&hold[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -293,8 +293,8 @@ task t_right_shift_a_reg;
    end
 endtask
 
-// Compare registers (no register write)
-task t_compare_regs;
+// CMPRR - set flags from rs1-rs2, no writeback (for use with conditional jumps)
+task t_cmprr3;
    reg signed [31:0] s_a;
    reg signed [31:0] s_b;
    begin
@@ -309,9 +309,9 @@ task t_compare_regs;
 endtask
 
 //=============================================================================
-// ADDRR - Add registers
+// ADDR - rd = rs1 + rs2
 //=============================================================================
-task t_add_regs;
+task t_addr3;
    reg [32:0] hold;
    begin
       hold = {1'b0, r_reg_port_a} + {1'b0, r_reg_port_b};
@@ -321,27 +321,9 @@ task t_add_regs;
       r_overflow_flag <= (r_reg_port_a[31] == r_reg_port_b[31]) &&
                          (hold[31] != r_reg_port_a[31]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold[31:0];
-      r_writeback_reg <= r_reg_1;
+      r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
 endtask
 
-//=============================================================================
-// CMPLTRR - Compare less-than registers (no register write)
-//=============================================================================
-task t_compare_less_than_regs;
-   reg signed [31:0] signed_reg1;
-   reg signed [31:0] signed_reg2;
-   begin
-      signed_reg1 = r_reg_port_a;
-      signed_reg2 = r_reg_port_b;
-
-      r_equal_flag <= (signed_reg1 < signed_reg2) ? 1'b1 : 1'b0;
-      r_carry_flag <= (r_reg_port_a < r_reg_port_b) ? 1'b1 : 1'b0;
-      r_zero_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
-
-      r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 1;
-   end
-endtask
