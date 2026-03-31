@@ -50,11 +50,11 @@ input [31:0] i_location; // Not used here, but needed to show this is a two word
 endtask
 */
 
-// COPYR - Copy rs1 into rd
-task t_copyr3;
+// COPY - Copy second register into first (2-register format)
+task t_copy_regs;
    begin
-      r_writeback_value <= r_reg_port_a;
-      r_writeback_reg <= r_reg_dst;
+      r_writeback_value <= r_reg_port_b;
+      r_writeback_reg <= r_reg_1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end

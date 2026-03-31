@@ -46,7 +46,6 @@ task t_opcode_select;
          32'h0003_0???: t_andr3;                               // ANDR RRR rd=rs1&rs2
          32'h0004_0???: t_orr3;                                // ORR RRR rd=rs1|rs2
          32'h0005_0???: t_xorr3;                               // XORR RRR rd=rs1^rs2
-         32'h0006_0???: t_copyr3;                              // COPYR RRR rd=rs1
          32'h0007_0???: t_cmprr3;                              // CMPRR RRR set flags from rs1-rs2 (no writeback)
 
          //=====================================================================
@@ -104,6 +103,7 @@ task t_opcode_select;
          //=====================================================================
          // Value-based register ops 0xxx (upper 16 = 0x0000, legacy format)
          //=====================================================================
+         32'h0000_01??: t_copy_regs;                           // COPY RR Copy second register into first
          32'h0000_080?: t_set_reg(w_var1);                     // SETR RV Set register to a value
          32'h0000_081?: t_add_value(w_var1);                   // ADDV RV Add value to register
          32'h0000_082?: t_minus_value(w_var1);                 // MINUSV RV Subtract value from register
