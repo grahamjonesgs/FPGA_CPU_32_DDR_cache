@@ -77,6 +77,7 @@ localparam MULTIPLY_WRITEBACK = 32'h0080_0000;  // Write result
 localparam WRITEBACK          = 32'h0200_0000;  // Register file writeback stage
 localparam HALTED             = 32'h0400_0000;  // CPU halted, waiting for reset
 localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
+localparam HALTED_BREAK       = 32'h1000_0000;  // Sending UART break before halt
 
    // Error Codes
    localparam ERR_INV_OPCODE = 8'h1, ERR_INV_FSM_STATE = 8'h2, ERR_STACK = 8'h3;
@@ -271,7 +272,14 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
        r_reg_port_b <= r_register[r_reg_2];
    end
 
-   assign w_reset_H = !CPU_RESETN;
+   // UART TX break generation — holds o_uart_tx low to signal program end
+   wire       w_uart_tx_serial;   // internal serial output from uart_send_msg
+   reg        r_break_active;     // when 1, overrides TX line to low (break)
+   reg [11:0] r_break_counter;    // countdown: 2500 clocks ≈ 2.5 frames
+
+   // Mux: break takes priority over normal TX; idle state is line-high
+   assign o_uart_tx  = r_break_active ? 1'b0 : w_uart_tx_serial;
+   assign w_reset_H  = !CPU_RESETN;
 
    mem_read_write mem_read_write (
        .i_Clk(i_Clk),
@@ -307,7 +315,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
        .i_msg_flat(r_msg),
        .i_msg_length(r_msg_length),
        .i_msg_send_DV(r_msg_send_DV),
-       .o_Tx_Serial(o_uart_tx),
+       .o_Tx_Serial(w_uart_tx_serial),
        .o_msg_sent_DV(i_msg_sent_DV),
        .o_sending_msg(w_sending_msg)
    );
@@ -477,7 +485,9 @@ rams_sp_nc rams_sp_nc1 (
       r_debug_step_run = 0;
       r_break_received = 0;
       r_writeback_set_zero_flag = 0;
-      r_rx_fifo_read = 0;
+      r_rx_fifo_read  = 0;
+      r_break_active  = 0;
+      r_break_counter = 0;
    end
 
    always @(posedge i_Clk) begin
@@ -984,6 +994,24 @@ MULTIPLY_WRITEBACK: begin
 
     r_SM <= WRITEBACK;
 end
+
+            HALTED_BREAK: begin
+               // Wait for any in-flight TX to finish, then hold line low for
+               // ~2.5 frames (2500 clocks at CLKS_PER_BIT=100) as a UART break,
+               // then transition to HALTED.
+               if (r_break_counter == 0) begin
+                  if (!w_sending_msg) begin
+                     r_break_active  <= 1'b1;
+                     r_break_counter <= 12'd2500;
+                  end
+               end else begin
+                  r_break_counter <= r_break_counter - 1;
+                  if (r_break_counter == 12'd1) begin
+                     r_break_active <= 1'b0;
+                     r_SM           <= HALTED;
+                  end
+               end
+            end
 
             HALTED: begin
                // CPU halted - do nothing until reset

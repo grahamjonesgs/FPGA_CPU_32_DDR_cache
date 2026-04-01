@@ -81,7 +81,7 @@ endtask
 // Do not change PC
 task t_halt;
    begin
-      r_SM <= HALTED;
+      r_SM <= HALTED_BREAK;
    end
 endtask
 
