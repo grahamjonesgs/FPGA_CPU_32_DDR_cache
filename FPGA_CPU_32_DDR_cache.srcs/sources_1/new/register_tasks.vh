@@ -220,6 +220,7 @@ task t_compare_reg_value;
       s_val = i_value;
       r_equal_flag <= (r_reg_port_b == i_value) ? 1'b1 : 1'b0;
       r_less_flag <= (s_reg < s_val) ? 1'b1 : 1'b0;
+      r_ult_flag <= (r_reg_port_b < i_value) ? 1'b1 : 1'b0;
       r_sign_flag <= (s_reg - s_val) < 0 ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 2;
@@ -246,6 +247,18 @@ task t_negate_reg;
    begin
       r_writeback_value <= ~r_reg_port_b + 1;
       r_writeback_reg <= r_reg_2;
+      r_writeback_set_zero_flag <= 1'b1;
+      r_SM <= WRITEBACK;
+      r_PC <= r_PC + 1;
+   end
+endtask
+
+// Bitwise NOT reg
+task t_not_reg;
+   begin
+      r_writeback_value <= ~r_reg_port_b;
+      r_writeback_reg <= r_reg_2;
+      r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 1;
    end
@@ -302,6 +315,7 @@ task t_cmprr3;
       s_b = r_reg_port_b;
       r_equal_flag <= (r_reg_port_a == r_reg_port_b) ? 1'b1 : 1'b0;
       r_less_flag <= (s_a < s_b) ? 1'b1 : 1'b0;
+      r_ult_flag <= (r_reg_port_a < r_reg_port_b) ? 1'b1 : 1'b0;
       r_sign_flag <= (s_a - s_b) < 0 ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 1;

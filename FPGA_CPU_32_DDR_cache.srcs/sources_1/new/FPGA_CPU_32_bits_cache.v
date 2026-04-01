@@ -195,6 +195,7 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    //=========================================================================
    reg r_sign_flag;      // Sign of last result (bit 31)
    reg r_less_flag;      // Result of signed less-than comparison
+   reg r_ult_flag;       // Result of unsigned less-than comparison
 
    reg r_mul_is_immediate;  // If true, increment PC by 2 instead of 1
    
@@ -360,6 +361,7 @@ rams_sp_nc rams_sp_nc1 (
    initial begin
       r_sign_flag <= 0;
       r_less_flag <= 0;
+      r_ult_flag <= 0;
       r_div_busy <= 0;
       r_div_op <= DIV_OP_NONE;
       r_div_counter <= 0;
