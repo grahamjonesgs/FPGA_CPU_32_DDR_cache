@@ -89,6 +89,12 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
    wire w_uart_break;  // Break condition detected
    reg  r_break_received;  // Set after break, cleared after command byte
 
+   // UART RX FIFO — buffers bytes for the CPU to read via RXRB / RXRNB opcodes
+   wire       w_rx_fifo_empty;
+   wire       w_rx_fifo_full;
+   wire [7:0] w_rx_fifo_byte;   // combinatorial peek at FIFO head
+   reg        r_rx_fifo_read;   // 1-cycle strobe: pop one byte from FIFO
+
    // LCD control
    reg [3:0] o_TX_LCD_Count;  // # bytes per CS low
    reg [7:0] o_TX_LCD_Byte;  // Byte to transmit on MOSI
@@ -315,6 +321,20 @@ localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
        .o_Break(w_uart_break)
    );
 
+   // Write to FIFO only when the byte is not consumed by the break/command
+   // handler (!r_break_received) or the program loader (r_SM != LOADING_BYTE).
+   uart_rx_fifo uart_rx_fifo1 (
+       .i_Clk        (i_Clk),
+       .i_Reset      (w_reset_H),
+       .i_Write_En   (w_uart_rx_DV & !r_break_received & (r_SM != LOADING_BYTE)),
+       .i_Write_Byte (w_uart_rx_value),
+       .i_Read_En    (r_rx_fifo_read),
+       .o_Peek_Byte  (w_rx_fifo_byte),
+       .o_Empty      (w_rx_fifo_empty),
+       .o_Full       (w_rx_fifo_full),
+       .o_Count      ()
+   );
+
 
    Seven_seg_LED_Display_Controller Seven_seg_LED_Display_Controller1 (
        .i_sysclk(i_Clk),
@@ -457,6 +477,7 @@ rams_sp_nc rams_sp_nc1 (
       r_debug_step_run = 0;
       r_break_received = 0;
       r_writeback_set_zero_flag = 0;
+      r_rx_fifo_read = 0;
    end
 
    always @(posedge i_Clk) begin
@@ -499,7 +520,8 @@ rams_sp_nc rams_sp_nc1 (
             // Any other byte after break: silently ignored
          endcase
       end else begin
-         r_msg_send_DV <= 1'b0;
+         r_msg_send_DV  <= 1'b0;
+         r_rx_fifo_read <= 1'b0;
 
          if (r_timer_interrupt_counter > 32'hFFFFF) begin
             r_timer_interrupt_counter <= 0;

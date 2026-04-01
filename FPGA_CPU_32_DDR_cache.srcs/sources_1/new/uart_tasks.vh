@@ -3,6 +3,46 @@
 // Increment PC 1
 // Increment r_SM_msg
 
+// Blocking UART receive — stalls CPU until a byte is in the FIFO, then writes
+// it zero-extended into the destination register. zero_flag is cleared (data valid).
+// Opcode: RXRB R
+task t_rx_blocking;
+    begin
+        if (w_rx_fifo_empty) begin
+            r_SM <= OPCODE_EXECUTE;  // retry next clock
+        end else begin
+            r_rx_fifo_read            <= 1'b1;
+            r_writeback_value         <= {24'b0, w_rx_fifo_byte};
+            r_writeback_reg           <= r_reg_2;
+            r_zero_flag               <= 1'b0;
+            r_SM <= WRITEBACK;
+            r_PC <= r_PC + 1;
+        end
+    end
+endtask
+
+// Non-blocking UART receive — always advances PC immediately.
+// If FIFO has data: writes byte to register, zero_flag=0 (data valid).
+// If FIFO empty:    leaves register unchanged, zero_flag=1 (no data).
+// Programmer must check zero_flag before trusting the register value.
+// Opcode: RXRNB R
+task t_rx_nonblocking;
+    begin
+        if (w_rx_fifo_empty) begin
+            r_zero_flag <= 1'b1;
+            r_SM <= OPCODE_REQUEST;
+            r_PC <= r_PC + 1;
+        end else begin
+            r_rx_fifo_read    <= 1'b1;
+            r_writeback_value <= {24'b0, w_rx_fifo_byte};
+            r_writeback_reg   <= r_reg_2;
+            r_zero_flag       <= 1'b0;
+            r_SM <= WRITEBACK;
+            r_PC <= r_PC + 1;
+        end
+    end
+endtask
+
 task t_debug_message;
     begin
         if (!w_sending_msg) begin
