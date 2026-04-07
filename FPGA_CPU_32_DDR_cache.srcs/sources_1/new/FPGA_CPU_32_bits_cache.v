@@ -161,7 +161,7 @@ localparam HALTED_BREAK       = 32'h1000_0000;  // Sending UART break before hal
    reg        r_int_push_wait;  // set while waiting for DDR2 to complete interrupt PC-push
 
    // UART send message
-   reg [2047:0] r_msg;
+   reg [255:0] r_msg;  // 32 bytes — longest message is 21 bytes (case 2 of t_tx_message)
    reg [7:0] r_msg_length;
    reg r_msg_send_DV;
    reg r_mem_was_ready;
@@ -477,7 +477,7 @@ rams_sp_nc rams_sp_nc1 (
       r_timer_interrupt_counter_sec <= 0;
       r_mem_write_DV <= 0;
       r_mem_read_DV <= 0;
-      r_msg = 2048'b0;
+      r_msg = 256'b0;
       r_boot_flash = 0;
       r_cache_reset = 0;
       r_debug_flag = 0;
@@ -704,7 +704,6 @@ rams_sp_nc rams_sp_nc1 (
 
             // Delay to enable load message to be sent before starting
             START_WAIT: begin
-               r_cache_reset <= 1'b1;
                r_msg_send_DV <= 1'b0;
                if (r_start_wait_counter == 0) begin
                   r_SM <= OPCODE_REQUEST;

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 module uart_send_msg (
     input               i_Clk,
-    input      [2047:0] i_msg_flat,
+    input      [ 255:0] i_msg_flat,
     input      [   7:0] i_msg_length,
     input               i_msg_send_DV,
     output              o_Tx_Serial,
@@ -15,7 +15,7 @@ module uart_send_msg (
 
     reg     [7:0] i_msg_count;
     reg     [2:0] r_SM_Main;
-    reg     [7:0] r_msg          [255:0];
+    reg     [7:0] r_msg          [31:0];
     reg     [7:0] r_msg_length;            // Latched copy of i_msg_length
 
     // for lower module
@@ -52,7 +52,7 @@ module uart_send_msg (
                     o_sending_msg <= 'b1;
                     r_msg_length <= i_msg_length;  // Latch length at start
                     r_UART_Tx_Byte[7:0] <= i_msg_flat[7:0];  // Set first byte directly
-                    for (i = 0; i <= 255; i = i + 1) begin
+                    for (i = 0; i <= 31; i = i + 1) begin
                         r_msg[i][7:0] <= i_msg_flat[8*i+:8];
                     end
                 end

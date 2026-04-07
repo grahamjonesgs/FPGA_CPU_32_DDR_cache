@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git ls-tree:*)"
+      "Bash(git ls-tree:*)",
+      "Read(//home/graham/Documents/src/fpga/blink/**)",
+      "Bash(git log:*)",
+      "Read(//home/graham/**)",
+      "Bash(python3)",
+      "Bash(ls /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.runs/impl_1/*.rpt)",
+      "Bash(include\\\\|\\\\.vh\" /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/FPGA_CPU_32_bits_cache.v | head -20)",
+      "Bash(grep -n \"task\\\\|t_debug\\\\|`include\\\\|\\\\.vh\" /home/graham/Documents/src/fpga/FPGA_CPU_32_DDR_cache/FPGA_CPU_32_DDR_cache.srcs/sources_1/new/FPGA_CPU_32_bits_cache.v | head -20)"
     ]
   }
 }
