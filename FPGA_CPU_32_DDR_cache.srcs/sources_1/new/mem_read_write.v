@@ -35,6 +35,8 @@ module mem_read_write (
     input      [24:0] i_mem_addr,
     input      [31:0] i_mem_write_data,
     output reg [31:0] o_mem_read_data,
+    output reg [31:0] o_mem_read_data_next, // next consecutive word in same cache line
+    output reg        o_mem_next_valid,      // 1 when o_mem_read_data_next is valid (offset != 3)
     output reg        o_mem_ready,
     input             i_cache_enable,
     input             i_cache_reset
@@ -225,7 +227,8 @@ module mem_read_write (
                 // All results are available next cycle in CHECK.
                 // ------------------------------------------------------------------
                 WAIT: begin
-                    o_mem_ready <= 0;
+                    o_mem_ready      <= 0;
+                    o_mem_next_valid <= 0;
                     if (i_mem_write_DV || i_mem_read_DV) begin
                         // Issue all BRAM reads in parallel
                         r_tag_way0          <= cache_val_addr_way0[w_cache_index];
@@ -388,10 +391,26 @@ module mem_read_write (
                 // ------------------------------------------------------------------
                 READ_CACHE2: begin
                     case (r_byte_offset)
-                        2'b00: o_mem_read_data <= r_cache_val_data_hold[127:96];
-                        2'b01: o_mem_read_data <= r_cache_val_data_hold[95:64];
-                        2'b10: o_mem_read_data <= r_cache_val_data_hold[63:32];
-                        2'b11: o_mem_read_data <= r_cache_val_data_hold[31:0];
+                        2'b00: begin
+                            o_mem_read_data      <= r_cache_val_data_hold[127:96];
+                            o_mem_read_data_next <= r_cache_val_data_hold[95:64];
+                            o_mem_next_valid     <= 1'b1;
+                        end
+                        2'b01: begin
+                            o_mem_read_data      <= r_cache_val_data_hold[95:64];
+                            o_mem_read_data_next <= r_cache_val_data_hold[63:32];
+                            o_mem_next_valid     <= 1'b1;
+                        end
+                        2'b10: begin
+                            o_mem_read_data      <= r_cache_val_data_hold[63:32];
+                            o_mem_read_data_next <= r_cache_val_data_hold[31:0];
+                            o_mem_next_valid     <= 1'b1;
+                        end
+                        2'b11: begin
+                            o_mem_read_data      <= r_cache_val_data_hold[31:0];
+                            o_mem_read_data_next <= 32'h0;
+                            o_mem_next_valid     <= 1'b0;
+                        end
                     endcase
                     o_mem_ready <= 1;
                     state       <= PRE_WAIT;
@@ -441,10 +460,26 @@ module mem_read_write (
                         end
 
                         case (r_byte_offset)
-                            2'b00: o_mem_read_data <= i_ddr_mem_read_data[127:96];
-                            2'b01: o_mem_read_data <= i_ddr_mem_read_data[95:64];
-                            2'b10: o_mem_read_data <= i_ddr_mem_read_data[63:32];
-                            2'b11: o_mem_read_data <= i_ddr_mem_read_data[31:0];
+                            2'b00: begin
+                                o_mem_read_data      <= i_ddr_mem_read_data[127:96];
+                                o_mem_read_data_next <= i_ddr_mem_read_data[95:64];
+                                o_mem_next_valid     <= 1'b1;
+                            end
+                            2'b01: begin
+                                o_mem_read_data      <= i_ddr_mem_read_data[95:64];
+                                o_mem_read_data_next <= i_ddr_mem_read_data[63:32];
+                                o_mem_next_valid     <= 1'b1;
+                            end
+                            2'b10: begin
+                                o_mem_read_data      <= i_ddr_mem_read_data[63:32];
+                                o_mem_read_data_next <= i_ddr_mem_read_data[31:0];
+                                o_mem_next_valid     <= 1'b1;
+                            end
+                            2'b11: begin
+                                o_mem_read_data      <= i_ddr_mem_read_data[31:0];
+                                o_mem_read_data_next <= 32'h0;
+                                o_mem_next_valid     <= 1'b0;
+                            end
                         endcase
 
                         o_mem_ready <= 1;

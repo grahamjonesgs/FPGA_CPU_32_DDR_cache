@@ -71,13 +71,13 @@ module FPGA_CPU_32_bits_cache (
    localparam LOAD_COMPLETE = 32'h10_000, LOAD_WAIT = 32'h20_000;
    localparam DEBUG_DATA = 32'h40_000, DEBUG_DATA2 = 32'h80_000, DEBUG_DATA3 = 32'h100_000;
    localparam DEBUG_WAIT = 32'h200_000;
-localparam MULTIPLY_CALC      = 32'h0040_0000;  // DSP pipeline stage 1 (MREG)
-localparam MULTIPLY_PIPE      = 32'h0100_0000;  // DSP pipeline stage 2 (PREG)
-localparam MULTIPLY_WRITEBACK = 32'h0080_0000;  // Write result
-localparam WRITEBACK          = 32'h0200_0000;  // Register file writeback stage
-localparam HALTED             = 32'h0400_0000;  // CPU halted, waiting for reset
-localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
-localparam HALTED_BREAK       = 32'h1000_0000;  // Sending UART break before halt
+   localparam MULTIPLY_CALC      = 32'h0040_0000;  // DSP pipeline stage 1 (MREG)
+   localparam MULTIPLY_PIPE      = 32'h0100_0000;  // DSP pipeline stage 2 (PREG)
+   localparam MULTIPLY_WRITEBACK = 32'h0080_0000;  // Write result
+   localparam WRITEBACK          = 32'h0200_0000;  // Register file writeback stage
+   localparam HALTED             = 32'h0400_0000;  // CPU halted, waiting for reset
+   localparam DIVIDE_STEP        = 32'h0800_0000;  // Division iteration state
+   localparam HALTED_BREAK       = 32'h1000_0000;  // Sending UART break before halt
 
    // Error Codes
    localparam ERR_INV_OPCODE = 8'h1, ERR_INV_FSM_STATE = 8'h2, ERR_STACK = 8'h3;
@@ -183,11 +183,14 @@ localparam HALTED_BREAK       = 32'h1000_0000;  // Sending UART break before hal
    reg [24:0] r_mem_addr;
    reg [31:0] r_mem_write_data;
    wire [31:0] w_mem_read_data;
+   wire [31:0] w_mem_read_data_next; // next word in same cache line
+   wire        w_mem_next_valid;     // 1 when w_mem_read_data_next is valid
    wire w_mem_ready;
    reg [31:0] r_opcode_mem;
    reg [31:0] r_var1_mem;
    reg [31:0] r_var2_mem;
    reg r_cache_reset;
+   reg r_var1_prefetched; // 1 when r_var1_mem was populated from the opcode cache line
 
    // Debug
    reg r_debug_flag;
@@ -304,6 +307,8 @@ localparam HALTED_BREAK       = 32'h1000_0000;  // Sending UART break before hal
        .i_mem_addr(r_mem_addr),
        .i_mem_write_data(r_mem_write_data),
        .o_mem_read_data(w_mem_read_data),
+       .o_mem_read_data_next(w_mem_read_data_next),
+       .o_mem_next_valid(w_mem_next_valid),
        .o_mem_ready(w_mem_ready),
        .i_cache_enable(i_switch[0]),
        .i_cache_reset(r_cache_reset)
@@ -488,6 +493,7 @@ rams_sp_nc rams_sp_nc1 (
       r_rx_fifo_read  = 0;
       r_break_active  = 0;
       r_break_counter = 0;
+      r_var1_prefetched = 0;
    end
 
    always @(posedge i_Clk) begin
@@ -759,8 +765,15 @@ rams_sp_nc rams_sp_nc1 (
 
             OPCODE_FETCH: begin
                if (w_mem_ready) begin
-                  r_opcode_mem<=w_mem_read_data; // full 32-bit opcode word
+                  r_opcode_mem  <= w_mem_read_data; // full 32-bit opcode word
                   r_mem_read_DV <= 1'b0;
+                  // Speculatively capture var1 if it's in the same 128-bit cache line
+                  if (w_mem_next_valid) begin
+                     r_var1_mem        <= w_mem_read_data_next;
+                     r_var1_prefetched <= 1'b1;
+                  end else begin
+                     r_var1_prefetched <= 1'b0;
+                  end
                   r_SM <= OPCODE_FETCH2;
                end  // if ready asserted, else will loop until ready
             end
@@ -769,9 +782,25 @@ rams_sp_nc rams_sp_nc1 (
                r_reg_1   <= w_opcode[7:4];
                r_reg_2   <= w_opcode[3:0];
                r_reg_dst <= w_opcode[11:8];
-               r_SM <= VAR1_FETCH;
-               r_mem_addr <= (r_PC + 1);
-               r_mem_read_DV <= 1'b1;
+               if (r_var1_prefetched) begin
+                  // var1 already in r_var1_mem — skip memory fetch.
+                  // VAR1_FETCH2 is a 1-cycle bubble so r_reg_port_a/b
+                  // (registered reads) update before OPCODE_EXECUTE uses them.
+                  r_SM <= VAR1_FETCH2;
+               end else begin
+                  r_SM          <= VAR1_FETCH;
+                  r_mem_addr    <= (r_PC + 1);
+                  r_mem_read_DV <= 1'b1;
+               end
+            end
+
+            VAR1_FETCH2: begin
+               // Pipeline bubble only — r_reg_port_a/b now valid.
+               if (r_debug_flag && w_opcode[31:12] != 20'h0000F) begin
+                  r_SM <= DEBUG_DATA;
+               end else begin
+                  r_SM <= OPCODE_EXECUTE;
+               end
             end
 
 
