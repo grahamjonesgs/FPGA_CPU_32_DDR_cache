@@ -32,8 +32,9 @@ module mem_read_write (
 
     input             i_mem_write_DV,
     input             i_mem_read_DV,
-    input      [24:0] i_mem_addr,
+    input      [26:0] i_mem_addr,       // byte address (word-aligned for word ops)
     input      [31:0] i_mem_write_data,
+    input      [ 3:0] i_mem_byte_en,    // byte enables for writes (4'b1111 = full word)
     output reg [31:0] o_mem_read_data,
     output reg [31:0] o_mem_read_data_next, // next consecutive word in same cache line
     output reg        o_mem_next_valid,      // 1 when o_mem_read_data_next is valid (offset != 3)
@@ -65,16 +66,22 @@ module mem_read_write (
     assign w_app_wdf_mask = r_app_wdf_mask;
 
     // -------------------------------------------------------------------------
-    // Address decode — combinational from i_mem_addr.
+    // Address decode — combinational from i_mem_addr (27-bit byte address).
     // CPU holds i_mem_addr stable until o_mem_ready, so these are stable
     // throughout any multi-cycle operation.
+    //
+    // DDR2 MIG address is in 16-bit half-word units (BL8 = 128-bit burst).
+    // byte_addr → DDR half-word addr = byte_addr >> 1 = {1'b0, byte_addr[26:1]}
+    // Burst-aligned (3 DDR addr bits = 16 bytes = 8×2B): clear bottom 3 DDR bits
+    //   → clear bottom 4 byte bits: {1'b0, byte_addr[26:4], 3'b0}
+    // Word offset within 128-bit cache line: byte_addr[3:2]  (4 words per line)
+    // Byte lane within 32-bit word:          byte_addr[1:0]
     // -------------------------------------------------------------------------
-    wire [26:0]           w_temp1             = {2'b0, i_mem_addr[24:0]};
-    wire [26:0]           w_temp2             = w_temp1 << 1;
-    wire [26:0]           w_computed_ddr_addr = {w_temp2[26:3], 3'b0};
+    wire [26:0]           w_computed_ddr_addr = {1'b0, i_mem_addr[26:4], 3'b0};
     wire [INDEX_BITS-1:0] w_cache_index       = w_computed_ddr_addr[INDEX_BITS+2:3];
     wire [TAG_BITS-1:0]   w_cache_tag         = w_computed_ddr_addr[26:3+INDEX_BITS];
-    wire [1:0]            w_byte_offset       = i_mem_addr[1:0];
+    wire [1:0]            w_byte_offset       = i_mem_addr[3:2];  // word within cache line
+    wire [1:0]            w_byte_lane         = i_mem_addr[1:0];  // byte within word
 
     // -------------------------------------------------------------------------
     // Cache arrays — ALL in BRAM.
@@ -130,7 +137,9 @@ module mem_read_write (
     // Latched request (stable while CPU waits, but latching makes CDC clear)
     reg [INDEX_BITS-1:0] r_cache_index;
     reg [TAG_BITS-1:0]   r_cache_tag;
-    reg [1:0]            r_byte_offset;
+    reg [1:0]            r_byte_offset;   // which word in 128-bit cache line
+    reg [1:0]            r_byte_lane;     // which byte within the 32-bit word
+    reg [3:0]            r_byte_en;       // byte enables (4'b1111 = full word write)
     reg [31:0]           r_write_data;
     reg                  r_is_write;
     reg [26:0]           r_computed_ddr_addr;
@@ -250,6 +259,8 @@ module mem_read_write (
                         r_cache_index       <= w_cache_index;
                         r_cache_tag         <= w_cache_tag;
                         r_byte_offset       <= w_byte_offset;
+                        r_byte_lane         <= w_byte_lane;
+                        r_byte_en           <= i_mem_byte_en;
                         r_write_data        <= i_mem_write_data;
                         r_is_write          <= i_mem_write_DV;
                         r_computed_ddr_addr <= w_computed_ddr_addr;
@@ -313,15 +324,32 @@ module mem_read_write (
 
                 // ------------------------------------------------------------------
                 // WRITE HIT: r_cache_val_data_hold contains the current line.
-                // Merge write word, store back, set dirty, update LRU.
+                // Byte-merge write data into old word, then word-merge into line.
                 // ------------------------------------------------------------------
                 WRITE_HIT: begin
-                    case (r_byte_offset)
-                        2'b00: merged = {r_write_data, r_cache_val_data_hold[95:0]};
-                        2'b01: merged = {r_cache_val_data_hold[127:96], r_write_data, r_cache_val_data_hold[63:0]};
-                        2'b10: merged = {r_cache_val_data_hold[127:64], r_write_data, r_cache_val_data_hold[31:0]};
-                        2'b11: merged = {r_cache_val_data_hold[127:32], r_write_data};
-                    endcase
+                    begin : write_hit_merge
+                        reg [31:0] old_word;
+                        reg [31:0] new_word;
+                        // Extract old word at the target word offset
+                        case (r_byte_offset)
+                            2'b00: old_word = r_cache_val_data_hold[127:96];
+                            2'b01: old_word = r_cache_val_data_hold[95:64];
+                            2'b10: old_word = r_cache_val_data_hold[63:32];
+                            2'b11: old_word = r_cache_val_data_hold[31:0];
+                        endcase
+                        // Apply byte enables (big-endian: lane0=bits[31:24], lane3=bits[7:0])
+                        new_word[31:24] = r_byte_en[3] ? r_write_data[31:24] : old_word[31:24];
+                        new_word[23:16] = r_byte_en[2] ? r_write_data[23:16] : old_word[23:16];
+                        new_word[15:8]  = r_byte_en[1] ? r_write_data[15:8]  : old_word[15:8];
+                        new_word[7:0]   = r_byte_en[0] ? r_write_data[7:0]   : old_word[7:0];
+                        // Merge new word into cache line
+                        case (r_byte_offset)
+                            2'b00: merged = {new_word, r_cache_val_data_hold[95:0]};
+                            2'b01: merged = {r_cache_val_data_hold[127:96], new_word, r_cache_val_data_hold[63:0]};
+                            2'b10: merged = {r_cache_val_data_hold[127:64], new_word, r_cache_val_data_hold[31:0]};
+                            2'b11: merged = {r_cache_val_data_hold[127:32], new_word};
+                        endcase
+                    end
 
                     // Separate write-enable per way — one write per array per cycle, BRAM-friendly.
                     if (r_hit_way == 1'b0) begin
@@ -368,12 +396,26 @@ module mem_read_write (
                     if (i_ddr_mem_ready) begin
                         o_ddr_mem_read_DV <= 0;
 
-                        case (r_byte_offset)
-                            2'b00: merged = {r_write_data, i_ddr_mem_read_data[95:0]};
-                            2'b01: merged = {i_ddr_mem_read_data[127:96], r_write_data, i_ddr_mem_read_data[63:0]};
-                            2'b10: merged = {i_ddr_mem_read_data[127:64], r_write_data, i_ddr_mem_read_data[31:0]};
-                            2'b11: merged = {i_ddr_mem_read_data[127:32], r_write_data};
-                        endcase
+                        begin : write_fetch_merge
+                            reg [31:0] old_word;
+                            reg [31:0] new_word;
+                            case (r_byte_offset)
+                                2'b00: old_word = i_ddr_mem_read_data[127:96];
+                                2'b01: old_word = i_ddr_mem_read_data[95:64];
+                                2'b10: old_word = i_ddr_mem_read_data[63:32];
+                                2'b11: old_word = i_ddr_mem_read_data[31:0];
+                            endcase
+                            new_word[31:24] = r_byte_en[3] ? r_write_data[31:24] : old_word[31:24];
+                            new_word[23:16] = r_byte_en[2] ? r_write_data[23:16] : old_word[23:16];
+                            new_word[15:8]  = r_byte_en[1] ? r_write_data[15:8]  : old_word[15:8];
+                            new_word[7:0]   = r_byte_en[0] ? r_write_data[7:0]   : old_word[7:0];
+                            case (r_byte_offset)
+                                2'b00: merged = {new_word, i_ddr_mem_read_data[95:0]};
+                                2'b01: merged = {i_ddr_mem_read_data[127:96], new_word, i_ddr_mem_read_data[63:0]};
+                                2'b10: merged = {i_ddr_mem_read_data[127:64], new_word, i_ddr_mem_read_data[31:0]};
+                                2'b11: merged = {i_ddr_mem_read_data[127:32], new_word};
+                            endcase
+                        end
 
                         if (r_evict_way == 1'b0) begin
                             cache_val_data_way0[w_wr_idx] <= merged;

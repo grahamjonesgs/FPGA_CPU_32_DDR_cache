@@ -60,7 +60,7 @@ module FPGA_CPU_32_bits_cache (
     output [0:0] ddr2_odt
 );
 
-   localparam STACK_TOP = 26'h200_0000;  // one word above top of 128 MiB (empty-stack sentinel)
+   localparam STACK_TOP = 28'h800_0000;  // one word (4 bytes) above top of 128 MiB byte address space
 
    // State Machine Code
    localparam OPCODE_REQUEST = 32'h1, OPCODE_FETCH = 32'h2, OPCODE_FETCH2 = 32'h4;
@@ -112,7 +112,7 @@ module FPGA_CPU_32_bits_cache (
 
    // Machine control
    reg [31:0] r_SM;
-   reg [24:0] r_PC;
+   reg [26:0] r_PC;           // byte address, always word-aligned (bits [1:0] = 0)
    reg [31:0] r_mem_read_addr;
    wire [31:0] w_opcode;
    wire [31:0] w_var1;
@@ -122,22 +122,22 @@ module FPGA_CPU_32_bits_cache (
    reg [3:0] r_reg_2;
    reg [3:0] r_reg_dst;
    reg [1:0] r_extra_clock;
-   reg [24:0] r_idx_base_addr;  // Saved base address for indexed register ops
+   reg [26:0] r_idx_base_addr;  // Saved base address for indexed register ops (byte addr)
    reg r_hcf_message_sent;
    reg [31:0] r_start_wait_counter;
 
    //load control
    //reg          o_ram_write_DV;
    reg [31:0] o_ram_write_value;
-   reg [24:0] o_ram_write_addr;
-   reg [24:0] r_ram_next_write_addr;
+   reg [26:0] o_ram_write_addr;
+   reg [26:0] r_ram_next_write_addr;
    reg [7:0] rx_count;
    reg [2:0] r_load_byte_counter;
    reg [15:0] r_checksum;
    reg [15:0] r_old_checksum;
    reg [15:0] r_calc_checksum;
    reg [15:0] r_rec_checksum;
-   reg [24:0] r_PC_requested;
+   reg [26:0] r_PC_requested;
 
    // Register control
    reg [31:0] r_register[15:0];
@@ -155,9 +155,9 @@ module FPGA_CPU_32_bits_cache (
    reg [11:0] r_RGB_LED_2;
 
    // Stack control — stack now lives in DDR2 RAM, top of 128 MiB, growing down
-   // SP = 26'h200_0000 means empty; PUSH: SP--, mem[SP]=val; POP: val=mem[SP], SP++
+   // SP = 28'h800_0000 means empty; PUSH: SP-=4, mem[SP]=val; POP: val=mem[SP], SP+=4
    // R15 is the frame pointer by convention (software convention only, no hardware enforcement)
-   reg [25:0] r_SP;
+   reg [27:0] r_SP;           // byte address, always word-aligned (bits [1:0] = 0)
    reg        r_int_push_wait;  // set while waiting for DDR2 to complete interrupt PC-push
 
    // UART send message
@@ -172,7 +172,7 @@ module FPGA_CPU_32_bits_cache (
    reg r_timing_start;
 
    // Interrupt handler
-   reg [24:0] r_interrupt_table[3:0];
+   reg [26:0] r_interrupt_table[3:0];
    reg r_timer_interrupt;
    reg [31:0] r_timer_interrupt_counter;
    reg [63:0] r_timer_interrupt_counter_sec;
@@ -180,8 +180,9 @@ module FPGA_CPU_32_bits_cache (
    // Memory
    reg r_mem_write_DV;
    reg r_mem_read_DV;
-   reg [24:0] r_mem_addr;
+   reg [26:0] r_mem_addr;      // byte address
    reg [31:0] r_mem_write_data;
+   reg [ 3:0] r_mem_byte_en;   // byte enables: 4'b1111=full word, else byte op
    wire [31:0] w_mem_read_data;
    wire [31:0] w_mem_read_data_next; // next word in same cache line
    wire        w_mem_next_valid;     // 1 when w_mem_read_data_next is valid
@@ -306,6 +307,7 @@ module FPGA_CPU_32_bits_cache (
        .i_mem_read_DV(r_mem_read_DV),
        .i_mem_addr(r_mem_addr),
        .i_mem_write_data(r_mem_write_data),
+       .i_mem_byte_en(r_mem_byte_en),
        .o_mem_read_data(w_mem_read_data),
        .o_mem_read_data_next(w_mem_read_data_next),
        .o_mem_next_valid(w_mem_next_valid),
@@ -458,7 +460,7 @@ rams_sp_nc rams_sp_nc1 (
       r_SM = NO_PROGRAM;
       r_timeout_counter = 0;
       o_LCD_reset_n = 1'b0;
-      r_PC = 25'h0;
+      r_PC = 27'h0;
       r_zero_flag = 0;
       r_equal_flag = 0;
       r_carry_flag = 0;
@@ -469,9 +471,9 @@ rams_sp_nc rams_sp_nc1 (
       r_seven_seg_value2 = 32'h21_21_21_21;
       o_led <= 16'h0;
       rx_count = 8'b0;
-      o_ram_write_addr = 25'h0;
-      r_ram_next_write_addr = 25'h0;
-      r_SP = 26'h200_0000;          // empty-descending stack, top of 128 MiB
+      o_ram_write_addr = 27'h0;
+      r_ram_next_write_addr = 27'h0;
+      r_SP = 28'h800_0000;          // empty-descending stack, top of 128 MiB byte space
       r_int_push_wait = 1'b0;
       r_msg_send_DV <= 1'b0;
       r_hcf_message_sent <= 1'b0;
@@ -482,6 +484,7 @@ rams_sp_nc rams_sp_nc1 (
       r_timer_interrupt_counter_sec <= 0;
       r_mem_write_DV <= 0;
       r_mem_read_DV <= 0;
+      r_mem_byte_en <= 4'b1111;
       r_msg = 256'b0;
       r_boot_flash = 0;
       r_cache_reset = 0;
@@ -500,7 +503,7 @@ rams_sp_nc rams_sp_nc1 (
       if (w_reset_H) begin
 
          r_SM <= NO_PROGRAM;
-         r_SP <= 26'h200_0000;
+         r_SP <= 28'h800_0000;
          r_int_push_wait <= 1'b0;
          r_break_received <= 1'b0;
          for (i = 0; i < 16; i = i + 1)
@@ -518,8 +521,8 @@ rams_sp_nc rams_sp_nc1 (
             8'h53: begin // 'S' — load start
                r_SM <= LOADING_BYTE;
                r_load_byte_counter <= 0;
-               o_ram_write_addr <= 25'h0;
-               r_ram_next_write_addr <= 25'h0;
+               o_ram_write_addr <= 27'h0;
+               r_ram_next_write_addr <= 27'h0;
                r_checksum <= 16'h0;
                r_old_checksum <= 16'h0;
                r_RGB_LED_1 <= 12'h0;
@@ -581,7 +584,7 @@ rams_sp_nc rams_sp_nc1 (
                if (w_mem_ready) begin
                   r_mem_write_DV <= 1'b0;
                end
-               r_SP <= 26'h200_0000;  // reset stack pointer during program load
+               r_SP <= 28'h800_0000;  // reset stack pointer during program load
                r_int_push_wait <= 1'b0;
 
                r_seven_seg_value1 <= {
@@ -611,7 +614,7 @@ rams_sp_nc rams_sp_nc1 (
                         begin
                         if (r_load_byte_counter == 0) begin
                            r_SM <= LOAD_COMPLETE;
-                           r_calc_checksum<=r_old_checksum+o_ram_write_addr[15:0]*2+o_ram_write_value[31:16]; //adding number byte to checksum for zeros
+                           r_calc_checksum<=r_old_checksum+o_ram_write_addr[17:2]*2+o_ram_write_value[31:16]; //adding number of words to checksum (addr>>2=word count)
                            r_rec_checksum <= o_ram_write_value[15:0];
                            o_ram_write_value <= 32'h0;
 
@@ -624,7 +627,7 @@ rams_sp_nc rams_sp_nc1 (
                      end  // case 8'h58
                      8'h5A: // Start data flag Z
                         begin
-                        r_PC_requested <= o_ram_write_value[24:0];
+                        r_PC_requested <= o_ram_write_value[26:0];
                      end
                      8'h0a: ;  // ignore LF
                      8'h0d: ;  // ignore CR
@@ -647,8 +650,8 @@ rams_sp_nc rams_sp_nc1 (
                               default: r_RGB_LED_1 <= 12'h050;
                            endcase
                            o_ram_write_addr <= r_ram_next_write_addr;
-                           r_ram_next_write_addr <= r_ram_next_write_addr + 1;
-                           if (r_ram_next_write_addr>25'h1FF_FFFF) // Nexys has 128 MiB DDR2, 32M words of 32-bit
+                           r_ram_next_write_addr <= r_ram_next_write_addr + 4;  // byte addr: 4 bytes per word
+                           if (r_ram_next_write_addr>27'h7FF_FFFC) // Nexys has 128 MiB DDR2, last valid word at byte addr 0x7FF_FFFC
                                 begin
                               r_SM <= HCF_1;  // Halt and catch fire error
                               r_error_code <= ERR_OVERFLOW;
@@ -675,7 +678,7 @@ rams_sp_nc rams_sp_nc1 (
                 begin  // Reset all flags and jump to first instruction
                   o_LCD_reset_n <= 1'b0;
                   o_led <= 16'h0;
-                  o_ram_write_addr <= 25'h0;
+                  o_ram_write_addr <= 27'h0;
                   o_TX_LCD_Byte <= 8'b0;
                   o_TX_LCD_Count <= 4'd1;
                   r_carry_flag <= 1'b0;
@@ -689,7 +692,7 @@ rams_sp_nc rams_sp_nc1 (
                   r_msg_send_DV <= 1'b0;
                   r_overflow_flag <= 1'b0;
                   r_PC <= r_PC_requested;
-                  r_ram_next_write_addr <= 25'h0;
+                  r_ram_next_write_addr <= 27'h0;
                   r_RGB_LED_1 <= 12'h000;
                   r_RGB_LED_2 <= 12'h000;
                   r_seven_seg_value1 <= 32'h22_22_22_22;
@@ -736,6 +739,7 @@ rams_sp_nc rams_sp_nc1 (
                o_led[0] <= i_switch[0];  // Temp showing cache enabled status.
                r_msg_send_DV <= 1'b0;
                r_extra_clock <= 2'b0;  // always reset — all instructions rely on this
+               r_mem_byte_en <= 4'b1111;  // default full-word; byte ops override this
 
                if (r_int_push_wait) begin
                   // Waiting for DDR2 to finish the timer-interrupt PC push
@@ -746,11 +750,11 @@ rams_sp_nc rams_sp_nc1 (
                      r_mem_read_DV   <= 1'b1;
                      r_SM            <= OPCODE_FETCH;
                   end
-               end else if (r_timer_interrupt && r_interrupt_table[0] != 25'h0) begin
+               end else if (r_timer_interrupt && r_interrupt_table[0] != 27'h0) begin
                   // Start pushing current PC onto DDR2 stack before jumping to handler
-                  r_SP             <= r_SP - 1;
-                  r_mem_addr       <= r_SP[24:0] - 25'd1;
-                  r_mem_write_data <= {7'b0, r_PC};
+                  r_SP             <= r_SP - 4;
+                  r_mem_addr       <= r_SP[26:0] - 27'd4;
+                  r_mem_write_data <= {5'b0, r_PC};
                   r_mem_write_DV   <= 1'b1;
                   r_timer_interrupt <= 1'b0;
                   r_PC             <= r_interrupt_table[0];
@@ -789,7 +793,7 @@ rams_sp_nc rams_sp_nc1 (
                   r_SM <= VAR1_FETCH2;
                end else begin
                   r_SM          <= VAR1_FETCH;
-                  r_mem_addr    <= (r_PC + 1);
+                  r_mem_addr    <= (r_PC + 4);
                   r_mem_read_DV <= 1'b1;
                end
             end
@@ -1016,9 +1020,9 @@ MULTIPLY_WRITEBACK: begin
 
     // PC increment depends on instruction type
     if (r_mul_is_immediate)
-        r_PC <= r_PC + 2;
+        r_PC <= r_PC + 8;
     else
-        r_PC <= r_PC + 1;
+        r_PC <= r_PC + 4;
 
     r_SM <= WRITEBACK;
 end
@@ -1079,7 +1083,7 @@ end
                   r_writeback_reg <= r_div_dest_reg;
                   r_overflow_flag <= 1'b0;
                   r_div_op <= DIV_OP_NONE;
-                  r_PC <= r_PC + (r_div_pc_inc ? 2 : 1);
+                  r_PC <= r_PC + (r_div_pc_inc ? 8 : 4);
                   r_SM <= WRITEBACK;
                end
             end

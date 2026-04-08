@@ -18,7 +18,7 @@ task t_delay;
                 r_timeout_counter <= 0;
                 r_timing_start <= 0;
                 r_SM <= OPCODE_REQUEST;
-                r_PC <= r_PC + 2;
+                r_PC <= r_PC + 8;
             end  // if(r_timeout_counter>=DELAY_TIME)
             else
             begin
@@ -51,7 +51,7 @@ task t_delay_reg;
                 r_timeout_counter <= 0;
                 r_timing_start <= 0;
                 r_SM <= OPCODE_REQUEST;
-                r_PC <= r_PC + 1;
+                r_PC <= r_PC + 4;
             end  // if(r_timeout_counter>=DELAY_TIME)
             else
             begin

@@ -9,7 +9,7 @@ task t_7_seg1_value;
          4'h0, i_byte[15:12], 4'h0, i_byte[11:8], 4'h0, i_byte[7:4], 4'h0, i_byte[3:0]
       };
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -24,7 +24,7 @@ task t_7_seg2_value;
          4'h0, i_byte[15:12], 4'h0, i_byte[11:8], 4'h0, i_byte[7:4], 4'h0, i_byte[3:0]
       };
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -46,7 +46,7 @@ task t_7_seg1_reg;
          r_reg_port_b[3:0]
       };
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -68,7 +68,7 @@ task t_7_seg2_reg;
          r_reg_port_b[3:0]
       };
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -99,7 +99,7 @@ task t_7_seg_reg;
          r_reg_port_b[3:0]
       };
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -113,7 +113,7 @@ task t_7_seg_blank;
       r_seven_seg_value1 <= 32'h22222222;
       r_seven_seg_value2 <= 32'h22222222;
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 

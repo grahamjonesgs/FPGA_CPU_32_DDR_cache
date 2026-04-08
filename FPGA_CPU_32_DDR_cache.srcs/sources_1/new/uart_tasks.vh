@@ -16,7 +16,7 @@ task t_rx_blocking;
             r_writeback_reg           <= r_reg_2;
             r_zero_flag               <= 1'b0;
             r_SM <= WRITEBACK;
-            r_PC <= r_PC + 1;
+            r_PC <= r_PC + 4;
         end
     end
 endtask
@@ -31,14 +31,14 @@ task t_rx_nonblocking;
         if (w_rx_fifo_empty) begin
             r_zero_flag <= 1'b1;
             r_SM <= OPCODE_REQUEST;
-            r_PC <= r_PC + 1;
+            r_PC <= r_PC + 4;
         end else begin
             r_rx_fifo_read    <= 1'b1;
             r_writeback_value <= {24'b0, w_rx_fifo_byte};
             r_writeback_reg   <= r_reg_2;
             r_zero_flag       <= 1'b0;
             r_SM <= WRITEBACK;
-            r_PC <= r_PC + 1;
+            r_PC <= r_PC + 4;
         end
     end
 endtask
@@ -53,7 +53,7 @@ task t_debug_message;
             r_msg[39:32] <= 8'h73;  // s
             r_msg[47:40] <= 8'h20;  //  
 
-            r_msg[55:48] <= return_ascii_from_hex({3'b0, r_PC[24]});
+            r_msg[55:48] <= return_ascii_from_hex({1'b0, r_PC[26:24]});
             r_msg[63:56] <= return_ascii_from_hex(r_PC[23:20]);
             r_msg[71:64] <= return_ascii_from_hex(r_PC[19:16]);
             r_msg[79:72] <= return_ascii_from_hex(r_PC[15:12]);
@@ -78,7 +78,7 @@ task t_test_message;
         if (!w_sending_msg) begin
             t_tx_message(8'd3);
             r_SM <= OPCODE_REQUEST;
-            r_PC <= r_PC + 1;
+            r_PC <= r_PC + 4;
         end
     end
 endtask
@@ -90,7 +90,7 @@ endtask
 task t_tx_char_from_reg_value;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_reg_port_b[24:0];
+            r_mem_addr <= r_reg_port_b[26:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -108,7 +108,7 @@ task t_tx_char_from_reg_value;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
                 r_mem_read_DV <= 1'b0;
-                r_PC <= r_PC + 1;
+                r_PC <= r_PC + 4;
             end  // if ready asserted, else will loop until ready
         end  // if subsequent loop
     end
@@ -121,7 +121,7 @@ endtask
 task t_tx_value_of_mem_at_reg;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_reg_port_b[24:0];
+            r_mem_addr <= r_reg_port_b[26:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -146,7 +146,7 @@ task t_tx_value_of_mem_at_reg;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
                 r_mem_read_DV <= 1'b0;
-                r_PC <= r_PC + 1;
+                r_PC <= r_PC + 4;
             end  // if ready asserted, else will loop until ready
         end  // if subsequent loop
     end
@@ -160,7 +160,7 @@ task t_tx_value_of_mem;
     input [31:0] i_location;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= i_location[24:0];
+            r_mem_addr <= i_location[26:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -185,7 +185,7 @@ task t_tx_value_of_mem;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
                 r_mem_read_DV <= 1'b0;
-                r_PC <= r_PC + 2;
+                r_PC <= r_PC + 8;
             end  // if ready asserted, else will loop until ready
         end  // if subsequent loop
     end
@@ -199,7 +199,7 @@ task t_tx_string_at_mem;
     input [31:0] i_location;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= i_location[24:0];
+            r_mem_addr <= i_location[26:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -220,7 +220,7 @@ task t_tx_string_at_mem;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
                 r_mem_read_DV <= 1'b0;
-                r_PC <= r_PC + 2;
+                r_PC <= r_PC + 8;
             end  // if ready asserted, else will loop until ready
         end  // if subsequent loop
     end
@@ -233,7 +233,7 @@ endtask
 task t_tx_string_at_reg;
     begin
         if (r_extra_clock == 0) begin
-            r_mem_addr <= r_reg_port_b[24:0];
+            r_mem_addr <= r_reg_port_b[26:0];
             r_mem_read_DV <= 1'b1;
             r_mem_was_ready <=1'b0;
             r_extra_clock <= 1'b1;
@@ -254,7 +254,7 @@ task t_tx_string_at_reg;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
                 r_mem_read_DV <= 1'b0;
-                r_PC <= r_PC + 1;
+                r_PC <= r_PC + 4;
             end  // if ready asserted, else will loop until ready
         end  // if subsequent loop
     end
@@ -273,7 +273,7 @@ task t_tx_newline;
             r_msg_length <= 8'h2;
             r_msg_send_DV <= 1'b1;
             r_SM <= UART_DELAY;
-            r_PC <= r_PC + 1;
+            r_PC <= r_PC + 4;
         end
     end
 endtask
@@ -296,7 +296,7 @@ task t_tx_reg;
             r_msg_length <= 8'h8;
             r_msg_send_DV <= 1'b1;
             r_SM <= UART_DELAY;
-            r_PC <= r_PC + 1;
+            r_PC <= r_PC + 4;
         end
     end
 endtask

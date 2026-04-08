@@ -23,7 +23,7 @@ task t_rotate_left;
       r_carry_flag <= r_reg_port_b[31];
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -35,7 +35,7 @@ task t_rotate_right;
       r_carry_flag <= r_reg_port_b[0];
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -49,7 +49,7 @@ task t_rotate_left_carry;
       r_carry_flag <= temp[32];
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -63,7 +63,7 @@ task t_rotate_right_carry;
       r_carry_flag <= temp[0];
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -79,7 +79,7 @@ task t_rotate_left_n;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -95,7 +95,7 @@ task t_rotate_right_n;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -110,7 +110,7 @@ task t_rotate_left_reg;
       r_writeback_reg <= r_reg_dst;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -125,7 +125,7 @@ task t_rotate_right_reg;
       r_writeback_reg <= r_reg_dst;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -141,7 +141,7 @@ task t_bit_set_value;
       r_writeback_value <= r_reg_port_b | (32'b1 << i_bit[4:0]);
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -152,7 +152,7 @@ task t_bit_clear_value;
       r_writeback_value <= r_reg_port_b & ~(32'b1 << i_bit[4:0]);
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -163,7 +163,7 @@ task t_bit_toggle_value;
       r_writeback_value <= r_reg_port_b ^ (32'b1 << i_bit[4:0]);
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -173,7 +173,7 @@ task t_bit_test_value;
    begin
       r_zero_flag <= ~r_reg_port_b[i_bit[4:0]];
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -183,7 +183,7 @@ task t_bit_set_reg;
       r_writeback_value <= r_reg_port_a | (32'b1 << r_reg_port_b[4:0]);
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -193,7 +193,7 @@ task t_bit_clear_reg;
       r_writeback_value <= r_reg_port_a & ~(32'b1 << r_reg_port_b[4:0]);
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -203,7 +203,7 @@ task t_bit_toggle_reg;
       r_writeback_value <= r_reg_port_a ^ (32'b1 << r_reg_port_b[4:0]);
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -215,7 +215,7 @@ task t_bit_test_reg;
       r_writeback_value <= {31'b0, r_reg_port_a[bit_pos]};
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -226,7 +226,7 @@ task t_popcnt;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -236,7 +236,7 @@ task t_clz;
       r_writeback_value <= {26'b0, count_leading_zeros(r_reg_port_b)};
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -246,7 +246,7 @@ task t_ctz;
       r_writeback_value <= {26'b0, count_trailing_zeros(r_reg_port_b)};
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -256,7 +256,7 @@ task t_bit_reverse;
       r_writeback_value <= bit_reverse(r_reg_port_b);
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -277,7 +277,7 @@ task t_extract_bits;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -298,7 +298,7 @@ task t_deposit_bits;
       r_writeback_value <= (r_reg_port_b & ~mask) | insert_val;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -314,7 +314,7 @@ task t_cmpeqr;
       r_writeback_value <= (r_reg_port_a == r_reg_port_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -324,7 +324,7 @@ task t_cmpner;
       r_writeback_value <= (r_reg_port_a != r_reg_port_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -338,7 +338,7 @@ task t_cmpltr;
       r_writeback_value <= (s_a < s_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -352,7 +352,7 @@ task t_cmpler;
       r_writeback_value <= (s_a <= s_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -366,7 +366,7 @@ task t_cmpgtr;
       r_writeback_value <= (s_a > s_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -380,7 +380,7 @@ task t_cmpger;
       r_writeback_value <= (s_a >= s_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -390,7 +390,7 @@ task t_cmpultr;
       r_writeback_value <= (r_reg_port_a < r_reg_port_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -400,7 +400,7 @@ task t_cmpuler;
       r_writeback_value <= (r_reg_port_a <= r_reg_port_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -410,7 +410,7 @@ task t_cmpugtr;
       r_writeback_value <= (r_reg_port_a > r_reg_port_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -420,7 +420,7 @@ task t_cmpuger;
       r_writeback_value <= (r_reg_port_a >= r_reg_port_b) ? 32'b1 : 32'b0;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -512,7 +512,7 @@ task t_div_regs_hw;
          r_writeback_reg <= r_reg_dst;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
-         r_PC <= r_PC + 1;
+         r_PC <= r_PC + 4;
       end
       else begin
          abs_dividend = r_reg_port_a[31] ? (~r_reg_port_a + 1) : r_reg_port_a;
@@ -541,7 +541,7 @@ task t_divu_regs_hw;
          r_writeback_reg <= r_reg_dst;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
-         r_PC <= r_PC + 1;
+         r_PC <= r_PC + 4;
       end
       else begin
          r_div_dividend <= r_reg_port_a;
@@ -568,7 +568,7 @@ task t_mod_regs_hw;
          r_writeback_reg <= r_reg_dst;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
-         r_PC <= r_PC + 1;
+         r_PC <= r_PC + 4;
       end
       else begin
          abs_dividend = r_reg_port_a[31] ? (~r_reg_port_a + 1) : r_reg_port_a;
@@ -596,7 +596,7 @@ task t_modu_regs_hw;
          r_writeback_reg <= r_reg_dst;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
-         r_PC <= r_PC + 1;
+         r_PC <= r_PC + 4;
       end
       else begin
          r_div_dividend <= r_reg_port_a;
@@ -624,7 +624,7 @@ task t_div_value_hw;
          r_writeback_reg <= r_reg_2;
          r_overflow_flag <= 1'b1;
          r_SM <= WRITEBACK;
-         r_PC <= r_PC + 2;
+         r_PC <= r_PC + 8;
       end
       else begin
          abs_dividend = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
@@ -654,7 +654,7 @@ task t_mod_value_hw;
          // Return dividend on mod by zero
          r_overflow_flag <= 1'b1;
          r_SM <= OPCODE_REQUEST;
-         r_PC <= r_PC + 2;
+         r_PC <= r_PC + 8;
       end
       else begin
          abs_dividend = r_reg_port_b[31] ? (~r_reg_port_b + 1) : r_reg_port_b;
@@ -692,7 +692,7 @@ task t_abs_reg;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -704,7 +704,7 @@ task t_sign_extend_byte;
       r_writeback_set_zero_flag <= 1'b1;
       r_sign_flag <= r_reg_port_b[7];
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -716,7 +716,7 @@ task t_sign_extend_half;
       r_writeback_set_zero_flag <= 1'b1;
       r_sign_flag <= r_reg_port_b[15];
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -727,7 +727,7 @@ task t_zero_extend_byte;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -738,7 +738,7 @@ task t_zero_extend_half;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -753,7 +753,7 @@ task t_byte_swap;
       };
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -767,7 +767,7 @@ task t_left_shift_n;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -781,7 +781,7 @@ task t_right_shift_n;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -797,7 +797,7 @@ task t_right_shift_a_n;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -811,7 +811,7 @@ task t_min_regs;
       r_writeback_value <= (s_a < s_b) ? r_reg_port_a : r_reg_port_b;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -825,7 +825,7 @@ task t_max_regs;
       r_writeback_value <= (s_a > s_b) ? r_reg_port_a : r_reg_port_b;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -836,7 +836,7 @@ task t_minu_regs;
                               r_reg_port_a : r_reg_port_b;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -847,7 +847,7 @@ task t_maxu_regs;
                               r_reg_port_a : r_reg_port_b;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -862,7 +862,7 @@ task t_shlr3;
       r_writeback_reg <= r_reg_dst;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -873,7 +873,7 @@ task t_shrr3;
       r_writeback_reg <= r_reg_dst;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -886,14 +886,14 @@ task t_sarr3;
       r_writeback_reg <= r_reg_dst;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
 // JMPR - Jump to address in register
 task t_jump_reg;
    begin
-      r_PC <= r_reg_port_b[24:0];
+      r_PC <= r_reg_port_b[26:0];
       r_SM <= OPCODE_REQUEST;
    end
 endtask
@@ -906,10 +906,10 @@ endtask
 // LDIDX - Load indexed: reg1 = mem[reg2 + immediate]
 task t_load_indexed;
    input [31:0] i_offset;
-   reg [24:0] effective_addr;
+   reg [26:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
-         effective_addr = r_reg_port_b[24:0] + i_offset[24:0];
+         effective_addr = r_reg_port_b[26:0] + i_offset[26:0];
          r_mem_addr <= effective_addr;
          r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
@@ -920,7 +920,7 @@ task t_load_indexed;
             r_writeback_reg <= r_reg_1;
             r_SM <= WRITEBACK;
             r_mem_read_DV <= 1'b0;
-            r_PC <= r_PC + 2;
+            r_PC <= r_PC + 8;
          end
       end
    end
@@ -929,10 +929,10 @@ endtask
 // STIDX - Store indexed: mem[reg2 + immediate] = reg1
 task t_store_indexed;
    input [31:0] i_offset;
-   reg [24:0] effective_addr;
+   reg [26:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
-         effective_addr = r_reg_port_b[24:0] + i_offset[24:0];
+         effective_addr = r_reg_port_b[26:0] + i_offset[26:0];
          r_mem_addr <= effective_addr;
          r_mem_write_data <= r_reg_port_a;
          r_mem_write_DV <= 1'b1;
@@ -942,7 +942,7 @@ task t_store_indexed;
          if (w_mem_ready) begin
             r_SM <= OPCODE_REQUEST;
             r_mem_write_DV <= 1'b0;
-            r_PC <= r_PC + 2;
+            r_PC <= r_PC + 8;
          end
       end
    end
@@ -954,11 +954,11 @@ endtask
 // (avoids direct r_register[n] mux which causes timing violations)
 task t_load_indexed_reg;
    input [31:0] i_var1;
-   reg [24:0] effective_addr;
+   reg [26:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
          // Stage 0: Save base address, redirect port B to offset register
-         r_idx_base_addr <= r_reg_port_b[24:0];
+         r_idx_base_addr <= r_reg_port_b[26:0];
          r_reg_2 <= i_var1[3:0];
          r_extra_clock <= 2'd1;
       end
@@ -969,7 +969,7 @@ task t_load_indexed_reg;
       else begin
          if (!r_mem_read_DV) begin
             // Stage 2a: Compute effective address and start memory read
-            effective_addr = r_idx_base_addr + r_reg_port_b[24:0];
+            effective_addr = r_idx_base_addr + r_reg_port_b[26:0];
             r_mem_addr <= effective_addr;
             r_mem_read_DV <= 1'b1;
          end
@@ -979,7 +979,7 @@ task t_load_indexed_reg;
             r_writeback_reg <= r_reg_1;
             r_SM <= WRITEBACK;
             r_mem_read_DV <= 1'b0;
-            r_PC <= r_PC + 2;
+            r_PC <= r_PC + 8;
          end
       end
    end
@@ -990,11 +990,11 @@ endtask
 // Uses 3-stage pipeline to read offset register through existing read port
 task t_store_indexed_reg;
    input [31:0] i_var1;
-   reg [24:0] effective_addr;
+   reg [26:0] effective_addr;
    begin
       if (r_extra_clock == 0) begin
          // Stage 0: Save base address and store data, redirect port B to offset register
-         r_idx_base_addr <= r_reg_port_b[24:0];
+         r_idx_base_addr <= r_reg_port_b[26:0];
          r_mem_write_data <= r_reg_port_a;
          r_reg_2 <= i_var1[3:0];
          r_extra_clock <= 2'd1;
@@ -1006,7 +1006,7 @@ task t_store_indexed_reg;
       else begin
          if (!r_mem_write_DV) begin
             // Stage 2a: Compute effective address and start memory write
-            effective_addr = r_idx_base_addr + r_reg_port_b[24:0];
+            effective_addr = r_idx_base_addr + r_reg_port_b[26:0];
             r_mem_addr <= effective_addr;
             r_mem_write_DV <= 1'b1;
          end
@@ -1014,7 +1014,7 @@ task t_store_indexed_reg;
             // Stage 2b: Memory write complete
             r_SM <= OPCODE_REQUEST;
             r_mem_write_DV <= 1'b0;
-            r_PC <= r_PC + 2;
+            r_PC <= r_PC + 8;
          end
       end
    end

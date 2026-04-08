@@ -56,7 +56,7 @@ task t_copy_regs;
       r_writeback_value <= r_reg_port_b;
       r_writeback_reg <= r_reg_1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -67,7 +67,7 @@ task t_set_reg;
       r_writeback_value <= i_value;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -77,7 +77,7 @@ task t_set_reg_flags;
       r_writeback_value <= {r_zero_flag, r_equal_flag, r_carry_flag, r_overflow_flag, 28'b0};
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -89,7 +89,7 @@ task t_andr3;
       r_writeback_value <= r_reg_port_a & r_reg_port_b;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -99,7 +99,7 @@ task t_orr3;
       r_writeback_value <= r_reg_port_a | r_reg_port_b;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -109,7 +109,7 @@ task t_xorr3;
       r_writeback_value <= r_reg_port_a ^ r_reg_port_b;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -120,7 +120,7 @@ task t_and_reg_value;
       r_writeback_value <= r_reg_port_b & i_value;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -131,7 +131,7 @@ task t_or_reg_value;
       r_writeback_value <= r_reg_port_b | i_value;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -142,7 +142,7 @@ task t_xor_reg_value;
       r_writeback_value <= r_reg_port_b ^ i_value;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -160,7 +160,7 @@ task t_add_value;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -176,7 +176,7 @@ task t_minus_value;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -191,7 +191,7 @@ task t_dec_reg;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -206,7 +206,7 @@ task t_inc_reg;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -223,7 +223,7 @@ task t_compare_reg_value;
       r_ult_flag <= (r_reg_port_b < i_value) ? 1'b1 : 1'b0;
       r_sign_flag <= (s_reg - s_val) < 0 ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 2;
+      r_PC <= r_PC + 8;
    end
 endtask
 
@@ -238,7 +238,7 @@ task t_subr3;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -249,7 +249,7 @@ task t_negate_reg;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -260,7 +260,7 @@ task t_not_reg;
       r_writeback_reg <= r_reg_2;
       r_writeback_set_zero_flag <= 1'b1;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -270,7 +270,7 @@ task t_left_shift_reg;
       r_writeback_value <= r_reg_port_b << 1;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -280,7 +280,7 @@ task t_right_shift_reg;
       r_writeback_value <= r_reg_port_b >> 1;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -290,7 +290,7 @@ task t_left_shift_a_reg;
       r_writeback_value <= r_reg_port_b <<< 1;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -302,7 +302,7 @@ task t_right_shift_a_reg;
       r_writeback_value <= signed_val >>> 1;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -318,7 +318,7 @@ task t_cmprr3;
       r_ult_flag <= (r_reg_port_a < r_reg_port_b) ? 1'b1 : 1'b0;
       r_sign_flag <= (s_a - s_b) < 0 ? 1'b1 : 1'b0;
       r_SM <= OPCODE_REQUEST;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
@@ -337,7 +337,7 @@ task t_addr3;
       r_writeback_value <= hold[31:0];
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
-      r_PC <= r_PC + 1;
+      r_PC <= r_PC + 4;
    end
 endtask
 
