@@ -79,6 +79,34 @@ module ddr2_control (
    wire ui_clk;
    wire ui_clk_sync_rst;
 
+   // -------------------------------------------------------------------------
+   // 2-FF synchronisers for control signals crossing from i_Clk (100 MHz CPU
+   // clock) into ui_clk (50 MHz MIG UI clock).
+   // (* ASYNC_REG = "true" *) tells Vivado to:
+   //   • place both FFs in the same slice (tight hold margin)
+   //   • exclude the path from setup/hold STA (CDC false-path)
+   //   • suppress the TIMING-10 "missing ASYNC_REG" warning
+   // Data/address buses (i_mem_addr, i_mem_write_data) need no synchroniser
+   // because the CPU holds them stable from the DV assertion until o_mem_ready.
+   // -------------------------------------------------------------------------
+   (* ASYNC_REG = "true" *) reg sync_wr_dv_0 = 1'b0, sync_wr_dv_1 = 1'b0;
+   (* ASYNC_REG = "true" *) reg sync_rd_dv_0 = 1'b0, sync_rd_dv_1 = 1'b0;
+
+   always @(posedge ui_clk or posedge ui_clk_sync_rst) begin
+      if (ui_clk_sync_rst) begin
+         sync_wr_dv_0 <= 1'b0;  sync_wr_dv_1 <= 1'b0;
+         sync_rd_dv_0 <= 1'b0;  sync_rd_dv_1 <= 1'b0;
+      end else begin
+         sync_wr_dv_0 <= i_mem_write_DV;
+         sync_wr_dv_1 <= sync_wr_dv_0;
+         sync_rd_dv_0 <= i_mem_read_DV;
+         sync_rd_dv_1 <= sync_rd_dv_0;
+      end
+   end
+
+   wire synced_write_dv = sync_wr_dv_1;
+   wire synced_read_dv  = sync_rd_dv_1;
+
 
 
    localparam IDLE = 4'd0;
@@ -161,15 +189,11 @@ module ddr2_control (
             end
 
             WAIT: begin
-               if (i_mem_write_DV) begin
+               if (synced_write_dv) begin
                   state <= WRITE;
-               end // if (i_mem_write_DV)
-                else
-                begin
-                  if (i_mem_read_DV) begin
-                     state <= READ;
-                  end  // f (i_mem_write_DV)
-               end  // else if (i_mem_write_DV)
+               end else if (synced_read_dv) begin
+                  state <= READ;
+               end
             end
 
             WRITE: begin

@@ -80,32 +80,40 @@ module mem_read_write (
     // Cache arrays — ALL in BRAM.
     // Reads are synchronous: results appear the cycle after the read address
     // is presented. WAIT issues reads; CHECK uses the registered results.
+    //
+    // Write-address mux: during CACHE_RESET (state == 14'd0) the write
+    // address is `counter`; during normal operation it is `r_cache_index`.
+    // A single wire is used so Vivado sees one write-port address and can
+    // infer BRAM for every metadata array.
     // -------------------------------------------------------------------------
+    wire in_cache_reset = (state == 14'd0);
+    wire [INDEX_BITS-1:0] w_wr_idx =
+        in_cache_reset ? counter[INDEX_BITS-1:0] : r_cache_index;
 
     // Tag + valid bit (bit [TAG_BITS] = valid, bits [TAG_BITS-1:0] = tag)
-    (* ram_style = "block" *) (* rw_addr_collision = "yes" *)
+    (* ram_style = "block" *)
     reg [TAG_BITS:0] cache_val_addr_way0 [CACHE_SIZE-1:0];
 
-    (* ram_style = "block" *) (* rw_addr_collision = "yes" *)
+    (* ram_style = "block" *)
     reg [TAG_BITS:0] cache_val_addr_way1 [CACHE_SIZE-1:0];
 
     // 128-bit cache line data
-    (* ram_style = "block" *) (* rw_addr_collision = "yes" *)
+    (* ram_style = "block" *)
     reg [127:0] cache_val_data_way0 [CACHE_SIZE-1:0];
 
-    (* ram_style = "block" *) (* rw_addr_collision = "yes" *)
+    (* ram_style = "block" *)
     reg [127:0] cache_val_data_way1 [CACHE_SIZE-1:0];
 
     // Dirty bits
-    (* ram_style = "block" *) (* rw_addr_collision = "yes" *)
+    (* ram_style = "block" *)
     reg cache_dirty_way0 [CACHE_SIZE-1:0];
 
-    (* ram_style = "block" *) (* rw_addr_collision = "yes" *)
+    (* ram_style = "block" *)
     reg cache_dirty_way1 [CACHE_SIZE-1:0];
 
     // LRU bit: 0 = way1 most-recently-used (evict way0)
     //          1 = way0 most-recently-used (evict way1)
-    (* ram_style = "block" *) (* rw_addr_collision = "yes" *)
+    (* ram_style = "block" *)
     reg cache_lru [CACHE_SIZE-1:0];
 
     // -------------------------------------------------------------------------
@@ -282,10 +290,7 @@ module mem_read_write (
                         if (r_cache_hit) begin
                             // Read hit — select line, update LRU
                             r_cache_val_data_hold <= r_hit_way0 ? r_data_way0 : r_data_way1;
-                            if (r_hit_way0)
-                                cache_lru[r_cache_index] <= 1'b1; // way0 MRU → evict way1
-                            else
-                                cache_lru[r_cache_index] <= 1'b0; // way1 MRU → evict way0
+                            cache_lru[w_wr_idx] <= r_hit_way0 ? 1'b1 : 1'b0;
                             state <= READ_CACHE2;
 
                         end else begin
@@ -318,15 +323,16 @@ module mem_read_write (
                         2'b11: merged = {r_cache_val_data_hold[127:32], r_write_data};
                     endcase
 
+                    // Separate write-enable per way — one write per array per cycle, BRAM-friendly.
                     if (r_hit_way == 1'b0) begin
-                        cache_val_data_way0[r_cache_index] <= merged;
-                        cache_dirty_way0[r_cache_index]    <= 1'b1;
-                        cache_lru[r_cache_index]           <= 1'b1; // way0 MRU → evict way1
-                    end else begin
-                        cache_val_data_way1[r_cache_index] <= merged;
-                        cache_dirty_way1[r_cache_index]    <= 1'b1;
-                        cache_lru[r_cache_index]           <= 1'b0; // way1 MRU → evict way0
+                        cache_val_data_way0[w_wr_idx] <= merged;
+                        cache_dirty_way0[w_wr_idx]    <= 1'b1;
                     end
+                    if (r_hit_way == 1'b1) begin
+                        cache_val_data_way1[w_wr_idx] <= merged;
+                        cache_dirty_way1[w_wr_idx]    <= 1'b1;
+                    end
+                    cache_lru[w_wr_idx] <= (r_hit_way == 1'b0) ? 1'b1 : 1'b0;
 
                     o_mem_ready <= 1;
                     state       <= PRE_WAIT;
@@ -370,16 +376,16 @@ module mem_read_write (
                         endcase
 
                         if (r_evict_way == 1'b0) begin
-                            cache_val_data_way0[r_cache_index] <= merged;
-                            cache_val_addr_way0[r_cache_index] <= {1'b1, r_cache_tag};
-                            cache_dirty_way0[r_cache_index]    <= 1'b1;
-                            cache_lru[r_cache_index]           <= 1'b1; // way0 MRU → evict way1
-                        end else begin
-                            cache_val_data_way1[r_cache_index] <= merged;
-                            cache_val_addr_way1[r_cache_index] <= {1'b1, r_cache_tag};
-                            cache_dirty_way1[r_cache_index]    <= 1'b1;
-                            cache_lru[r_cache_index]           <= 1'b0; // way1 MRU → evict way0
+                            cache_val_data_way0[w_wr_idx] <= merged;
+                            cache_val_addr_way0[w_wr_idx] <= {1'b1, r_cache_tag};
+                            cache_dirty_way0[w_wr_idx]    <= 1'b1;
                         end
+                        if (r_evict_way == 1'b1) begin
+                            cache_val_data_way1[w_wr_idx] <= merged;
+                            cache_val_addr_way1[w_wr_idx] <= {1'b1, r_cache_tag};
+                            cache_dirty_way1[w_wr_idx]    <= 1'b1;
+                        end
+                        cache_lru[w_wr_idx] <= (r_evict_way == 1'b0) ? 1'b1 : 1'b0;
 
                         o_mem_ready <= 1;
                         state       <= PRE_WAIT;
@@ -448,16 +454,16 @@ module mem_read_write (
                         o_ddr_mem_read_DV <= 0;
 
                         if (r_evict_way == 1'b0) begin
-                            cache_val_data_way0[r_cache_index] <= i_ddr_mem_read_data;
-                            cache_val_addr_way0[r_cache_index] <= {1'b1, r_cache_tag};
-                            cache_dirty_way0[r_cache_index]    <= 1'b0;
-                            cache_lru[r_cache_index]           <= 1'b1; // way0 MRU → evict way1
-                        end else begin
-                            cache_val_data_way1[r_cache_index] <= i_ddr_mem_read_data;
-                            cache_val_addr_way1[r_cache_index] <= {1'b1, r_cache_tag};
-                            cache_dirty_way1[r_cache_index]    <= 1'b0;
-                            cache_lru[r_cache_index]           <= 1'b0; // way1 MRU → evict way0
+                            cache_val_data_way0[w_wr_idx] <= i_ddr_mem_read_data;
+                            cache_val_addr_way0[w_wr_idx] <= {1'b1, r_cache_tag};
+                            cache_dirty_way0[w_wr_idx]    <= 1'b0;
                         end
+                        if (r_evict_way == 1'b1) begin
+                            cache_val_data_way1[w_wr_idx] <= i_ddr_mem_read_data;
+                            cache_val_addr_way1[w_wr_idx] <= {1'b1, r_cache_tag};
+                            cache_dirty_way1[w_wr_idx]    <= 1'b0;
+                        end
+                        cache_lru[w_wr_idx] <= (r_evict_way == 1'b0) ? 1'b1 : 1'b0;
 
                         case (r_byte_offset)
                             2'b00: begin
@@ -495,11 +501,12 @@ module mem_read_write (
                 // valid tag match.
                 // ------------------------------------------------------------------
                 default: begin
-                    cache_val_addr_way0[counter] <= 0;
-                    cache_val_addr_way1[counter] <= 0;
-                    cache_dirty_way0[counter]    <= 0;
-                    cache_dirty_way1[counter]    <= 0;
-                    cache_lru[counter]           <= 0;
+                    // w_wr_idx == counter when in_cache_reset (state==14'd0)
+                    cache_val_addr_way0[w_wr_idx] <= 0;
+                    cache_val_addr_way1[w_wr_idx] <= 0;
+                    cache_dirty_way0[w_wr_idx]    <= 0;
+                    cache_dirty_way1[w_wr_idx]    <= 0;
+                    cache_lru[w_wr_idx]           <= 0;
 
                     if (counter == CACHE_SIZE - 1)
                         state <= WAIT;
