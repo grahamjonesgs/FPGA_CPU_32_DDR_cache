@@ -6,7 +6,7 @@
 // R15 is the frame pointer by software convention.
 
 // Push register onto stack
-// 1-word instruction (PC+1)
+// 1-word instruction (PC+4)
 task t_stack_push_reg;
    begin
       if (r_extra_clock == 0) begin
@@ -19,14 +19,14 @@ task t_stack_push_reg;
          if (w_mem_ready) begin
             r_mem_write_DV <= 1'b0;
             r_SM           <= OPCODE_REQUEST;
-            r_PC           <= r_PC + 1;
+            r_PC           <= r_PC + 4;
          end
       end
    end
 endtask
 
 // Push 32-bit immediate value onto stack
-// 2-word instruction (PC+2)
+// 2-word instruction (PC+8)
 task t_stack_push_value;
    input [31:0] i_value;
    begin
@@ -40,14 +40,14 @@ task t_stack_push_value;
          if (w_mem_ready) begin
             r_mem_write_DV <= 1'b0;
             r_SM           <= OPCODE_REQUEST;
-            r_PC           <= r_PC + 2;
+            r_PC           <= r_PC + 8;
          end
       end
    end
 endtask
 
 // Pop stack into register
-// 1-word instruction (PC+1)
+// 1-word instruction (PC+4)
 task t_stack_pop_reg;
    begin
       if (r_extra_clock == 0) begin
@@ -61,20 +61,20 @@ task t_stack_pop_reg;
             r_SP              <= r_SP + 4;
             r_mem_read_DV     <= 1'b0;
             r_SM              <= WRITEBACK;
-            r_PC              <= r_PC + 1;
+            r_PC              <= r_PC + 4;
          end
       end
    end
 endtask
 
 // GETSP — copy stack pointer value into register
-// 1-word instruction (PC+1)
+// 1-word instruction (PC+4)
 task t_get_sp;
    begin
       r_writeback_value <= {4'b0, r_SP};
       r_writeback_reg   <= r_reg_2;
       r_SM              <= WRITEBACK;
-      r_PC              <= r_PC + 1;
+      r_PC              <= r_PC + 4;
    end
 endtask
 
