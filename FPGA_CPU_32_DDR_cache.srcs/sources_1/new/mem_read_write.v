@@ -8,9 +8,13 @@
 // on every access vs a LUTRAM tag design, but the hit path is still only 3
 // cycles and misses are DDR-dominated (~20-50 cycles).
 //
-// External interface unchanged: i_mem_write_DV, i_mem_read_DV, i_mem_addr[24:0],
-// i_mem_write_data[31:0], o_mem_read_data[31:0], o_mem_ready, i_cache_enable,
-// i_cache_reset.
+// 64-bit data bus: 128-bit cache line holds 2 × 64-bit doublewords.
+// Doubleword offset within line: i_mem_addr[3] (0=upper [127:64], 1=lower [63:0])
+// Cache index: addr[3+INDEX_BITS:4], Tag: addr[31:4+INDEX_BITS]
+//
+// External interface: i_mem_write_DV, i_mem_read_DV, i_mem_addr[31:0],
+// i_mem_write_data[63:0], i_mem_byte_en[7:0], o_mem_read_data[63:0],
+// o_mem_ready, i_cache_enable, i_cache_reset.
 //////////////////////////////////////////////////////////////////////////////////
 
 module mem_read_write (
@@ -32,20 +36,22 @@ module mem_read_write (
 
     input             i_mem_write_DV,
     input             i_mem_read_DV,
-    input      [26:0] i_mem_addr,       // byte address (word-aligned for word ops)
-    input      [31:0] i_mem_write_data,
-    input      [ 3:0] i_mem_byte_en,    // byte enables for writes (4'b1111 = full word)
-    output reg [31:0] o_mem_read_data,
-    output reg [31:0] o_mem_read_data_next, // next consecutive word in same cache line
-    output reg        o_mem_next_valid,      // 1 when o_mem_read_data_next is valid (offset != 3)
+    input      [31:0] i_mem_addr,       // byte address (doubleword-aligned for 64-bit ops)
+    input      [63:0] i_mem_write_data,
+    input      [ 7:0] i_mem_byte_en,    // byte enables for writes (8'hFF = full doubleword)
+    output reg [63:0] o_mem_read_data,
+    output reg [63:0] o_mem_read_data_next, // next consecutive doubleword in same cache line
+    output reg        o_mem_next_valid,      // 1 when o_mem_read_data_next is valid (offset == 0)
     output reg        o_mem_ready,
     input             i_cache_enable,
     input             i_cache_reset
 );
 
-    parameter  CACHE_SIZE = 2_048;              // number of sets — 2 ways × 2048 sets = 4096 total lines = 64 KB (same capacity as original 4096×1-way)
+    parameter  CACHE_SIZE = 2_048;              // number of sets — 2 ways × 2048 sets = 4096 total lines = 64 KB
     localparam INDEX_BITS = $clog2(CACHE_SIZE); // 11
-    localparam TAG_BITS   = 24 - INDEX_BITS;    // 13
+    // 32-bit byte address, bottom 4 bits = byte offset within 16-byte line
+    // addr[31:4] is the line address; tag = upper bits, index = lower INDEX_BITS
+    localparam TAG_BITS   = 28 - INDEX_BITS;    // 17 (addr[31:4] = 28 bits, lower INDEX_BITS used for index)
 
     // -------------------------------------------------------------------------
     // DDR2 interface
@@ -56,7 +62,7 @@ module mem_read_write (
 
     reg          o_ddr_mem_write_DV;
     reg          o_ddr_mem_read_DV;
-    reg  [ 26:0] o_ddr_mem_addr;
+    reg  [ 31:0] o_ddr_mem_addr;
     reg  [127:0] o_ddr_mem_write_data;
     wire [127:0] i_ddr_mem_read_data;
     wire         i_ddr_mem_ready;
@@ -66,22 +72,22 @@ module mem_read_write (
     assign w_app_wdf_mask = r_app_wdf_mask;
 
     // -------------------------------------------------------------------------
-    // Address decode — combinational from i_mem_addr (27-bit byte address).
+    // Address decode — combinational from i_mem_addr (32-bit byte address).
     // CPU holds i_mem_addr stable until o_mem_ready, so these are stable
     // throughout any multi-cycle operation.
     //
     // DDR2 MIG address is in 16-bit half-word units (BL8 = 128-bit burst).
-    // byte_addr → DDR half-word addr = byte_addr >> 1 = {1'b0, byte_addr[26:1]}
+    // byte_addr → DDR half-word addr = byte_addr >> 1
     // Burst-aligned (3 DDR addr bits = 16 bytes = 8×2B): clear bottom 3 DDR bits
-    //   → clear bottom 4 byte bits: {1'b0, byte_addr[26:4], 3'b0}
-    // Word offset within 128-bit cache line: byte_addr[3:2]  (4 words per line)
-    // Byte lane within 32-bit word:          byte_addr[1:0]
+    //   → clear bottom 4 byte bits: {byte_addr[31:4], 4'b0000}
+    // Doubleword offset within 128-bit cache line: byte_addr[3]  (2 doublewords per line)
+    //   0 = upper doubleword [127:64], 1 = lower doubleword [63:0]
+    // Cache index: addr[4+INDEX_BITS-1:4], Tag: addr[31:4+INDEX_BITS]
     // -------------------------------------------------------------------------
-    wire [26:0]           w_computed_ddr_addr = {1'b0, i_mem_addr[26:4], 3'b0};
-    wire [INDEX_BITS-1:0] w_cache_index       = w_computed_ddr_addr[INDEX_BITS+2:3];
-    wire [TAG_BITS-1:0]   w_cache_tag         = w_computed_ddr_addr[26:3+INDEX_BITS];
-    wire [1:0]            w_byte_offset       = i_mem_addr[3:2];  // word within cache line
-    wire [1:0]            w_byte_lane         = i_mem_addr[1:0];  // byte within word
+    wire [31:0]           w_computed_ddr_addr = {i_mem_addr[31:4], 4'b0000};
+    wire [INDEX_BITS-1:0] w_cache_index       = i_mem_addr[4+INDEX_BITS-1:4];
+    wire [TAG_BITS-1:0]   w_cache_tag         = i_mem_addr[31:4+INDEX_BITS];
+    wire                  w_byte_offset       = i_mem_addr[3];    // doubleword within cache line
 
     // -------------------------------------------------------------------------
     // Cache arrays — ALL in BRAM.
@@ -137,12 +143,11 @@ module mem_read_write (
     // Latched request (stable while CPU waits, but latching makes CDC clear)
     reg [INDEX_BITS-1:0] r_cache_index;
     reg [TAG_BITS-1:0]   r_cache_tag;
-    reg [1:0]            r_byte_offset;   // which word in 128-bit cache line
-    reg [1:0]            r_byte_lane;     // which byte within the 32-bit word
-    reg [3:0]            r_byte_en;       // byte enables (4'b1111 = full word write)
-    reg [31:0]           r_write_data;
+    reg                  r_byte_offset;   // which doubleword in 128-bit cache line (0=upper, 1=lower)
+    reg [7:0]            r_byte_en;       // byte enables (8'hFF = full doubleword write)
+    reg [63:0]           r_write_data;
     reg                  r_is_write;
-    reg [26:0]           r_computed_ddr_addr;
+    reg [31:0]           r_computed_ddr_addr;
 
     // -------------------------------------------------------------------------
     // Hit / evict decode — combinational from the registered BRAM outputs.
@@ -166,8 +171,8 @@ module mem_read_write (
     // -------------------------------------------------------------------------
     reg [127:0] r_cache_val_data_hold; // cache line for hit merge / presentation
     reg [127:0] r_evict_data_hold;     // dirty line being written back to DDR
-    reg [26:0]  r_evict_ddr_addr_r;   // DDR address of the dirty eviction
-    reg [26:0]  r_fetch_ddr_addr;     // DDR address for the refill fetch
+    reg [31:0]  r_evict_ddr_addr_r;   // DDR address of the dirty eviction
+    reg [31:0]  r_fetch_ddr_addr;     // DDR address for the refill fetch
     reg         r_hit_way;            // which way matched (write-hit path)
     reg         r_evict_way;          // which way to replace (miss paths)
 
@@ -259,7 +264,6 @@ module mem_read_write (
                         r_cache_index       <= w_cache_index;
                         r_cache_tag         <= w_cache_tag;
                         r_byte_offset       <= w_byte_offset;
-                        r_byte_lane         <= w_byte_lane;
                         r_byte_en           <= i_mem_byte_en;
                         r_write_data        <= i_mem_write_data;
                         r_is_write          <= i_mem_write_DV;
@@ -284,7 +288,7 @@ module mem_read_write (
                         end else begin
                             // Write miss
                             r_evict_way        <= r_evict_way_sel;
-                            r_evict_ddr_addr_r <= {r_evict_tag, r_cache_index, 3'b000};
+                            r_evict_ddr_addr_r <= {r_evict_tag, r_cache_index, 4'b0000};
                             r_fetch_ddr_addr   <= r_computed_ddr_addr;
                             r_evict_data_hold  <= r_evict_way_sel ? r_data_way1 : r_data_way0;
                             if (r_evict_dirty) begin
@@ -307,7 +311,7 @@ module mem_read_write (
                         end else begin
                             // Read miss
                             r_evict_way        <= r_evict_way_sel;
-                            r_evict_ddr_addr_r <= {r_evict_tag, r_cache_index, 3'b000};
+                            r_evict_ddr_addr_r <= {r_evict_tag, r_cache_index, 4'b0000};
                             r_fetch_ddr_addr   <= r_computed_ddr_addr;
                             r_evict_data_hold  <= r_evict_way_sel ? r_data_way1 : r_data_way0;
                             if (r_evict_dirty) begin
@@ -328,27 +332,26 @@ module mem_read_write (
                 // ------------------------------------------------------------------
                 WRITE_HIT: begin
                     begin : write_hit_merge
-                        reg [31:0] old_word;
-                        reg [31:0] new_word;
-                        // Extract old word at the target word offset
-                        case (r_byte_offset)
-                            2'b00: old_word = r_cache_val_data_hold[127:96];
-                            2'b01: old_word = r_cache_val_data_hold[95:64];
-                            2'b10: old_word = r_cache_val_data_hold[63:32];
-                            2'b11: old_word = r_cache_val_data_hold[31:0];
-                        endcase
-                        // Apply byte enables (big-endian: lane0=bits[31:24], lane3=bits[7:0])
-                        new_word[31:24] = r_byte_en[3] ? r_write_data[31:24] : old_word[31:24];
-                        new_word[23:16] = r_byte_en[2] ? r_write_data[23:16] : old_word[23:16];
-                        new_word[15:8]  = r_byte_en[1] ? r_write_data[15:8]  : old_word[15:8];
-                        new_word[7:0]   = r_byte_en[0] ? r_write_data[7:0]   : old_word[7:0];
-                        // Merge new word into cache line
-                        case (r_byte_offset)
-                            2'b00: merged = {new_word, r_cache_val_data_hold[95:0]};
-                            2'b01: merged = {r_cache_val_data_hold[127:96], new_word, r_cache_val_data_hold[63:0]};
-                            2'b10: merged = {r_cache_val_data_hold[127:64], new_word, r_cache_val_data_hold[31:0]};
-                            2'b11: merged = {r_cache_val_data_hold[127:32], new_word};
-                        endcase
+                        reg [63:0] old_dw;
+                        reg [63:0] new_dw;
+                        // Extract old doubleword at the target offset
+                        // r_byte_offset 0 = upper [127:64], 1 = lower [63:0]
+                        old_dw = r_byte_offset ? r_cache_val_data_hold[63:0]
+                                               : r_cache_val_data_hold[127:64];
+                        // Apply byte enables (big-endian: lane7=bits[63:56], lane0=bits[7:0])
+                        new_dw[63:56] = r_byte_en[7] ? r_write_data[63:56] : old_dw[63:56];
+                        new_dw[55:48] = r_byte_en[6] ? r_write_data[55:48] : old_dw[55:48];
+                        new_dw[47:40] = r_byte_en[5] ? r_write_data[47:40] : old_dw[47:40];
+                        new_dw[39:32] = r_byte_en[4] ? r_write_data[39:32] : old_dw[39:32];
+                        new_dw[31:24] = r_byte_en[3] ? r_write_data[31:24] : old_dw[31:24];
+                        new_dw[23:16] = r_byte_en[2] ? r_write_data[23:16] : old_dw[23:16];
+                        new_dw[15:8]  = r_byte_en[1] ? r_write_data[15:8]  : old_dw[15:8];
+                        new_dw[7:0]   = r_byte_en[0] ? r_write_data[7:0]   : old_dw[7:0];
+                        // Merge new doubleword into cache line
+                        if (r_byte_offset)
+                            merged = {r_cache_val_data_hold[127:64], new_dw};
+                        else
+                            merged = {new_dw, r_cache_val_data_hold[63:0]};
                     end
 
                     // Separate write-enable per way — one write per array per cycle, BRAM-friendly.
@@ -397,24 +400,23 @@ module mem_read_write (
                         o_ddr_mem_read_DV <= 0;
 
                         begin : write_fetch_merge
-                            reg [31:0] old_word;
-                            reg [31:0] new_word;
-                            case (r_byte_offset)
-                                2'b00: old_word = i_ddr_mem_read_data[127:96];
-                                2'b01: old_word = i_ddr_mem_read_data[95:64];
-                                2'b10: old_word = i_ddr_mem_read_data[63:32];
-                                2'b11: old_word = i_ddr_mem_read_data[31:0];
-                            endcase
-                            new_word[31:24] = r_byte_en[3] ? r_write_data[31:24] : old_word[31:24];
-                            new_word[23:16] = r_byte_en[2] ? r_write_data[23:16] : old_word[23:16];
-                            new_word[15:8]  = r_byte_en[1] ? r_write_data[15:8]  : old_word[15:8];
-                            new_word[7:0]   = r_byte_en[0] ? r_write_data[7:0]   : old_word[7:0];
-                            case (r_byte_offset)
-                                2'b00: merged = {new_word, i_ddr_mem_read_data[95:0]};
-                                2'b01: merged = {i_ddr_mem_read_data[127:96], new_word, i_ddr_mem_read_data[63:0]};
-                                2'b10: merged = {i_ddr_mem_read_data[127:64], new_word, i_ddr_mem_read_data[31:0]};
-                                2'b11: merged = {i_ddr_mem_read_data[127:32], new_word};
-                            endcase
+                            reg [63:0] old_dw;
+                            reg [63:0] new_dw;
+                            // r_byte_offset 0 = upper [127:64], 1 = lower [63:0]
+                            old_dw = r_byte_offset ? i_ddr_mem_read_data[63:0]
+                                                   : i_ddr_mem_read_data[127:64];
+                            new_dw[63:56] = r_byte_en[7] ? r_write_data[63:56] : old_dw[63:56];
+                            new_dw[55:48] = r_byte_en[6] ? r_write_data[55:48] : old_dw[55:48];
+                            new_dw[47:40] = r_byte_en[5] ? r_write_data[47:40] : old_dw[47:40];
+                            new_dw[39:32] = r_byte_en[4] ? r_write_data[39:32] : old_dw[39:32];
+                            new_dw[31:24] = r_byte_en[3] ? r_write_data[31:24] : old_dw[31:24];
+                            new_dw[23:16] = r_byte_en[2] ? r_write_data[23:16] : old_dw[23:16];
+                            new_dw[15:8]  = r_byte_en[1] ? r_write_data[15:8]  : old_dw[15:8];
+                            new_dw[7:0]   = r_byte_en[0] ? r_write_data[7:0]   : old_dw[7:0];
+                            if (r_byte_offset)
+                                merged = {i_ddr_mem_read_data[127:64], new_dw};
+                            else
+                                merged = {new_dw, i_ddr_mem_read_data[63:0]};
                         end
 
                         if (r_evict_way == 1'b0) begin
@@ -435,31 +437,21 @@ module mem_read_write (
                 end
 
                 // ------------------------------------------------------------------
-                // READ HIT: present the correct word from the latched line
+                // READ HIT: present the correct doubleword from the latched line.
+                // r_byte_offset 0 = upper [127:64], 1 = lower [63:0]
+                // o_mem_read_data_next is valid only when offset == 0 (upper dw,
+                // next is lower dw in same line); offset == 1 has no next in line.
                 // ------------------------------------------------------------------
                 READ_CACHE2: begin
-                    case (r_byte_offset)
-                        2'b00: begin
-                            o_mem_read_data      <= r_cache_val_data_hold[127:96];
-                            o_mem_read_data_next <= r_cache_val_data_hold[95:64];
-                            o_mem_next_valid     <= 1'b1;
-                        end
-                        2'b01: begin
-                            o_mem_read_data      <= r_cache_val_data_hold[95:64];
-                            o_mem_read_data_next <= r_cache_val_data_hold[63:32];
-                            o_mem_next_valid     <= 1'b1;
-                        end
-                        2'b10: begin
-                            o_mem_read_data      <= r_cache_val_data_hold[63:32];
-                            o_mem_read_data_next <= r_cache_val_data_hold[31:0];
-                            o_mem_next_valid     <= 1'b1;
-                        end
-                        2'b11: begin
-                            o_mem_read_data      <= r_cache_val_data_hold[31:0];
-                            o_mem_read_data_next <= 32'h0;
-                            o_mem_next_valid     <= 1'b0;
-                        end
-                    endcase
+                    if (r_byte_offset == 1'b0) begin
+                        o_mem_read_data      <= r_cache_val_data_hold[127:64];
+                        o_mem_read_data_next <= r_cache_val_data_hold[63:0];
+                        o_mem_next_valid     <= 1'b1;
+                    end else begin
+                        o_mem_read_data      <= r_cache_val_data_hold[63:0];
+                        o_mem_read_data_next <= 64'h0;
+                        o_mem_next_valid     <= 1'b0;
+                    end
                     o_mem_ready <= 1;
                     state       <= PRE_WAIT;
                 end
@@ -507,28 +499,16 @@ module mem_read_write (
                         end
                         cache_lru[w_wr_idx] <= (r_evict_way == 1'b0) ? 1'b1 : 1'b0;
 
-                        case (r_byte_offset)
-                            2'b00: begin
-                                o_mem_read_data      <= i_ddr_mem_read_data[127:96];
-                                o_mem_read_data_next <= i_ddr_mem_read_data[95:64];
-                                o_mem_next_valid     <= 1'b1;
-                            end
-                            2'b01: begin
-                                o_mem_read_data      <= i_ddr_mem_read_data[95:64];
-                                o_mem_read_data_next <= i_ddr_mem_read_data[63:32];
-                                o_mem_next_valid     <= 1'b1;
-                            end
-                            2'b10: begin
-                                o_mem_read_data      <= i_ddr_mem_read_data[63:32];
-                                o_mem_read_data_next <= i_ddr_mem_read_data[31:0];
-                                o_mem_next_valid     <= 1'b1;
-                            end
-                            2'b11: begin
-                                o_mem_read_data      <= i_ddr_mem_read_data[31:0];
-                                o_mem_read_data_next <= 32'h0;
-                                o_mem_next_valid     <= 1'b0;
-                            end
-                        endcase
+                        // r_byte_offset 0 = upper [127:64], 1 = lower [63:0]
+                        if (r_byte_offset == 1'b0) begin
+                            o_mem_read_data      <= i_ddr_mem_read_data[127:64];
+                            o_mem_read_data_next <= i_ddr_mem_read_data[63:0];
+                            o_mem_next_valid     <= 1'b1;
+                        end else begin
+                            o_mem_read_data      <= i_ddr_mem_read_data[63:0];
+                            o_mem_read_data_next <= 64'h0;
+                            o_mem_next_valid     <= 1'b0;
+                        end
 
                         o_mem_ready <= 1;
                         state       <= PRE_WAIT;

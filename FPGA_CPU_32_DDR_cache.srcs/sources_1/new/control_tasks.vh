@@ -8,7 +8,7 @@ task t_cond_jump;
    begin
       if (i_condition) begin
          r_SM <= OPCODE_REQUEST;
-         r_PC <= i_value[26:0];  // jump (byte address)
+         r_PC <= i_value[31:0];  // jump (byte address)
       end // if(i_condition)
         else
         begin
@@ -18,7 +18,7 @@ task t_cond_jump;
    end
 endtask
 
-// Call if condition met — push return address (PC+2) onto DDR2 stack, jump to target.
+// Call if condition met — push return address (PC+8) onto DDR2 stack, jump to target.
 // 2-word instruction; uses multi-cycle DDR2 write (r_extra_clock pattern).
 // w_var1 (the jump target) stays valid across cycles as the instruction stays latched.
 task t_cond_call;
@@ -27,16 +27,17 @@ task t_cond_call;
    begin
       if (i_condition) begin
          if (r_extra_clock == 0) begin
-            r_SP             <= r_SP - 4;
-            r_mem_addr       <= r_SP[26:0] - 27'd4;
-            r_mem_write_data <= {5'b0, r_PC + 27'd8};  // return after 2-word instruction
+            r_SP             <= r_SP - 8;
+            r_mem_addr       <= r_SP - 32'd8;
+            r_mem_write_data <= {32'b0, r_PC + 32'd8};  // return after 2-word instruction
+            r_mem_byte_en    <= 8'hFF;
             r_mem_write_DV   <= 1'b1;
             r_extra_clock    <= 1'b1;
          end else begin
             if (w_mem_ready) begin
                r_mem_write_DV <= 1'b0;
                r_SM           <= OPCODE_REQUEST;
-               r_PC           <= i_value[26:0];
+               r_PC           <= i_value[31:0];
             end
          end
       end else begin
@@ -51,13 +52,13 @@ endtask
 task t_ret;
    begin
       if (r_extra_clock == 0) begin
-         r_mem_addr    <= r_SP[26:0];
+         r_mem_addr    <= r_SP;
          r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
       end else begin
          if (w_mem_ready) begin
-            r_PC          <= w_mem_read_data[26:0];
-            r_SP          <= r_SP + 4;
+            r_PC          <= w_mem_read_data[31:0];
+            r_SP          <= r_SP + 8;
             r_mem_read_DV <= 1'b0;
             r_SM          <= OPCODE_REQUEST;
          end
@@ -92,7 +93,7 @@ endtask
 task t_reset;
    begin
       r_SM <= OPCODE_REQUEST;
-      r_PC <= 27'h4;  // byte address of word 1 (first instruction word after header)
+      r_PC <= 32'h4;  // byte address of word 1 (first instruction word after header)
    end  // Case FFFF
 endtask
 
@@ -104,7 +105,7 @@ task t_set_interrupt_regs;
    reg [1:0] r_interrupt_number;
    begin
       r_interrupt_number = r_reg_port_a[1:0];
-      r_interrupt_table[r_interrupt_number] <= r_reg_port_b[26:0];
+      r_interrupt_table[r_interrupt_number] <= r_reg_port_b[31:0];
       r_SM <= OPCODE_REQUEST;
       r_PC <= r_PC + 4;
    end

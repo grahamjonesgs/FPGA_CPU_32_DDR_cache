@@ -278,22 +278,30 @@ task t_tx_newline;
     end
 endtask
 
-// Send message of reg contents
+// Send message of reg contents (64-bit = 16 hex chars)
 // On completion
 // Increment PC 1
 // Increment r_SM_msg
 task t_tx_reg;
     begin
         if (!w_sending_msg) begin
-            r_msg[7:0] <= return_ascii_from_hex(r_reg_port_b[31:28]);
-            r_msg[15:8] <= return_ascii_from_hex(r_reg_port_b[27:24]);
-            r_msg[23:16] <= return_ascii_from_hex(r_reg_port_b[23:20]);
-            r_msg[31:24] <= return_ascii_from_hex(r_reg_port_b[19:16]);
-            r_msg[39:32] <= return_ascii_from_hex(r_reg_port_b[15:12]);
-            r_msg[47:40] <= return_ascii_from_hex(r_reg_port_b[11:8]);
-            r_msg[55:48] <= return_ascii_from_hex(r_reg_port_b[7:4]);
-            r_msg[63:56] <= return_ascii_from_hex(r_reg_port_b[3:0]);
-            r_msg_length <= 8'h8;
+            r_msg[7:0]   <= return_ascii_from_hex(r_reg_port_b[63:60]);
+            r_msg[15:8]  <= return_ascii_from_hex(r_reg_port_b[59:56]);
+            r_msg[23:16] <= return_ascii_from_hex(r_reg_port_b[55:52]);
+            r_msg[31:24] <= return_ascii_from_hex(r_reg_port_b[51:48]);
+            r_msg[39:32] <= return_ascii_from_hex(r_reg_port_b[47:44]);
+            r_msg[47:40] <= return_ascii_from_hex(r_reg_port_b[43:40]);
+            r_msg[55:48] <= return_ascii_from_hex(r_reg_port_b[39:36]);
+            r_msg[63:56] <= return_ascii_from_hex(r_reg_port_b[35:32]);
+            r_msg[71:64] <= return_ascii_from_hex(r_reg_port_b[31:28]);
+            r_msg[79:72] <= return_ascii_from_hex(r_reg_port_b[27:24]);
+            r_msg[87:80] <= return_ascii_from_hex(r_reg_port_b[23:20]);
+            r_msg[95:88] <= return_ascii_from_hex(r_reg_port_b[19:16]);
+            r_msg[103:96]  <= return_ascii_from_hex(r_reg_port_b[15:12]);
+            r_msg[111:104] <= return_ascii_from_hex(r_reg_port_b[11:8]);
+            r_msg[119:112] <= return_ascii_from_hex(r_reg_port_b[7:4]);
+            r_msg[127:120] <= return_ascii_from_hex(r_reg_port_b[3:0]);
+            r_msg_length <= 8'h10;
             r_msg_send_DV <= 1'b1;
             r_SM <= UART_DELAY;
             r_PC <= r_PC + 4;

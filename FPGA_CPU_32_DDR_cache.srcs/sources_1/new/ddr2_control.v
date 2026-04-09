@@ -43,7 +43,7 @@ module ddr2_control (
 
     input i_mem_write_DV,
     input i_mem_read_DV,
-    input [26:0] i_mem_addr,
+    input [31:0] i_mem_addr,
     input [127:0] i_mem_write_data,
     inout [15:0] i_app_wdf_mask,
     output reg [127:0] o_mem_read_data,
@@ -201,7 +201,7 @@ module ddr2_control (
                   state <= WRITE_DONE;
                   app_en <= 1;
                   app_wdf_wren <= 1;
-                  app_addr <= i_mem_addr;
+                  app_addr <= i_mem_addr[27:1]; // byte addr → MIG halfword addr
                   app_cmd <= CMD_WRITE;
                   app_wdf_data <= i_mem_write_data;
                   app_wdf_mask <= i_app_wdf_mask;
@@ -227,7 +227,7 @@ module ddr2_control (
             READ: begin
                if (app_rdy) begin
                   app_en <= 1;
-                  app_addr <= i_mem_addr;
+                  app_addr <= i_mem_addr[27:1]; // byte addr → MIG halfword addr
                   app_cmd <= CMD_READ;
                   state <= READ_DONE;
                end

@@ -60,7 +60,7 @@ module FPGA_CPU_32_bits_cache (
     output [0:0] ddr2_odt
 );
 
-   localparam STACK_TOP = 28'h800_0000;  // one word (4 bytes) above top of 128 MiB byte address space
+   localparam STACK_TOP = 32'h800_0000;  // one doubleword (8 bytes) above top of 128 MiB byte address space
 
    // State Machine Code
    localparam OPCODE_REQUEST = 32'h1, OPCODE_FETCH = 32'h2, OPCODE_FETCH2 = 32'h4;
@@ -112,7 +112,7 @@ module FPGA_CPU_32_bits_cache (
 
    // Machine control
    reg [31:0] r_SM;
-   reg [26:0] r_PC;           // byte address, always word-aligned (bits [1:0] = 0)
+   reg [31:0] r_PC;           // byte address, always word-aligned (bits [1:0] = 0)
    reg [31:0] r_mem_read_addr;
    wire [31:0] w_opcode;
    wire [31:0] w_var1;
@@ -122,25 +122,25 @@ module FPGA_CPU_32_bits_cache (
    reg [3:0] r_reg_2;
    reg [3:0] r_reg_dst;
    reg [1:0] r_extra_clock;
-   reg [26:0] r_idx_base_addr;  // Saved base address for indexed register ops (byte addr)
+   reg [31:0] r_idx_base_addr;  // Saved base address for indexed register ops (byte addr)
    reg r_hcf_message_sent;
    reg [31:0] r_start_wait_counter;
 
    //load control
    //reg          o_ram_write_DV;
    reg [31:0] o_ram_write_value;
-   reg [26:0] o_ram_write_addr;
-   reg [26:0] r_ram_next_write_addr;
+   reg [31:0] o_ram_write_addr;
+   reg [31:0] r_ram_next_write_addr;
    reg [7:0] rx_count;
    reg [2:0] r_load_byte_counter;
    reg [15:0] r_checksum;
    reg [15:0] r_old_checksum;
    reg [15:0] r_calc_checksum;
    reg [15:0] r_rec_checksum;
-   reg [26:0] r_PC_requested;
+   reg [31:0] r_PC_requested;
 
    // Register control
-   reg [31:0] r_register[15:0];
+   reg [63:0] r_register[15:0];
    reg r_zero_flag;
    reg r_equal_flag;
    reg r_carry_flag;
@@ -155,9 +155,9 @@ module FPGA_CPU_32_bits_cache (
    reg [11:0] r_RGB_LED_2;
 
    // Stack control — stack now lives in DDR2 RAM, top of 128 MiB, growing down
-   // SP = 28'h800_0000 means empty; PUSH: SP-=4, mem[SP]=val; POP: val=mem[SP], SP+=4
+   // SP = 32'h800_0000 means empty; PUSH: SP-=8, mem[SP]=val; POP: val=mem[SP], SP+=8
    // R15 is the frame pointer by convention (software convention only, no hardware enforcement)
-   reg [27:0] r_SP;           // byte address, always word-aligned (bits [1:0] = 0)
+   reg [31:0] r_SP;           // byte address, always doubleword-aligned (bits [2:0] = 0)
    reg        r_int_push_wait;  // set while waiting for DDR2 to complete interrupt PC-push
 
    // UART send message
@@ -172,7 +172,7 @@ module FPGA_CPU_32_bits_cache (
    reg r_timing_start;
 
    // Interrupt handler
-   reg [26:0] r_interrupt_table[3:0];
+   reg [31:0] r_interrupt_table[3:0];
    reg r_timer_interrupt;
    reg [31:0] r_timer_interrupt_counter;
    reg [63:0] r_timer_interrupt_counter_sec;
@@ -180,11 +180,11 @@ module FPGA_CPU_32_bits_cache (
    // Memory
    reg r_mem_write_DV;
    reg r_mem_read_DV;
-   reg [26:0] r_mem_addr;      // byte address
-   reg [31:0] r_mem_write_data;
-   reg [ 3:0] r_mem_byte_en;   // byte enables: 4'b1111=full word, else byte op
-   wire [31:0] w_mem_read_data;
-   wire [31:0] w_mem_read_data_next; // next word in same cache line
+   reg [31:0] r_mem_addr;      // byte address
+   reg [63:0] r_mem_write_data;
+   reg [ 7:0] r_mem_byte_en;   // byte enables: 8'hFF=full doubleword, else partial op
+   wire [63:0] w_mem_read_data;
+   wire [63:0] w_mem_read_data_next; // next doubleword in same cache line
    wire        w_mem_next_valid;     // 1 when w_mem_read_data_next is valid
    wire w_mem_ready;
    reg [31:0] r_opcode_mem;
@@ -204,7 +204,7 @@ module FPGA_CPU_32_bits_cache (
    //=========================================================================
    // Additional flags for expanded comparisons
    //=========================================================================
-   reg r_sign_flag;      // Sign of last result (bit 31)
+   reg r_sign_flag;      // Sign of last result (bit 63)
    reg r_less_flag;      // Result of signed less-than comparison
    reg r_ult_flag;       // Result of unsigned less-than comparison
 
@@ -215,19 +215,19 @@ module FPGA_CPU_32_bits_cache (
   //=============================================================================
 
   // Pipeline stage registers (active during s_multiply state)
-  reg [63:0] r_mul_pipe1;        // Stage 1: multiply result (maps to DSP48 MREG)
-  reg [63:0] r_mul_pipe2;        // Stage 2: registered output (maps to DSP48 PREG)
-  wire [31:0] r_mul_result_lo;
-  wire [31:0] r_mul_result_hi;
-  assign r_mul_result_lo = r_mul_pipe2[31:0];
-  assign r_mul_result_hi = r_mul_pipe2[63:32];
+  reg [127:0] r_mul_pipe1;        // Stage 1: multiply result (maps to DSP48 MREG)
+  reg [127:0] r_mul_pipe2;        // Stage 2: registered output (maps to DSP48 PREG)
+  wire [63:0] r_mul_result_lo;
+  wire [63:0] r_mul_result_hi;
+  assign r_mul_result_lo = r_mul_pipe2[63:0];
+  assign r_mul_result_hi = r_mul_pipe2[127:64];
 
   reg        r_mul_is_high;      // Are we capturing high word?
   reg        r_mul_is_unsigned;  // Unsigned operation?
   reg [3:0]  r_mul_dest_reg;     // Destination register
   // Dedicated multiply operand capture (breaks path from register file)
-  reg [31:0] r_mul_operand_a;
-  reg [31:0] r_mul_operand_b;
+  reg [63:0] r_mul_operand_a;
+  reg [63:0] r_mul_operand_b;
 
   // Free-running 2-stage multiply pipeline (lets Vivado use DSP48 MREG + PREG)
   always @(posedge i_Clk) begin
@@ -245,11 +245,11 @@ module FPGA_CPU_32_bits_cache (
    // Hardware divide using iterative but optimized state machine
    // For true single-cycle, you'd need a pipelined divider IP
    //=========================================================================
-   reg [31:0] r_div_dividend;
-   reg [31:0] r_div_divisor;
-   reg [31:0] r_div_quotient;
-   reg [31:0] r_div_remainder;
-   reg [5:0]  r_div_counter;
+   reg [63:0] r_div_dividend;
+   reg [63:0] r_div_divisor;
+   reg [63:0] r_div_quotient;
+   reg [63:0] r_div_remainder;
+   reg [6:0]  r_div_counter;
    reg        r_div_busy;
    reg        r_div_sign_q;      // Sign of quotient
    reg        r_div_sign_r;      // Sign of remainder
@@ -263,11 +263,11 @@ module FPGA_CPU_32_bits_cache (
    localparam DIV_OP_MOD  = 2'd2;
    
    // Dedicated read ports - registered every cycle
-   reg [31:0] r_reg_port_a;
-   reg [31:0] r_reg_port_b;
+   reg [63:0] r_reg_port_a;
+   reg [63:0] r_reg_port_b;
 
    // Writeback pipeline registers
-   reg [31:0] r_writeback_value;
+   reg [63:0] r_writeback_value;
    reg [3:0]  r_writeback_reg;
    reg        r_writeback_set_zero_flag;  // Set zero flag from writeback value in WRITEBACK stage
 
@@ -401,7 +401,7 @@ rams_sp_nc rams_sp_nc1 (
       r_div_op <= DIV_OP_NONE;
       r_div_counter <= 0;
        for (i = 0; i < 16; i = i + 1)
-       r_register[i] = 32'b0;
+       r_register[i] = 64'b0;
       r_mul_is_immediate = 0;
    end
    
@@ -460,7 +460,7 @@ rams_sp_nc rams_sp_nc1 (
       r_SM = NO_PROGRAM;
       r_timeout_counter = 0;
       o_LCD_reset_n = 1'b0;
-      r_PC = 27'h0;
+      r_PC = 32'h0;
       r_zero_flag = 0;
       r_equal_flag = 0;
       r_carry_flag = 0;
@@ -471,9 +471,9 @@ rams_sp_nc rams_sp_nc1 (
       r_seven_seg_value2 = 32'h21_21_21_21;
       o_led <= 16'h0;
       rx_count = 8'b0;
-      o_ram_write_addr = 27'h0;
-      r_ram_next_write_addr = 27'h0;
-      r_SP = 28'h800_0000;          // empty-descending stack, top of 128 MiB byte space
+      o_ram_write_addr = 32'h0;
+      r_ram_next_write_addr = 32'h0;
+      r_SP = 32'h800_0000;          // empty-descending stack, top of 128 MiB byte space
       r_int_push_wait = 1'b0;
       r_msg_send_DV <= 1'b0;
       r_hcf_message_sent <= 1'b0;
@@ -484,7 +484,7 @@ rams_sp_nc rams_sp_nc1 (
       r_timer_interrupt_counter_sec <= 0;
       r_mem_write_DV <= 0;
       r_mem_read_DV <= 0;
-      r_mem_byte_en <= 4'b1111;
+      r_mem_byte_en <= 8'hFF;
       r_msg = 256'b0;
       r_boot_flash = 0;
       r_cache_reset = 0;
@@ -503,11 +503,11 @@ rams_sp_nc rams_sp_nc1 (
       if (w_reset_H) begin
 
          r_SM <= NO_PROGRAM;
-         r_SP <= 28'h800_0000;
+         r_SP <= 32'h800_0000;
          r_int_push_wait <= 1'b0;
          r_break_received <= 1'b0;
          for (i = 0; i < 16; i = i + 1)
-            r_register[i] <= 32'b0;
+            r_register[i] <= 64'b0;
 
       end // if (w_reset_H)
       // Break received: arm the flag so next byte is treated as a command
@@ -521,8 +521,8 @@ rams_sp_nc rams_sp_nc1 (
             8'h53: begin // 'S' — load start
                r_SM <= LOADING_BYTE;
                r_load_byte_counter <= 0;
-               o_ram_write_addr <= 27'h0;
-               r_ram_next_write_addr <= 27'h0;
+               o_ram_write_addr <= 32'h0;
+               r_ram_next_write_addr <= 32'h0;
                r_checksum <= 16'h0;
                r_old_checksum <= 16'h0;
                r_RGB_LED_1 <= 12'h0;
@@ -584,7 +584,7 @@ rams_sp_nc rams_sp_nc1 (
                if (w_mem_ready) begin
                   r_mem_write_DV <= 1'b0;
                end
-               r_SP <= 28'h800_0000;  // reset stack pointer during program load
+               r_SP <= 32'h800_0000;  // reset stack pointer during program load
                r_int_push_wait <= 1'b0;
 
                r_seven_seg_value1 <= {
@@ -627,7 +627,7 @@ rams_sp_nc rams_sp_nc1 (
                      end  // case 8'h58
                      8'h5A: // Start data flag Z
                         begin
-                        r_PC_requested <= o_ram_write_value[26:0];
+                        r_PC_requested <= o_ram_write_value[31:0];
                      end
                      8'h0a: ;  // ignore LF
                      8'h0d: ;  // ignore CR
@@ -651,7 +651,7 @@ rams_sp_nc rams_sp_nc1 (
                            endcase
                            o_ram_write_addr <= r_ram_next_write_addr;
                            r_ram_next_write_addr <= r_ram_next_write_addr + 4;  // byte addr: 4 bytes per word
-                           if (r_ram_next_write_addr>27'h7FF_FFFC) // Nexys has 128 MiB DDR2, last valid word at byte addr 0x7FF_FFFC
+                           if (r_ram_next_write_addr>32'h7FF_FFFC) // Nexys has 128 MiB DDR2, last valid word at byte addr 0x7FF_FFFC
                                 begin
                               r_SM <= HCF_1;  // Halt and catch fire error
                               r_error_code <= ERR_OVERFLOW;
@@ -678,7 +678,7 @@ rams_sp_nc rams_sp_nc1 (
                 begin  // Reset all flags and jump to first instruction
                   o_LCD_reset_n <= 1'b0;
                   o_led <= 16'h0;
-                  o_ram_write_addr <= 27'h0;
+                  o_ram_write_addr <= 32'h0;
                   o_TX_LCD_Byte <= 8'b0;
                   o_TX_LCD_Count <= 4'd1;
                   r_carry_flag <= 1'b0;
@@ -692,7 +692,7 @@ rams_sp_nc rams_sp_nc1 (
                   r_msg_send_DV <= 1'b0;
                   r_overflow_flag <= 1'b0;
                   r_PC <= r_PC_requested;
-                  r_ram_next_write_addr <= 27'h0;
+                  r_ram_next_write_addr <= 32'h0;
                   r_RGB_LED_1 <= 12'h000;
                   r_RGB_LED_2 <= 12'h000;
                   r_seven_seg_value1 <= 32'h22_22_22_22;
@@ -739,7 +739,7 @@ rams_sp_nc rams_sp_nc1 (
                o_led[0] <= i_switch[0];  // Temp showing cache enabled status.
                r_msg_send_DV <= 1'b0;
                r_extra_clock <= 2'b0;  // always reset — all instructions rely on this
-               r_mem_byte_en <= 4'b1111;  // default full-word; byte ops override this
+               r_mem_byte_en <= 8'hFF;  // default full-word; byte ops override this
 
                if (r_int_push_wait) begin
                   // Waiting for DDR2 to finish the timer-interrupt PC push
@@ -750,11 +750,12 @@ rams_sp_nc rams_sp_nc1 (
                      r_mem_read_DV   <= 1'b1;
                      r_SM            <= OPCODE_FETCH;
                   end
-               end else if (r_timer_interrupt && r_interrupt_table[0] != 27'h0) begin
+               end else if (r_timer_interrupt && r_interrupt_table[0] != 32'h0) begin
                   // Start pushing current PC onto DDR2 stack before jumping to handler
-                  r_SP             <= r_SP - 4;
-                  r_mem_addr       <= r_SP[26:0] - 27'd4;
-                  r_mem_write_data <= {5'b0, r_PC};
+                  r_SP             <= r_SP - 8;
+                  r_mem_addr       <= r_SP - 32'd8;
+                  r_mem_write_data <= {32'b0, r_PC};
+                  r_mem_byte_en    <= 8'hFF;
                   r_mem_write_DV   <= 1'b1;
                   r_timer_interrupt <= 1'b0;
                   r_PC             <= r_interrupt_table[0];
@@ -769,11 +770,11 @@ rams_sp_nc rams_sp_nc1 (
 
             OPCODE_FETCH: begin
                if (w_mem_ready) begin
-                  r_opcode_mem  <= w_mem_read_data; // full 32-bit opcode word
+                  r_opcode_mem  <= w_mem_read_data[63:32]; // upper 32 bits = first word at address
                   r_mem_read_DV <= 1'b0;
-                  // Speculatively capture var1 if it's in the same 128-bit cache line
+                  // Speculatively capture var1 if it's in the same cache line
                   if (w_mem_next_valid) begin
-                     r_var1_mem        <= w_mem_read_data_next;
+                     r_var1_mem        <= w_mem_read_data_next[63:32];
                      r_var1_prefetched <= 1'b1;
                   end else begin
                      r_var1_prefetched <= 1'b0;
@@ -810,7 +811,7 @@ rams_sp_nc rams_sp_nc1 (
 
             VAR1_FETCH: begin
                if (w_mem_ready) begin
-                  r_var1_mem<=w_mem_read_data; // the memory location, allows read of code as well as data
+                  r_var1_mem<=w_mem_read_data[63:32]; // upper 32 bits = instruction word at this address
                   if (r_debug_flag&&w_opcode[31:12]!=20'h0000F) begin  // Ignore delay/NOP opcodes (0x0000_F???)
                      r_SM <= DEBUG_DATA;
                   end else begin
@@ -1006,16 +1007,16 @@ MULTIPLY_WRITEBACK: begin
 
     // Flags from registered values
     if (r_mul_is_high) begin
-        r_zero_flag     <= (r_mul_result_hi == 32'b0);
-        r_sign_flag     <= r_mul_result_hi[31];
+        r_zero_flag     <= (r_mul_result_hi == 64'b0);
+        r_sign_flag     <= r_mul_result_hi[63];
         r_overflow_flag <= 1'b0;
     end else begin
-        r_zero_flag     <= (r_mul_result_lo == 32'b0);
-        r_sign_flag     <= r_mul_result_lo[31];
+        r_zero_flag     <= (r_mul_result_lo == 64'b0);
+        r_sign_flag     <= r_mul_result_lo[63];
         if (r_mul_is_unsigned)
-            r_overflow_flag <= (r_mul_result_hi != 32'b0);
+            r_overflow_flag <= (r_mul_result_hi != 64'b0);
         else
-            r_overflow_flag <= (r_mul_result_hi != {32{r_mul_result_lo[31]}});
+            r_overflow_flag <= (r_mul_result_hi != {64{r_mul_result_lo[63]}});
     end
 
     // PC increment depends on instruction type
@@ -1051,17 +1052,17 @@ end
 
             DIVIDE_STEP: begin
                // Shared division iteration - avoids re-evaluating opcode casez each cycle
-               if (r_div_counter < 6'd32) begin
+               if (r_div_counter < 7'd64) begin
                   // Restoring division step
-                  if ({r_div_remainder[30:0], r_div_dividend[31]} >= r_div_divisor) begin
-                     r_div_remainder <= {r_div_remainder[30:0], r_div_dividend[31]} - r_div_divisor;
-                     r_div_quotient <= {r_div_quotient[30:0], 1'b1};
+                  if ({r_div_remainder[62:0], r_div_dividend[63]} >= r_div_divisor) begin
+                     r_div_remainder <= {r_div_remainder[62:0], r_div_dividend[63]} - r_div_divisor;
+                     r_div_quotient <= {r_div_quotient[62:0], 1'b1};
                   end
                   else begin
-                     r_div_remainder <= {r_div_remainder[30:0], r_div_dividend[31]};
-                     r_div_quotient <= {r_div_quotient[30:0], 1'b0};
+                     r_div_remainder <= {r_div_remainder[62:0], r_div_dividend[63]};
+                     r_div_quotient <= {r_div_quotient[62:0], 1'b0};
                   end
-                  r_div_dividend <= {r_div_dividend[30:0], 1'b0};
+                  r_div_dividend <= {r_div_dividend[62:0], 1'b0};
                   r_div_counter <= r_div_counter + 1;
                end
                else begin
@@ -1091,7 +1092,7 @@ end
             WRITEBACK: begin
                r_register[r_writeback_reg] <= r_writeback_value;
                if (r_writeback_set_zero_flag)
-                  r_zero_flag <= (r_writeback_value == 32'b0);
+                  r_zero_flag <= (r_writeback_value == 64'b0);
                r_writeback_set_zero_flag <= 1'b0;
                r_SM <= OPCODE_REQUEST;
             end
@@ -1105,116 +1106,54 @@ end
    // Bit manipulation helper functions (active during single cycles)
    //=========================================================================
    // Population count - count number of 1 bits
-   function [5:0] popcount;
-      input [31:0] val;
+   function [6:0] popcount;
+      input [63:0] val;
       integer i;
       begin
          popcount = 0;
-         for (i = 0; i < 32; i = i + 1) begin
+         for (i = 0; i < 64; i = i + 1) begin
             popcount = popcount + val[i];
          end
       end
    endfunction
    
-   // Count leading zeros
-   function [5:0] count_leading_zeros;
-      input [31:0] val;
-      integer i;
+   // Count leading zeros (64-bit)
+   function [6:0] count_leading_zeros;
+      input [63:0] val;
+      integer clz_i;
+      reg [6:0] clz_result;
       begin
-         count_leading_zeros = 32;
-         for (i = 31; i >= 0; i = i - 1) begin
-            if (val[i] && count_leading_zeros == 32 - i - 1 + 32) begin
-               // This is tricky in a function; use casez instead
-            end
+         clz_result = 7'd64;
+         for (clz_i = 63; clz_i >= 0; clz_i = clz_i - 1) begin
+            if (val[clz_i])
+               clz_result = 7'd63 - clz_i[6:0];
          end
-         // Simpler implementation:
-         casez (val)
-            32'b1???????????????????????????????: count_leading_zeros = 0;
-            32'b01??????????????????????????????: count_leading_zeros = 1;
-            32'b001?????????????????????????????: count_leading_zeros = 2;
-            32'b0001????????????????????????????: count_leading_zeros = 3;
-            32'b00001???????????????????????????: count_leading_zeros = 4;
-            32'b000001??????????????????????????: count_leading_zeros = 5;
-            32'b0000001?????????????????????????: count_leading_zeros = 6;
-            32'b00000001????????????????????????: count_leading_zeros = 7;
-            32'b000000001???????????????????????: count_leading_zeros = 8;
-            32'b0000000001??????????????????????: count_leading_zeros = 9;
-            32'b00000000001?????????????????????: count_leading_zeros = 10;
-            32'b000000000001????????????????????: count_leading_zeros = 11;
-            32'b0000000000001???????????????????: count_leading_zeros = 12;
-            32'b00000000000001??????????????????: count_leading_zeros = 13;
-            32'b000000000000001?????????????????: count_leading_zeros = 14;
-            32'b0000000000000001????????????????: count_leading_zeros = 15;
-            32'b00000000000000001???????????????: count_leading_zeros = 16;
-            32'b000000000000000001??????????????: count_leading_zeros = 17;
-            32'b0000000000000000001?????????????: count_leading_zeros = 18;
-            32'b00000000000000000001????????????: count_leading_zeros = 19;
-            32'b000000000000000000001???????????: count_leading_zeros = 20;
-            32'b0000000000000000000001??????????: count_leading_zeros = 21;
-            32'b00000000000000000000001?????????: count_leading_zeros = 22;
-            32'b000000000000000000000001????????: count_leading_zeros = 23;
-            32'b0000000000000000000000001???????: count_leading_zeros = 24;
-            32'b00000000000000000000000001??????: count_leading_zeros = 25;
-            32'b000000000000000000000000001?????: count_leading_zeros = 26;
-            32'b0000000000000000000000000001????: count_leading_zeros = 27;
-            32'b00000000000000000000000000001???: count_leading_zeros = 28;
-            32'b000000000000000000000000000001??: count_leading_zeros = 29;
-            32'b0000000000000000000000000000001?: count_leading_zeros = 30;
-            32'b00000000000000000000000000000001: count_leading_zeros = 31;
-            32'b00000000000000000000000000000000: count_leading_zeros = 32;
-         endcase
+         count_leading_zeros = clz_result;
       end
    endfunction
    
-   // Count trailing zeros
-   function [5:0] count_trailing_zeros;
-      input [31:0] val;
+   // Count trailing zeros (64-bit)
+   function [6:0] count_trailing_zeros;
+      input [63:0] val;
+      integer ctz_i;
+      reg [6:0] ctz_result;
       begin
-         casez (val)
-            32'b???????????????????????????????1: count_trailing_zeros = 0;
-            32'b??????????????????????????????10: count_trailing_zeros = 1;
-            32'b?????????????????????????????100: count_trailing_zeros = 2;
-            32'b????????????????????????????1000: count_trailing_zeros = 3;
-            32'b???????????????????????????10000: count_trailing_zeros = 4;
-            32'b??????????????????????????100000: count_trailing_zeros = 5;
-            32'b?????????????????????????1000000: count_trailing_zeros = 6;
-            32'b????????????????????????10000000: count_trailing_zeros = 7;
-            32'b???????????????????????100000000: count_trailing_zeros = 8;
-            32'b??????????????????????1000000000: count_trailing_zeros = 9;
-            32'b?????????????????????10000000000: count_trailing_zeros = 10;
-            32'b????????????????????100000000000: count_trailing_zeros = 11;
-            32'b???????????????????1000000000000: count_trailing_zeros = 12;
-            32'b??????????????????10000000000000: count_trailing_zeros = 13;
-            32'b?????????????????100000000000000: count_trailing_zeros = 14;
-            32'b????????????????1000000000000000: count_trailing_zeros = 15;
-            32'b???????????????10000000000000000: count_trailing_zeros = 16;
-            32'b??????????????100000000000000000: count_trailing_zeros = 17;
-            32'b?????????????1000000000000000000: count_trailing_zeros = 18;
-            32'b????????????10000000000000000000: count_trailing_zeros = 19;
-            32'b???????????100000000000000000000: count_trailing_zeros = 20;
-            32'b??????????1000000000000000000000: count_trailing_zeros = 21;
-            32'b?????????10000000000000000000000: count_trailing_zeros = 22;
-            32'b????????100000000000000000000000: count_trailing_zeros = 23;
-            32'b???????1000000000000000000000000: count_trailing_zeros = 24;
-            32'b??????10000000000000000000000000: count_trailing_zeros = 25;
-            32'b?????100000000000000000000000000: count_trailing_zeros = 26;
-            32'b????1000000000000000000000000000: count_trailing_zeros = 27;
-            32'b???10000000000000000000000000000: count_trailing_zeros = 28;
-            32'b??100000000000000000000000000000: count_trailing_zeros = 29;
-            32'b?1000000000000000000000000000000: count_trailing_zeros = 30;
-            32'b10000000000000000000000000000000: count_trailing_zeros = 31;
-            32'b00000000000000000000000000000000: count_trailing_zeros = 32;
-         endcase
+         ctz_result = 7'd64;
+         for (ctz_i = 0; ctz_i < 64; ctz_i = ctz_i + 1) begin
+            if (val[ctz_i])
+               ctz_result = ctz_i[6:0];
+         end
+         count_trailing_zeros = ctz_result;
       end
    endfunction
-   
-   // Bit reverse
-   function [31:0] bit_reverse;
-      input [31:0] val;
-      integer i;
+
+   // Bit reverse (64-bit)
+   function [63:0] bit_reverse;
+      input [63:0] val;
+      integer br_i;
       begin
-         for (i = 0; i < 32; i = i + 1) begin
-            bit_reverse[31-i] = val[i];
+         for (br_i = 0; br_i < 64; br_i = br_i + 1) begin
+            bit_reverse[63-br_i] = val[br_i];
          end
       end
    endfunction

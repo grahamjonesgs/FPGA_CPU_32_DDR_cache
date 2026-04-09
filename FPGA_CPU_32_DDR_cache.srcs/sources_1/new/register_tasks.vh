@@ -74,7 +74,7 @@ endtask
 // Set reg with flags
 task t_set_reg_flags;
    begin
-      r_writeback_value <= {r_zero_flag, r_equal_flag, r_carry_flag, r_overflow_flag, 28'b0};
+      r_writeback_value <= {r_zero_flag, r_equal_flag, r_carry_flag, r_overflow_flag, 60'b0};
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 4;
@@ -151,12 +151,12 @@ endtask
 // Add value to reg
 task t_add_value;
    input [31:0] i_value;
-   reg [31:0] hold;
+   reg [63:0] hold;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} + {1'b0, i_value};
       r_writeback_set_zero_flag <= 1'b1;
-      r_sign_flag <= hold[31];
-      r_overflow_flag <= (r_reg_port_b[31]&&i_value[31]&&!hold[31])||(!r_reg_port_b[31]&&!i_value[31]&&hold[31]) ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[63];
+      r_overflow_flag <= (r_reg_port_b[63]&&i_value[31]&&!hold[63])||(!r_reg_port_b[63]&&!i_value[31]&&hold[63]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
@@ -167,12 +167,12 @@ endtask
 // Subtract value from reg
 task t_minus_value;
    input [31:0] i_value;
-   reg [31:0] hold;
+   reg [63:0] hold;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_b} - {1'b0, i_value};
       r_writeback_set_zero_flag <= 1'b1;
-      r_sign_flag <= hold[31];
-      r_overflow_flag <= (r_reg_port_b[31]&&!i_value[31]&&!hold[31])||(!r_reg_port_b[31]&&i_value[31]&&hold[31]) ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[63];
+      r_overflow_flag <= (r_reg_port_b[63]&&!i_value[31]&&!hold[63])||(!r_reg_port_b[63]&&i_value[31]&&hold[63]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
@@ -182,12 +182,12 @@ endtask
 
 // Decrement reg
 task t_dec_reg;
-   reg [31:0] hold;
+   reg [63:0] hold;
    begin
-      {r_carry_flag, hold} = {1'b0, r_reg_port_b} - {33'b1};
+      {r_carry_flag, hold} = {1'b0, r_reg_port_b} - {65'b1};
       r_writeback_set_zero_flag <= 1'b1;
-      r_sign_flag <= hold[31];
-      r_overflow_flag <= (r_reg_port_b[31] && !hold[31]) ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[63];
+      r_overflow_flag <= (r_reg_port_b[63] && !hold[63]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
@@ -197,12 +197,12 @@ endtask
 
 // Increment reg
 task t_inc_reg;
-   reg [31:0] hold;
+   reg [63:0] hold;
    begin
-      {r_carry_flag, hold} = {1'b0, r_reg_port_b} + 33'b1;
+      {r_carry_flag, hold} = {1'b0, r_reg_port_b} + 65'b1;
       r_writeback_set_zero_flag <= 1'b1;
-      r_sign_flag <= hold[31];
-      r_overflow_flag <= (!r_reg_port_b[31] && hold[31]) ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[63];
+      r_overflow_flag <= (!r_reg_port_b[63] && hold[63]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
@@ -213,11 +213,11 @@ endtask
 // Compare register to value (no register write)
 task t_compare_reg_value;
    input [31:0] i_value;
-   reg signed [31:0] s_reg;
-   reg signed [31:0] s_val;
+   reg signed [63:0] s_reg;
+   reg signed [63:0] s_val;
    begin
       s_reg = r_reg_port_b;
-      s_val = i_value;
+      s_val = {{32{i_value[31]}}, i_value};  // sign-extend 32-bit value to 64-bit
       r_equal_flag <= (r_reg_port_b == i_value) ? 1'b1 : 1'b0;
       r_less_flag <= (s_reg < s_val) ? 1'b1 : 1'b0;
       r_ult_flag <= (r_reg_port_b < i_value) ? 1'b1 : 1'b0;
@@ -229,12 +229,12 @@ endtask
 
 // SUBR - rd = rs1 - rs2
 task t_subr3;
-   reg [31:0] hold;
+   reg [63:0] hold;
    begin
       {r_carry_flag, hold} = {1'b0, r_reg_port_a} - {1'b0, r_reg_port_b};
       r_writeback_set_zero_flag <= 1'b1;
-      r_sign_flag <= hold[31];
-      r_overflow_flag <= (r_reg_port_a[31]&&!r_reg_port_b[31]&&!hold[31])||(!r_reg_port_a[31]&&r_reg_port_b[31]&&hold[31]) ? 1'b1 : 1'b0;
+      r_sign_flag <= hold[63];
+      r_overflow_flag <= (r_reg_port_a[63]&&!r_reg_port_b[63]&&!hold[63])||(!r_reg_port_a[63]&&r_reg_port_b[63]&&hold[63]) ? 1'b1 : 1'b0;
       r_writeback_value <= hold;
       r_writeback_reg <= r_reg_dst;
       r_SM <= WRITEBACK;
@@ -296,7 +296,7 @@ endtask
 
 // Right shift arithmetical reg
 task t_right_shift_a_reg;
-   reg signed [31:0] signed_val;
+   reg signed [63:0] signed_val;
    begin
       signed_val = r_reg_port_b;
       r_writeback_value <= signed_val >>> 1;
@@ -308,8 +308,8 @@ endtask
 
 // CMPRR - set flags from first-second, no writeback (for use with conditional jumps)
 task t_cmprr3;
-   reg signed [31:0] s_a;
-   reg signed [31:0] s_b;
+   reg signed [63:0] s_a;
+   reg signed [63:0] s_b;
    begin
       s_a = r_reg_port_a;
       s_b = r_reg_port_b;
@@ -326,16 +326,59 @@ endtask
 // ADDR - rd = rs1 + rs2
 //=============================================================================
 task t_addr3;
-   reg [32:0] hold;
+   reg [65:0] hold;
    begin
       hold = {1'b0, r_reg_port_a} + {1'b0, r_reg_port_b};
-      r_carry_flag <= hold[32];
+      r_carry_flag <= hold[64];
       r_writeback_set_zero_flag <= 1'b1;
-      r_sign_flag <= hold[31];
-      r_overflow_flag <= (r_reg_port_a[31] == r_reg_port_b[31]) &&
-                         (hold[31] != r_reg_port_a[31]) ? 1'b1 : 1'b0;
-      r_writeback_value <= hold[31:0];
+      r_sign_flag <= hold[63];
+      r_overflow_flag <= (r_reg_port_a[63] == r_reg_port_b[63]) &&
+                         (hold[63] != r_reg_port_a[63]) ? 1'b1 : 1'b0;
+      r_writeback_value <= hold[63:0];
       r_writeback_reg <= r_reg_dst;
+      r_SM <= WRITEBACK;
+      r_PC <= r_PC + 4;
+   end
+endtask
+
+// SETR64 - Load 64-bit immediate (3-word instruction: opcode + lo32 + hi32)
+// i_lo = w_var1 (already fetched), hi32 must be fetched from PC+8
+task t_set_reg64;
+   input [31:0] i_lo;
+   input [31:0] i_hi;  // not used — fetched via r_extra_clock
+   begin
+      if (r_extra_clock == 0) begin
+         // Fetch hi32 from PC+8
+         r_mem_addr    <= r_PC + 8;
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_read_DV     <= 1'b0;
+            r_writeback_value <= {w_mem_read_data[63:32], i_lo};
+            r_writeback_reg   <= r_reg_2;
+            r_SM              <= WRITEBACK;
+            r_PC              <= r_PC + 12;  // opcode(4) + lo32(4) + hi32(4)
+         end
+      end
+   end
+endtask
+
+// SEXTW - Sign-extend lower 32 bits to 64
+task t_sextw;
+   begin
+      r_writeback_value <= {{32{r_reg_port_b[31]}}, r_reg_port_b[31:0]};
+      r_writeback_reg <= r_reg_2;
+      r_SM <= WRITEBACK;
+      r_PC <= r_PC + 4;
+   end
+endtask
+
+// ZEXTW - Zero-extend lower 32 bits to 64
+task t_zextw;
+   begin
+      r_writeback_value <= {32'b0, r_reg_port_b[31:0]};
+      r_writeback_reg <= r_reg_2;
       r_SM <= WRITEBACK;
       r_PC <= r_PC + 4;
    end

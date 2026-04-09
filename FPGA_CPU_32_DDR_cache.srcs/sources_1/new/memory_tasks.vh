@@ -6,7 +6,7 @@ task t_set_mem_from_value_reg;
    input [31:0] i_location;
    begin
       if (r_extra_clock == 0) begin
-         r_mem_addr <= i_location[26:0];
+         r_mem_addr <= i_location[31:0];
          r_mem_write_data <= r_reg_port_b;
          r_mem_write_DV <= 1'b1;
          r_extra_clock <= 1'b1;
@@ -29,7 +29,7 @@ endtask
 task t_set_mem_from_reg_reg;
    begin
       if (r_extra_clock == 0) begin
-         r_mem_addr <= r_reg_port_b[26:0];
+         r_mem_addr <= r_reg_port_b[31:0];
          r_mem_write_data <= r_reg_port_a;
          r_mem_write_DV <= 1'b1;
          r_extra_clock <= 1'b1;
@@ -53,7 +53,7 @@ task t_set_reg_from_mem_value;
    input [31:0] i_location;
    begin
       if (r_extra_clock == 0) begin
-         r_mem_addr <= i_location[26:0];
+         r_mem_addr <= i_location[31:0];
          r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
@@ -77,7 +77,7 @@ endtask
 task t_set_reg_from_mem_reg;
    begin
       if (r_extra_clock == 0) begin
-         r_mem_addr <= r_reg_port_b[26:0];
+         r_mem_addr <= r_reg_port_b[31:0];
          r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
       end // if first loop
@@ -97,17 +97,17 @@ task t_set_reg_from_mem_reg;
 endtask
 
 // MEMSET8 - Write one byte to byte address in register
-// Big-endian: byte_addr[1:0]=0 → bits[31:24], 1→bits[23:16], 2→bits[15:8], 3→bits[7:0]
+// Big-endian 64-bit bus: byte_addr[2:0]=0 → bits[63:56] (MSB), 7→bits[7:0] (LSB)
 // 1-word instruction (PC+4)
 task t_memset8;
-   reg [1:0] byte_lane;
+   reg [2:0] byte_lane;
    begin
       if (r_extra_clock == 0) begin
-         byte_lane        = r_reg_port_b[1:0];
-         r_mem_addr       <= r_reg_port_b[26:0];
-         r_mem_write_data <= {4{r_reg_port_a[7:0]}};  // replicated; only enabled lane used
-         // Big-endian byte enables: lane 0 = bit[3] (MSB), lane 3 = bit[0] (LSB)
-         r_mem_byte_en    <= 4'b1000 >> byte_lane;
+         byte_lane        = r_reg_port_b[2:0];
+         r_mem_addr       <= r_reg_port_b[31:0];
+         r_mem_write_data <= {8{r_reg_port_a[7:0]}};  // replicated; only enabled lane used
+         // Big-endian byte enables: lane 0 = bit[7] (MSB), lane 7 = bit[0] (LSB)
+         r_mem_byte_en    <= 8'b1000_0000 >> byte_lane;
          r_mem_write_DV   <= 1'b1;
          r_extra_clock    <= 1'b1;
       end else begin
@@ -121,26 +121,154 @@ task t_memset8;
 endtask
 
 // MEMGET8 - Read one byte from byte address in register, zero-extended into dest register
-// Big-endian: byte_addr[1:0]=0 → bits[31:24], 1→bits[23:16], 2→bits[15:8], 3→bits[7:0]
+// Big-endian 64-bit bus: byte_addr[2:0]=0 → bits[63:56] (MSB), 7→bits[7:0] (LSB)
 // 1-word instruction (PC+4)
 task t_memget8;
    begin
       if (r_extra_clock == 0) begin
-         r_mem_addr    <= r_reg_port_b[26:0];
+         r_mem_addr    <= r_reg_port_b[31:0];
          r_mem_read_DV <= 1'b1;
          r_extra_clock <= 1'b1;
       end else begin
          if (w_mem_ready) begin
             r_mem_read_DV <= 1'b0;
-            case (r_reg_port_b[1:0])
-               2'b00: r_writeback_value <= {24'b0, w_mem_read_data[31:24]};
-               2'b01: r_writeback_value <= {24'b0, w_mem_read_data[23:16]};
-               2'b10: r_writeback_value <= {24'b0, w_mem_read_data[15:8]};
-               2'b11: r_writeback_value <= {24'b0, w_mem_read_data[7:0]};
+            case (r_reg_port_b[2:0])
+               3'b000: r_writeback_value <= {56'b0, w_mem_read_data[63:56]};
+               3'b001: r_writeback_value <= {56'b0, w_mem_read_data[55:48]};
+               3'b010: r_writeback_value <= {56'b0, w_mem_read_data[47:40]};
+               3'b011: r_writeback_value <= {56'b0, w_mem_read_data[39:32]};
+               3'b100: r_writeback_value <= {56'b0, w_mem_read_data[31:24]};
+               3'b101: r_writeback_value <= {56'b0, w_mem_read_data[23:16]};
+               3'b110: r_writeback_value <= {56'b0, w_mem_read_data[15:8]};
+               3'b111: r_writeback_value <= {56'b0, w_mem_read_data[7:0]};
             endcase
             r_writeback_reg <= r_reg_1;
             r_SM            <= WRITEBACK;
             r_PC            <= r_PC + 4;
+         end
+      end
+   end
+endtask
+
+// MEMSET16 - Write 16-bit halfword to byte address in register
+// Big-endian 64-bit bus, 2-byte aligned
+task t_memset16;
+   reg [2:0] byte_lane;
+   begin
+      if (r_extra_clock == 0) begin
+         byte_lane        = {r_reg_port_b[2:1], 1'b0};  // aligned to 2-byte boundary
+         r_mem_addr       <= {r_reg_port_b[31:1], 1'b0};
+         r_mem_write_data <= {4{r_reg_port_a[15:0]}};    // replicated; only enabled lanes used
+         r_mem_byte_en    <= 8'b1100_0000 >> byte_lane;
+         r_mem_write_DV   <= 1'b1;
+         r_extra_clock    <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_write_DV <= 1'b0;
+            r_SM           <= OPCODE_REQUEST;
+            r_PC           <= r_PC + 4;
+         end
+      end
+   end
+endtask
+
+// MEMGET16 - Read 16-bit halfword, zero-extended into dest register
+task t_memget16;
+   begin
+      if (r_extra_clock == 0) begin
+         r_mem_addr    <= {r_reg_port_b[31:1], 1'b0};
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_read_DV <= 1'b0;
+            case (r_reg_port_b[2:1])
+               2'b00: r_writeback_value <= {48'b0, w_mem_read_data[63:48]};
+               2'b01: r_writeback_value <= {48'b0, w_mem_read_data[47:32]};
+               2'b10: r_writeback_value <= {48'b0, w_mem_read_data[31:16]};
+               2'b11: r_writeback_value <= {48'b0, w_mem_read_data[15:0]};
+            endcase
+            r_writeback_reg <= r_reg_1;
+            r_SM            <= WRITEBACK;
+            r_PC            <= r_PC + 4;
+         end
+      end
+   end
+endtask
+
+// MEMSET32 - Write 32-bit word to byte-aligned address
+task t_memset32;
+   begin
+      if (r_extra_clock == 0) begin
+         r_mem_addr       <= {r_reg_port_b[31:2], 2'b00};
+         r_mem_write_data <= {r_reg_port_a[31:0], r_reg_port_a[31:0]};
+         r_mem_byte_en    <= r_reg_port_b[2] ? 8'b0000_1111 : 8'b1111_0000;
+         r_mem_write_DV   <= 1'b1;
+         r_extra_clock    <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_write_DV <= 1'b0;
+            r_SM           <= OPCODE_REQUEST;
+            r_PC           <= r_PC + 4;
+         end
+      end
+   end
+endtask
+
+// MEMGET32 - Read 32-bit word, zero-extended into dest register
+task t_memget32;
+   begin
+      if (r_extra_clock == 0) begin
+         r_mem_addr    <= {r_reg_port_b[31:2], 2'b00};
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_read_DV <= 1'b0;
+            r_writeback_value <= r_reg_port_b[2] ?
+               {32'b0, w_mem_read_data[31:0]} :
+               {32'b0, w_mem_read_data[63:32]};
+            r_writeback_reg <= r_reg_1;
+            r_SM            <= WRITEBACK;
+            r_PC            <= r_PC + 4;
+         end
+      end
+   end
+endtask
+
+// MEMSET64 - Write 64-bit doubleword to 8-byte aligned address
+task t_memset64;
+   begin
+      if (r_extra_clock == 0) begin
+         r_mem_addr       <= {r_reg_port_b[31:3], 3'b000};
+         r_mem_write_data <= r_reg_port_a;
+         r_mem_byte_en    <= 8'b1111_1111;
+         r_mem_write_DV   <= 1'b1;
+         r_extra_clock    <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_write_DV <= 1'b0;
+            r_SM           <= OPCODE_REQUEST;
+            r_PC           <= r_PC + 4;
+         end
+      end
+   end
+endtask
+
+// MEMGET64 - Read 64-bit doubleword from 8-byte aligned address
+task t_memget64;
+   begin
+      if (r_extra_clock == 0) begin
+         r_mem_addr    <= {r_reg_port_b[31:3], 3'b000};
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_read_DV     <= 1'b0;
+            r_writeback_value <= w_mem_read_data;
+            r_writeback_reg   <= r_reg_1;
+            r_SM              <= WRITEBACK;
+            r_PC              <= r_PC + 4;
          end
       end
    end
