@@ -83,6 +83,7 @@ module FPGA_CPU_32_bits_cache (
    localparam ERR_INV_OPCODE = 8'h1, ERR_INV_FSM_STATE = 8'h2, ERR_STACK = 8'h3;
    localparam ERR_DATA_LOAD = 8'h4, ERR_CHECKSUM_LOAD = 8'h5, ERR_OVERFLOW = 8'h6;
    localparam ERR_SEG_WRITE_TO_CODE = 'h7, ERR_SEG_EXEC_DATA = 'h8;
+   localparam ERR_TRAP = 8'h9;        // Explicit software trap (TRAP opcode)
 
    // UART receive control
    wire [7:0] w_uart_rx_value;  // Received value
@@ -657,7 +658,16 @@ rams_sp_nc rams_sp_nc1 (
                               r_error_code <= ERR_OVERFLOW;
                            end
                            r_mem_addr <= r_ram_next_write_addr;
-                           r_mem_write_data <= o_ram_write_value;
+                           // Place 32-bit word in the correct half of the 64-bit doubleword.
+                           // Cache big-endian layout: [63:32]=bytes at addr, [31:0]=bytes at addr+4.
+                           // addr[2]==0 → upper half (8-byte aligned); addr[2]==1 → lower half.
+                           if (r_ram_next_write_addr[2] == 1'b0) begin
+                              r_mem_write_data <= {o_ram_write_value, 32'b0};
+                              r_mem_byte_en    <= 8'hF0;
+                           end else begin
+                              r_mem_write_data <= {32'b0, o_ram_write_value};
+                              r_mem_byte_en    <= 8'h0F;
+                           end
                            r_mem_write_DV <= 1'b1;
 
                            r_old_checksum <= r_checksum;
@@ -692,6 +702,7 @@ rams_sp_nc rams_sp_nc1 (
                   r_msg_send_DV <= 1'b0;
                   r_overflow_flag <= 1'b0;
                   r_PC <= r_PC_requested;
+                  r_mem_byte_en <= 8'hFF;  // restore full-doubleword default after loader partial writes
                   r_ram_next_write_addr <= 32'h0;
                   r_RGB_LED_1 <= 12'h000;
                   r_RGB_LED_2 <= 12'h000;
@@ -754,7 +765,13 @@ rams_sp_nc rams_sp_nc1 (
                   // Start pushing current PC onto DDR2 stack before jumping to handler
                   r_SP             <= r_SP - 8;
                   r_mem_addr       <= r_SP - 32'd8;
-                  r_mem_write_data <= {32'b0, r_PC};
+                  // Pack flags into [38:32] so IRET can restore them.
+                  // Slot layout: [63:39]=0, [38]=zero, [37]=equal, [36]=carry,
+                  //              [35]=overflow, [34]=sign, [33]=less, [32]=ult, [31:0]=PC
+                  r_mem_write_data <= {25'b0,
+                                       r_zero_flag, r_equal_flag, r_carry_flag,
+                                       r_overflow_flag, r_sign_flag, r_less_flag, r_ult_flag,
+                                       r_PC};
                   r_mem_byte_en    <= 8'hFF;
                   r_mem_write_DV   <= 1'b1;
                   r_timer_interrupt <= 1'b0;
@@ -770,10 +787,19 @@ rams_sp_nc rams_sp_nc1 (
 
             OPCODE_FETCH: begin
                if (w_mem_ready) begin
-                  r_opcode_mem  <= w_mem_read_data[63:32]; // upper 32 bits = first word at address
+                  // PC[2] selects which 32-bit half of the 64-bit doubleword holds the opcode.
+                  // Cache layout (big-endian within doubleword):
+                  //   [63:32] = bytes at the doubleword-aligned base address  (PC[2]==0)
+                  //   [31:0]  = bytes at base+4                               (PC[2]==1)
+                  r_opcode_mem  <= r_PC[2] ? w_mem_read_data[31:0]
+                                           : w_mem_read_data[63:32];
                   r_mem_read_DV <= 1'b0;
-                  // Speculatively capture var1 if it's in the same cache line
-                  if (w_mem_next_valid) begin
+                  if (r_PC[2] == 0) begin
+                     // var1 (at PC+4) is in the OTHER half of the same doubleword — always here.
+                     r_var1_mem        <= w_mem_read_data[31:0];
+                     r_var1_prefetched <= 1'b1;
+                  end else if (w_mem_next_valid) begin
+                     // var1 (at PC+4) is in the next doubleword's upper half.
                      r_var1_mem        <= w_mem_read_data_next[63:32];
                      r_var1_prefetched <= 1'b1;
                   end else begin

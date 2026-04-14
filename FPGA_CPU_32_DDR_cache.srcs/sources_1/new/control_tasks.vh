@@ -97,6 +97,44 @@ task t_reset;
    end  // Case FFFF
 endtask
 
+// IRET — return from interrupt handler.
+// Pops the 64-bit context slot saved by interrupt dispatch:
+//   [31:0]  → PC  (resume address of interrupted instruction)
+//   [38:32] → flags (zero, equal, carry, overflow, sign, less, ult)
+// Uses the same multi-cycle DDR2 read pattern as t_ret.
+task t_iret;
+   begin
+      if (r_extra_clock == 0) begin
+         r_mem_addr    <= r_SP;
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_PC            <= w_mem_read_data[31:0];
+            r_zero_flag     <= w_mem_read_data[38];
+            r_equal_flag    <= w_mem_read_data[37];
+            r_carry_flag    <= w_mem_read_data[36];
+            r_overflow_flag <= w_mem_read_data[35];
+            r_sign_flag     <= w_mem_read_data[34];
+            r_less_flag     <= w_mem_read_data[33];
+            r_ult_flag      <= w_mem_read_data[32];
+            r_SP            <= r_SP + 8;
+            r_mem_read_DV   <= 1'b0;
+            r_SM            <= OPCODE_REQUEST;
+         end
+      end
+   end
+endtask
+
+// TRAP — software trap.  Halts with ERR_TRAP, distinct from HALT (normal stop)
+// and ERR_INV_OPCODE (illegal instruction).  Maps to ISD::TRAP in the LLVM backend.
+task t_trap;
+   begin
+      r_error_code <= ERR_TRAP;
+      r_SM         <= HCF_1;
+   end
+endtask
+
 // Set interrupt from regs first is interrupt in lowest byte, then address of handlers
 // On completion
 // Increment PC

@@ -99,7 +99,7 @@ module mem_read_write (
     // A single wire is used so Vivado sees one write-port address and can
     // infer BRAM for every metadata array.
     // -------------------------------------------------------------------------
-    wire in_cache_reset = (state == 14'd0);
+    wire in_cache_reset = (state == 16'd0);
     wire [INDEX_BITS-1:0] w_wr_idx =
         in_cache_reset ? counter[INDEX_BITS-1:0] : r_cache_index;
 
@@ -171,6 +171,7 @@ module mem_read_write (
     // -------------------------------------------------------------------------
     reg [127:0] r_cache_val_data_hold; // cache line for hit merge / presentation
     reg [127:0] r_evict_data_hold;     // dirty line being written back to DDR
+    reg [127:0] r_merged_write_line;   // merged 128-bit line saved for write-through DDR write
     reg [31:0]  r_evict_ddr_addr_r;   // DDR address of the dirty eviction
     reg [31:0]  r_fetch_ddr_addr;     // DDR address for the refill fetch
     reg         r_hit_way;            // which way matched (write-hit path)
@@ -179,22 +180,24 @@ module mem_read_write (
     // -------------------------------------------------------------------------
     // State machine — 14-bit one-hot
     // -------------------------------------------------------------------------
-    localparam PRE_WAIT         = 14'd1;
-    localparam WAIT             = 14'd2;     // idle: wait for DV, issue BRAM reads
-    localparam CHECK            = 14'd4;     // check registered BRAM results
-    localparam WRITE_HIT        = 14'd8;     // merge word into line, set dirty, done
-    localparam WRITE_MISS_EVICT = 14'd16;    // dirty write-miss: start writeback
-    localparam WRITE_EVICT_DONE = 14'd32;    // wait for writeback, then fetch
-    localparam WRITE_EVICT_GAP  = 14'd64;    // CDC gap before read DV
-    localparam WRITE_FETCH      = 14'd128;   // wait for fetch, merge, store, done
-    localparam READ_CACHE2      = 14'd256;   // read hit: present word from latched line
-    localparam READ_EVICT       = 14'd512;   // dirty read-miss: start writeback
-    localparam READ_EVICT_DONE  = 14'd1024;  // wait for writeback, then fetch
-    localparam READ_EVICT_GAP   = 14'd2048;  // CDC gap before read DV
-    localparam READ_WAIT        = 14'd4096;  // wait for DDR fetch
-    // 14'd8192 and above: illegal → default → CACHE_RESET sequencer
+    localparam PRE_WAIT              = 16'd1;
+    localparam WAIT                  = 16'd2;     // idle: wait for DV, issue BRAM reads
+    localparam CHECK                 = 16'd4;     // check registered BRAM results
+    localparam WRITE_HIT             = 16'd8;     // merge word into line, set dirty, done
+    localparam WRITE_MISS_EVICT      = 16'd16;    // dirty write-miss: start writeback
+    localparam WRITE_EVICT_DONE      = 16'd32;    // wait for writeback, then fetch
+    localparam WRITE_EVICT_GAP       = 16'd64;    // CDC gap before read DV
+    localparam WRITE_FETCH           = 16'd128;   // wait for fetch, merge, store
+    localparam WRITE_FETCH_WRITEBACK = 16'd256;   // write merged line to DDR (write-through)
+    localparam WRITE_FETCH_WB_DONE   = 16'd512;   // wait for write-through DDR write
+    localparam READ_CACHE2           = 16'd1024;  // read hit: present word from latched line
+    localparam READ_EVICT            = 16'd2048;  // dirty read-miss: start writeback
+    localparam READ_EVICT_DONE       = 16'd4096;  // wait for writeback, then fetch
+    localparam READ_EVICT_GAP        = 16'd8192;  // CDC gap before read DV
+    localparam READ_WAIT             = 16'd16384; // wait for DDR fetch
+    // 16'd0: illegal → default → CACHE_RESET sequencer
 
-    reg [13:0] state = WAIT;
+    reg [15:0] state = WAIT;
 
     integer counter; // used by CACHE_RESET sequencer
 
@@ -231,7 +234,7 @@ module mem_read_write (
 
         if (i_cache_reset) begin
             counter            <= 0;
-            state              <= 14'd0; // illegal → default → CACHE_RESET
+            state              <= 16'd0; // illegal → default → CACHE_RESET
             o_ddr_mem_write_DV <= 0;
             o_ddr_mem_read_DV  <= 0;
             o_mem_ready        <= 0;
@@ -419,20 +422,48 @@ module mem_read_write (
                                 merged = {new_dw, i_ddr_mem_read_data[63:0]};
                         end
 
+                        // Install merged line in cache as CLEAN — DDR write-through below
+                        // keeps DDR in sync, so the dirty bit is not needed.
                         if (r_evict_way == 1'b0) begin
                             cache_val_data_way0[w_wr_idx] <= merged;
                             cache_val_addr_way0[w_wr_idx] <= {1'b1, r_cache_tag};
-                            cache_dirty_way0[w_wr_idx]    <= 1'b1;
+                            cache_dirty_way0[w_wr_idx]    <= 1'b0;  // clean: DDR write follows
                         end
                         if (r_evict_way == 1'b1) begin
                             cache_val_data_way1[w_wr_idx] <= merged;
                             cache_val_addr_way1[w_wr_idx] <= {1'b1, r_cache_tag};
-                            cache_dirty_way1[w_wr_idx]    <= 1'b1;
+                            cache_dirty_way1[w_wr_idx]    <= 1'b0;  // clean: DDR write follows
                         end
                         cache_lru[w_wr_idx] <= (r_evict_way == 1'b0) ? 1'b1 : 1'b0;
 
-                        o_mem_ready <= 1;
-                        state       <= PRE_WAIT;
+                        // Save merged line for the write-through DDR write.
+                        r_merged_write_line <= merged;
+
+                        // Do NOT assert o_mem_ready yet — write merged line to DDR first
+                        // so that reads with cache disabled observe the byte write.
+                        state <= WRITE_FETCH_WRITEBACK;
+                    end
+                end
+
+                // ------------------------------------------------------------------
+                // WRITE_FETCH_WRITEBACK: write the merged 128-bit line to DDR so that
+                // DDR is always coherent after a write miss. This makes the miss path
+                // write-through: byte writes are visible to subsequent 64-bit reads
+                // regardless of whether the cache is enabled.
+                // ------------------------------------------------------------------
+                WRITE_FETCH_WRITEBACK: begin
+                    o_ddr_mem_addr       <= r_computed_ddr_addr;
+                    o_ddr_mem_write_data <= r_merged_write_line;
+                    r_app_wdf_mask       <= 16'b0000_0000_0000_0000; // all bytes valid
+                    o_ddr_mem_write_DV   <= 1;
+                    state                <= WRITE_FETCH_WB_DONE;
+                end
+
+                WRITE_FETCH_WB_DONE: begin
+                    if (i_ddr_mem_ready) begin
+                        o_ddr_mem_write_DV <= 0;
+                        o_mem_ready        <= 1;
+                        state              <= PRE_WAIT;
                     end
                 end
 

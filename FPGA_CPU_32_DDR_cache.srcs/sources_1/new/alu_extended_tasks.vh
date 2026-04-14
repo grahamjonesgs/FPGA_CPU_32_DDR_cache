@@ -1069,3 +1069,167 @@ task t_store_indexed_reg;
       end
    end
 endtask
+
+// ---------------------------------------------------------------------------
+// Sub-word indexed load/store  (RRV, 2-word instructions, PC += 8)
+// effective_addr = r_reg_port_b[31:0] + zero_ext(i_offset)
+// Data register  = r_reg_port_a  (stores: source;  loads: dest = r_reg_1)
+// Big-endian 64-bit bus — same byte-lane conventions as MEMGET/MEMSET tasks.
+// r_reg_port_b remains stable across both cycles (no writeback until WRITEBACK
+// state), so the lane selector can be recomputed in cycle 1 from the same inputs.
+// ---------------------------------------------------------------------------
+
+// LDIDX32 RRV — rd = zero_ext(mem32[(rs2 + imm32) & ~3])
+task t_load_indexed32;
+   input [31:0] i_offset;
+   reg [31:0] effective_addr;
+   begin
+      if (r_extra_clock == 0) begin
+         effective_addr = r_reg_port_b[31:0] + i_offset;
+         r_mem_addr    <= {effective_addr[31:2], 2'b00};
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            effective_addr = r_reg_port_b[31:0] + i_offset;
+            r_mem_read_DV     <= 1'b0;
+            r_writeback_value <= effective_addr[2] ?
+               {32'b0, w_mem_read_data[31:0]} :
+               {32'b0, w_mem_read_data[63:32]};
+            r_writeback_reg <= r_reg_1;
+            r_SM            <= WRITEBACK;
+            r_PC            <= r_PC + 8;
+         end
+      end
+   end
+endtask
+
+// STIDX32 RRV — mem32[(rs2 + imm32) & ~3] = rs1[31:0]
+task t_store_indexed32;
+   input [31:0] i_offset;
+   reg [31:0] effective_addr;
+   begin
+      if (r_extra_clock == 0) begin
+         effective_addr   = r_reg_port_b[31:0] + i_offset;
+         r_mem_addr       <= {effective_addr[31:2], 2'b00};
+         r_mem_write_data <= {r_reg_port_a[31:0], r_reg_port_a[31:0]};
+         r_mem_byte_en    <= effective_addr[2] ? 8'b0000_1111 : 8'b1111_0000;
+         r_mem_write_DV   <= 1'b1;
+         r_extra_clock    <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_write_DV <= 1'b0;
+            r_SM           <= OPCODE_REQUEST;
+            r_PC           <= r_PC + 8;
+         end
+      end
+   end
+endtask
+
+// LDIDX16 RRV — rd = zero_ext(mem16[(rs2 + imm32) & ~1])
+task t_load_indexed16;
+   input [31:0] i_offset;
+   reg [31:0] effective_addr;
+   begin
+      if (r_extra_clock == 0) begin
+         effective_addr = r_reg_port_b[31:0] + i_offset;
+         r_mem_addr    <= {effective_addr[31:1], 1'b0};
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            effective_addr = r_reg_port_b[31:0] + i_offset;
+            r_mem_read_DV <= 1'b0;
+            case (effective_addr[2:1])
+               2'b00: r_writeback_value <= {48'b0, w_mem_read_data[63:48]};
+               2'b01: r_writeback_value <= {48'b0, w_mem_read_data[47:32]};
+               2'b10: r_writeback_value <= {48'b0, w_mem_read_data[31:16]};
+               2'b11: r_writeback_value <= {48'b0, w_mem_read_data[15:0]};
+            endcase
+            r_writeback_reg <= r_reg_1;
+            r_SM            <= WRITEBACK;
+            r_PC            <= r_PC + 8;
+         end
+      end
+   end
+endtask
+
+// STIDX16 RRV — mem16[(rs2 + imm32) & ~1] = rs1[15:0]
+task t_store_indexed16;
+   input [31:0] i_offset;
+   reg [31:0] effective_addr;
+   reg [2:0]  byte_lane;
+   begin
+      if (r_extra_clock == 0) begin
+         effective_addr   = r_reg_port_b[31:0] + i_offset;
+         byte_lane        = {effective_addr[2:1], 1'b0};
+         r_mem_addr       <= {effective_addr[31:1], 1'b0};
+         r_mem_write_data <= {4{r_reg_port_a[15:0]}};
+         r_mem_byte_en    <= 8'b1100_0000 >> byte_lane;
+         r_mem_write_DV   <= 1'b1;
+         r_extra_clock    <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_write_DV <= 1'b0;
+            r_SM           <= OPCODE_REQUEST;
+            r_PC           <= r_PC + 8;
+         end
+      end
+   end
+endtask
+
+// LDIDX8 RRV — rd = zero_ext(mem8[rs2 + imm32])
+task t_load_indexed8;
+   input [31:0] i_offset;
+   reg [31:0] effective_addr;
+   begin
+      if (r_extra_clock == 0) begin
+         effective_addr = r_reg_port_b[31:0] + i_offset;
+         r_mem_addr    <= effective_addr;
+         r_mem_read_DV <= 1'b1;
+         r_extra_clock <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            effective_addr = r_reg_port_b[31:0] + i_offset;
+            r_mem_read_DV <= 1'b0;
+            case (effective_addr[2:0])
+               3'b000: r_writeback_value <= {56'b0, w_mem_read_data[63:56]};
+               3'b001: r_writeback_value <= {56'b0, w_mem_read_data[55:48]};
+               3'b010: r_writeback_value <= {56'b0, w_mem_read_data[47:40]};
+               3'b011: r_writeback_value <= {56'b0, w_mem_read_data[39:32]};
+               3'b100: r_writeback_value <= {56'b0, w_mem_read_data[31:24]};
+               3'b101: r_writeback_value <= {56'b0, w_mem_read_data[23:16]};
+               3'b110: r_writeback_value <= {56'b0, w_mem_read_data[15:8]};
+               3'b111: r_writeback_value <= {56'b0, w_mem_read_data[7:0]};
+            endcase
+            r_writeback_reg <= r_reg_1;
+            r_SM            <= WRITEBACK;
+            r_PC            <= r_PC + 8;
+         end
+      end
+   end
+endtask
+
+// STIDX8 RRV — mem8[rs2 + imm32] = rs1[7:0]
+task t_store_indexed8;
+   input [31:0] i_offset;
+   reg [31:0] effective_addr;
+   reg [2:0]  byte_lane;
+   begin
+      if (r_extra_clock == 0) begin
+         effective_addr   = r_reg_port_b[31:0] + i_offset;
+         byte_lane        = effective_addr[2:0];
+         r_mem_addr       <= effective_addr;
+         r_mem_write_data <= {8{r_reg_port_a[7:0]}};
+         r_mem_byte_en    <= 8'b1000_0000 >> byte_lane;
+         r_mem_write_DV   <= 1'b1;
+         r_extra_clock    <= 1'b1;
+      end else begin
+         if (w_mem_ready) begin
+            r_mem_write_DV <= 1'b0;
+            r_SM           <= OPCODE_REQUEST;
+            r_PC           <= r_PC + 8;
+         end
+      end
+   end
+endtask
