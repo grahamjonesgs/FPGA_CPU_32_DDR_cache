@@ -140,7 +140,7 @@ task t_stack_push_value64;
             r_mem_read_DV    <= 1'b0;
             r_SP             <= r_SP - 8;
             r_mem_addr       <= r_SP - 32'd8;
-            r_mem_write_data <= {w_mem_read_data[63:32], i_lo};
+            r_mem_write_data <= {(r_PC[2] ? w_mem_read_data[63:32] : w_mem_read_data[31:0]), i_lo};
             r_mem_byte_en    <= 8'hFF;
             r_mem_write_DV   <= 1'b1;
             r_extra_clock    <= 2'd2;

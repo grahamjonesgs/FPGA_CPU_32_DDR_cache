@@ -392,7 +392,7 @@ task t_set_reg64;
       end else begin
          if (w_mem_ready) begin
             r_mem_read_DV     <= 1'b0;
-            r_writeback_value <= {(r_PC[2] ? w_mem_read_data[31:0] : w_mem_read_data[63:32]), i_lo};
+            r_writeback_value <= {(r_PC[2] ? w_mem_read_data[63:32] : w_mem_read_data[31:0]), i_lo};
             r_writeback_reg   <= r_reg_2;
             r_SM              <= WRITEBACK;
             r_PC              <= r_PC + 12;  // opcode(4) + lo32(4) + hi32(4)

@@ -1094,8 +1094,8 @@ task t_load_indexed32;
             effective_addr = r_reg_port_b[31:0] + i_offset;
             r_mem_read_DV     <= 1'b0;
             r_writeback_value <= effective_addr[2] ?
-               {32'b0, w_mem_read_data[31:0]} :
-               {32'b0, w_mem_read_data[63:32]};
+               {32'b0, w_mem_read_data[63:32]} :
+               {32'b0, w_mem_read_data[31:0]};
             r_writeback_reg <= r_reg_1;
             r_SM            <= WRITEBACK;
             r_PC            <= r_PC + 8;
@@ -1113,7 +1113,7 @@ task t_store_indexed32;
          effective_addr   = r_reg_port_b[31:0] + i_offset;
          r_mem_addr       <= {effective_addr[31:2], 2'b00};
          r_mem_write_data <= {r_reg_port_a[31:0], r_reg_port_a[31:0]};
-         r_mem_byte_en    <= effective_addr[2] ? 8'b0000_1111 : 8'b1111_0000;
+         r_mem_byte_en    <= effective_addr[2] ? 8'b1111_0000 : 8'b0000_1111;
          r_mem_write_DV   <= 1'b1;
          r_extra_clock    <= 1'b1;
       end else begin
