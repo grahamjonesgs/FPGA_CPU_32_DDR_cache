@@ -103,7 +103,18 @@ task t_tx_char_from_reg_value;
                 
             end       
             if ((w_mem_ready||r_mem_was_ready) && !w_sending_msg) begin
-                r_msg[7:0] <= w_mem_read_data[7:0];
+                // Little-endian: select the byte at the given byte-lane offset within
+                // the 64-bit doubleword.  addr[2:0]=0 → bits[7:0] (LSByte), 7 → bits[63:56].
+                case (r_reg_port_b[2:0])
+                    3'b000: r_msg[7:0] <= w_mem_read_data[7:0];
+                    3'b001: r_msg[7:0] <= w_mem_read_data[15:8];
+                    3'b010: r_msg[7:0] <= w_mem_read_data[23:16];
+                    3'b011: r_msg[7:0] <= w_mem_read_data[31:24];
+                    3'b100: r_msg[7:0] <= w_mem_read_data[39:32];
+                    3'b101: r_msg[7:0] <= w_mem_read_data[47:40];
+                    3'b110: r_msg[7:0] <= w_mem_read_data[55:48];
+                    3'b111: r_msg[7:0] <= w_mem_read_data[63:56];
+                endcase
                 r_msg_length <= 8'h1;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
@@ -134,15 +145,24 @@ task t_tx_value_of_mem_at_reg;
                 
             end       
             if ((w_mem_ready||r_mem_was_ready) && !w_sending_msg) begin
-                r_msg[7:0] <= return_ascii_from_hex(w_mem_read_data[31:28]);
-                r_msg[15:8] <= return_ascii_from_hex(w_mem_read_data[27:24]);
-                r_msg[23:16] <= return_ascii_from_hex(w_mem_read_data[23:20]);
-                r_msg[31:24] <= return_ascii_from_hex(w_mem_read_data[19:16]);
-                r_msg[39:32] <= return_ascii_from_hex(w_mem_read_data[15:12]);
-                r_msg[47:40] <= return_ascii_from_hex(w_mem_read_data[11:8]);
-                r_msg[55:48] <= return_ascii_from_hex(w_mem_read_data[7:4]);
-                r_msg[63:56] <= return_ascii_from_hex(w_mem_read_data[3:0]);
-                r_msg_length <= 8'h8;
+                // Print all 64 bits as 16 hex chars, MSB first.
+                r_msg[7:0]    <= return_ascii_from_hex(w_mem_read_data[63:60]);
+                r_msg[15:8]   <= return_ascii_from_hex(w_mem_read_data[59:56]);
+                r_msg[23:16]  <= return_ascii_from_hex(w_mem_read_data[55:52]);
+                r_msg[31:24]  <= return_ascii_from_hex(w_mem_read_data[51:48]);
+                r_msg[39:32]  <= return_ascii_from_hex(w_mem_read_data[47:44]);
+                r_msg[47:40]  <= return_ascii_from_hex(w_mem_read_data[43:40]);
+                r_msg[55:48]  <= return_ascii_from_hex(w_mem_read_data[39:36]);
+                r_msg[63:56]  <= return_ascii_from_hex(w_mem_read_data[35:32]);
+                r_msg[71:64]  <= return_ascii_from_hex(w_mem_read_data[31:28]);
+                r_msg[79:72]  <= return_ascii_from_hex(w_mem_read_data[27:24]);
+                r_msg[87:80]  <= return_ascii_from_hex(w_mem_read_data[23:20]);
+                r_msg[95:88]  <= return_ascii_from_hex(w_mem_read_data[19:16]);
+                r_msg[103:96] <= return_ascii_from_hex(w_mem_read_data[15:12]);
+                r_msg[111:104]<= return_ascii_from_hex(w_mem_read_data[11:8]);
+                r_msg[119:112]<= return_ascii_from_hex(w_mem_read_data[7:4]);
+                r_msg[127:120]<= return_ascii_from_hex(w_mem_read_data[3:0]);
+                r_msg_length <= 8'h10;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
                 r_mem_read_DV <= 1'b0;
@@ -173,15 +193,24 @@ task t_tx_value_of_mem;
                 
             end       
             if ((w_mem_ready||r_mem_was_ready) && !w_sending_msg) begin
-                r_msg[7:0] <= return_ascii_from_hex(w_mem_read_data[31:28]);
-                r_msg[15:8] <= return_ascii_from_hex(w_mem_read_data[27:24]);
-                r_msg[23:16] <= return_ascii_from_hex(w_mem_read_data[23:20]);
-                r_msg[31:24] <= return_ascii_from_hex(w_mem_read_data[19:16]);
-                r_msg[39:32] <= return_ascii_from_hex(w_mem_read_data[15:12]);
-                r_msg[47:40] <= return_ascii_from_hex(w_mem_read_data[11:8]);
-                r_msg[55:48] <= return_ascii_from_hex(w_mem_read_data[7:4]);
-                r_msg[63:56] <= return_ascii_from_hex(w_mem_read_data[3:0]);
-                r_msg_length <= 8'h8;
+                // Print all 64 bits as 16 hex chars, MSB first.
+                r_msg[7:0]    <= return_ascii_from_hex(w_mem_read_data[63:60]);
+                r_msg[15:8]   <= return_ascii_from_hex(w_mem_read_data[59:56]);
+                r_msg[23:16]  <= return_ascii_from_hex(w_mem_read_data[55:52]);
+                r_msg[31:24]  <= return_ascii_from_hex(w_mem_read_data[51:48]);
+                r_msg[39:32]  <= return_ascii_from_hex(w_mem_read_data[47:44]);
+                r_msg[47:40]  <= return_ascii_from_hex(w_mem_read_data[43:40]);
+                r_msg[55:48]  <= return_ascii_from_hex(w_mem_read_data[39:36]);
+                r_msg[63:56]  <= return_ascii_from_hex(w_mem_read_data[35:32]);
+                r_msg[71:64]  <= return_ascii_from_hex(w_mem_read_data[31:28]);
+                r_msg[79:72]  <= return_ascii_from_hex(w_mem_read_data[27:24]);
+                r_msg[87:80]  <= return_ascii_from_hex(w_mem_read_data[23:20]);
+                r_msg[95:88]  <= return_ascii_from_hex(w_mem_read_data[19:16]);
+                r_msg[103:96] <= return_ascii_from_hex(w_mem_read_data[15:12]);
+                r_msg[111:104]<= return_ascii_from_hex(w_mem_read_data[11:8]);
+                r_msg[119:112]<= return_ascii_from_hex(w_mem_read_data[7:4]);
+                r_msg[127:120]<= return_ascii_from_hex(w_mem_read_data[3:0]);
+                r_msg_length <= 8'h10;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
                 r_mem_read_DV <= 1'b0;
@@ -212,10 +241,16 @@ task t_tx_string_at_mem;
                 
             end       
             if ((w_mem_ready||r_mem_was_ready) && !w_sending_msg) begin
-                r_msg[15:0] <= {8'b0, w_mem_read_data[31:24]};
-                r_msg[31:16] <= {8'b0, w_mem_read_data[23:16]};
-                r_msg[47:32] <= {8'b0, w_mem_read_data[15:8]};
-                r_msg[63:48] <= {8'b0, w_mem_read_data[7:0]};
+                // Little-endian: send 8 bytes in address order (lowest byte first).
+                // addr+0 → bits[7:0], addr+1 → bits[15:8], … addr+7 → bits[63:56].
+                r_msg[7:0]   <= w_mem_read_data[7:0];
+                r_msg[15:8]  <= w_mem_read_data[15:8];
+                r_msg[23:16] <= w_mem_read_data[23:16];
+                r_msg[31:24] <= w_mem_read_data[31:24];
+                r_msg[39:32] <= w_mem_read_data[39:32];
+                r_msg[47:40] <= w_mem_read_data[47:40];
+                r_msg[55:48] <= w_mem_read_data[55:48];
+                r_msg[63:56] <= w_mem_read_data[63:56];
                 r_msg_length <= 8'h8;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
@@ -246,10 +281,16 @@ task t_tx_string_at_reg;
                 
             end       
             if ((w_mem_ready||r_mem_was_ready) && !w_sending_msg) begin
-                r_msg[15:0] <= {8'b0, w_mem_read_data[31:24]};
-                r_msg[31:16] <= {8'b0, w_mem_read_data[23:16]};
-                r_msg[47:32] <= {8'b0, w_mem_read_data[15:8]};
-                r_msg[63:48] <= {8'b0, w_mem_read_data[7:0]};
+                // Little-endian: send 8 bytes in address order (lowest byte first).
+                // addr+0 → bits[7:0], addr+1 → bits[15:8], … addr+7 → bits[63:56].
+                r_msg[7:0]   <= w_mem_read_data[7:0];
+                r_msg[15:8]  <= w_mem_read_data[15:8];
+                r_msg[23:16] <= w_mem_read_data[23:16];
+                r_msg[31:24] <= w_mem_read_data[31:24];
+                r_msg[39:32] <= w_mem_read_data[39:32];
+                r_msg[47:40] <= w_mem_read_data[47:40];
+                r_msg[55:48] <= w_mem_read_data[55:48];
+                r_msg[63:56] <= w_mem_read_data[63:56];
                 r_msg_length <= 8'h8;
                 r_msg_send_DV <= 1'b1;
                 r_SM <= UART_DELAY;
@@ -278,22 +319,30 @@ task t_tx_newline;
     end
 endtask
 
-// Send message of reg contents
+// Send message of reg contents (64-bit = 16 hex chars)
 // On completion
 // Increment PC 1
 // Increment r_SM_msg
 task t_tx_reg;
     begin
         if (!w_sending_msg) begin
-            r_msg[7:0] <= return_ascii_from_hex(r_reg_port_b[31:28]);
-            r_msg[15:8] <= return_ascii_from_hex(r_reg_port_b[27:24]);
-            r_msg[23:16] <= return_ascii_from_hex(r_reg_port_b[23:20]);
-            r_msg[31:24] <= return_ascii_from_hex(r_reg_port_b[19:16]);
-            r_msg[39:32] <= return_ascii_from_hex(r_reg_port_b[15:12]);
-            r_msg[47:40] <= return_ascii_from_hex(r_reg_port_b[11:8]);
-            r_msg[55:48] <= return_ascii_from_hex(r_reg_port_b[7:4]);
-            r_msg[63:56] <= return_ascii_from_hex(r_reg_port_b[3:0]);
-            r_msg_length <= 8'h8;
+            r_msg[7:0]   <= return_ascii_from_hex(r_reg_port_b[63:60]);
+            r_msg[15:8]  <= return_ascii_from_hex(r_reg_port_b[59:56]);
+            r_msg[23:16] <= return_ascii_from_hex(r_reg_port_b[55:52]);
+            r_msg[31:24] <= return_ascii_from_hex(r_reg_port_b[51:48]);
+            r_msg[39:32] <= return_ascii_from_hex(r_reg_port_b[47:44]);
+            r_msg[47:40] <= return_ascii_from_hex(r_reg_port_b[43:40]);
+            r_msg[55:48] <= return_ascii_from_hex(r_reg_port_b[39:36]);
+            r_msg[63:56] <= return_ascii_from_hex(r_reg_port_b[35:32]);
+            r_msg[71:64] <= return_ascii_from_hex(r_reg_port_b[31:28]);
+            r_msg[79:72] <= return_ascii_from_hex(r_reg_port_b[27:24]);
+            r_msg[87:80] <= return_ascii_from_hex(r_reg_port_b[23:20]);
+            r_msg[95:88] <= return_ascii_from_hex(r_reg_port_b[19:16]);
+            r_msg[103:96]  <= return_ascii_from_hex(r_reg_port_b[15:12]);
+            r_msg[111:104] <= return_ascii_from_hex(r_reg_port_b[11:8]);
+            r_msg[119:112] <= return_ascii_from_hex(r_reg_port_b[7:4]);
+            r_msg[127:120] <= return_ascii_from_hex(r_reg_port_b[3:0]);
+            r_msg_length <= 8'h10;
             r_msg_send_DV <= 1'b1;
             r_SM <= UART_DELAY;
             r_PC <= r_PC + 4;
