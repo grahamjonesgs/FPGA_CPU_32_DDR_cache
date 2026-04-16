@@ -421,8 +421,8 @@
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design">
-          <Option Id="GlobalReTiming">1</Option>
-          <Option Id="ReTiming">1</Option>
+          <Option Id="GlobalReTiming">0</Option>
+          <Option Id="NoReTiming">1</Option>
         </Step>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>

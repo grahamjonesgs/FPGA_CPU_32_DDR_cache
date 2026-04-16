@@ -191,7 +191,6 @@ module FPGA_CPU_32_bits_cache (
    reg [31:0] r_opcode_mem;
    reg [31:0] r_var1_mem;
    reg [31:0] r_var2_mem;
-   reg r_cache_reset;
    reg r_var1_prefetched; // 1 when r_var1_mem was populated from the opcode cache line
 
    // Debug
@@ -312,9 +311,7 @@ module FPGA_CPU_32_bits_cache (
        .o_mem_read_data(w_mem_read_data),
        .o_mem_read_data_next(w_mem_read_data_next),
        .o_mem_next_valid(w_mem_next_valid),
-       .o_mem_ready(w_mem_ready),
-       .i_cache_enable(i_switch[0]),
-       .i_cache_reset(r_cache_reset)
+       .o_mem_ready(w_mem_ready)
    );
 
 
@@ -488,7 +485,6 @@ rams_sp_nc rams_sp_nc1 (
       r_mem_byte_en <= 8'hFF;
       r_msg = 256'b0;
       r_boot_flash = 0;
-      r_cache_reset = 0;
       r_debug_flag = 0;
       r_debug_step_flag = 0;
       r_debug_step_run = 0;
@@ -659,14 +655,13 @@ rams_sp_nc rams_sp_nc1 (
                            end
                            r_mem_addr <= r_ram_next_write_addr;
                            // Place 32-bit word in the correct half of the 64-bit doubleword.
-                           // Cache big-endian layout: [63:32]=bytes at addr, [31:0]=bytes at addr+4.
-                           // addr[2]==0 → upper half (8-byte aligned); addr[2]==1 → lower half.
+                           // Little-endian layout: addr[2]==0 → LOW half [31:0]; addr[2]==1 → HIGH half [63:32].
                            if (r_ram_next_write_addr[2] == 1'b0) begin
-                              r_mem_write_data <= {o_ram_write_value, 32'b0};
-                              r_mem_byte_en    <= 8'hF0;
-                           end else begin
                               r_mem_write_data <= {32'b0, o_ram_write_value};
                               r_mem_byte_en    <= 8'h0F;
+                           end else begin
+                              r_mem_write_data <= {o_ram_write_value, 32'b0};
+                              r_mem_byte_en    <= 8'hF0;
                            end
                            r_mem_write_DV <= 1'b1;
 
@@ -746,8 +741,6 @@ rams_sp_nc rams_sp_nc1 (
             end
 
             OPCODE_REQUEST: begin
-               r_cache_reset <= 1'b0;
-               o_led[0] <= i_switch[0];  // Temp showing cache enabled status.
                r_msg_send_DV <= 1'b0;
                r_extra_clock <= 2'b0;  // always reset — all instructions rely on this
                r_mem_byte_en <= 8'hFF;  // default full-word; byte ops override this
@@ -788,19 +781,19 @@ rams_sp_nc rams_sp_nc1 (
             OPCODE_FETCH: begin
                if (w_mem_ready) begin
                   // PC[2] selects which 32-bit half of the 64-bit doubleword holds the opcode.
-                  // Cache layout (big-endian within doubleword):
-                  //   [63:32] = bytes at the doubleword-aligned base address  (PC[2]==0)
-                  //   [31:0]  = bytes at base+4                               (PC[2]==1)
-                  r_opcode_mem  <= r_PC[2] ? w_mem_read_data[31:0]
-                                           : w_mem_read_data[63:32];
+                  // Little-endian layout:
+                  //   [31:0]  = bytes at the doubleword-aligned base address  (PC[2]==0)
+                  //   [63:32] = bytes at base+4                               (PC[2]==1)
+                  r_opcode_mem  <= r_PC[2] ? w_mem_read_data[63:32]
+                                           : w_mem_read_data[31:0];
                   r_mem_read_DV <= 1'b0;
                   if (r_PC[2] == 0) begin
-                     // var1 (at PC+4) is in the OTHER half of the same doubleword — always here.
-                     r_var1_mem        <= w_mem_read_data[31:0];
+                     // var1 (at PC+4) is in the HIGH half of the same doubleword — always here.
+                     r_var1_mem        <= w_mem_read_data[63:32];
                      r_var1_prefetched <= 1'b1;
                   end else if (w_mem_next_valid) begin
-                     // var1 (at PC+4) is in the next doubleword's upper half.
-                     r_var1_mem        <= w_mem_read_data_next[63:32];
+                     // var1 (at PC+4) is in the next doubleword's low half.
+                     r_var1_mem        <= w_mem_read_data_next[31:0];
                      r_var1_prefetched <= 1'b1;
                   end else begin
                      r_var1_prefetched <= 1'b0;
@@ -837,7 +830,7 @@ rams_sp_nc rams_sp_nc1 (
 
             VAR1_FETCH: begin
                if (w_mem_ready) begin
-                  r_var1_mem<=w_mem_read_data[63:32]; // upper 32 bits = instruction word at this address
+                  r_var1_mem<=w_mem_read_data[31:0]; // lower 32 bits = instruction word at this address (little-endian, PC[2]==0)
                   if (r_debug_flag&&w_opcode[31:12]!=20'h0000F) begin  // Ignore delay/NOP opcodes (0x0000_F???)
                      r_SM <= DEBUG_DATA;
                   end else begin
